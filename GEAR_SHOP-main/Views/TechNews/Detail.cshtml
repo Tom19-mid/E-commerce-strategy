@@ -9,7 +9,7 @@
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 240px">
         <h1 class="font-weight-semi-bold text-uppercase mb-3">@Model.Title</h1>
         <div class="d-inline-flex">
-            <p class="m-0"><a class="text-primary" href="/">Home</a></p>
+            <p class="m-0"><a class="text-primary" href="/">Trang chủ</a></p>
             <p class="m-0 px-2 text-dark">-</p>
             <p class="m-0"><a class="text-primary" href="@Url.Action("Index","TechNews")">Tin công nghệ</a></p>
         </div>
@@ -54,7 +54,7 @@
             <div class="card shadow-sm mb-3">
                 <div class="card-body">
                     <h6 class="font-weight-bold">Từ khóa</h6>
-                    <p class="mb-0 text-dark">@Model.Tags</p>
+                    <p class="mb-0 text-dark">@string.Join(", ", Model.Tags.Split(';', StringSplitOptions.RemoveEmptyEntries))</p>
                 </div>
             </div>
         </div>

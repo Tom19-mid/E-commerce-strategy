@@ -128,19 +128,61 @@
             transition: background-color 0.3s;
             border-radius: 10px 10px 0px 0px;
             font-family: Tahoma;
-            font-size: 80%
+            font-size: 80%;
         }
 
             .chat-bar:hover {
-                background-color: #D19C97;
+                background-color: #d48e84;
             }
+
+        /* 🔔 Chấm đỏ thông báo tin nhắn mới */
+        /* .alert-dot {
+            position: absolute;
+            top: -6px;
+            right: 6px;
+            width: 20px;
+            height: 20px;
+            background: #ff3b30;
+            border-radius: 50%;
+            display: none;
+            box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.2);
+        }
+
+            .alert-dot.visible {
+                display: inline-block;
+            } */
+        /* 🔔 Badge hiển thị số tin nhắn chưa đọc */
+        #newMessageAlert {
+            position: absolute;
+            top: -8px;
+            right: 1px;
+            min-width: 20px;
+            height: 20px;
+            background-color: #ff3b30;
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 20px;
+            border-radius: 50px; /* bo tròn nhẹ để không méo khi số dài */
+            padding: 0 5px; /* giúp co giãn linh hoạt khi có 2–3 chữ số */
+            display: none;
+            box-shadow: 0 0 4px rgba(255, 59, 48, 0.5);
+            z-index: 1001;
+        }
+
+            #newMessageAlert.visible {
+                display: inline-block;
+            }
+
+
 
         .chat-box {
             position: fixed;
             bottom: 30px;
             right: 0;
-            width: 400px;
-            /* height: 400px; */
+            width: 350px;
+            height: 470px; 
             background-color: white;
             border: 1px solid #ccc;
             border-radius: 10px;
@@ -163,31 +205,50 @@
 
         .chat-messages {
             padding: 10px;
-            height: 300px;
+            height: 370px;
             overflow-y: auto;
             font-size: 0.9em;
         }
 
         .chat-input {
             display: flex;
+            align-items: flex-end;
+            padding: 6px;
             border-top: 1px solid #ccc;
             border-radius: 10px;
+            background-color: #fff;
+            gap: 6px;
         }
 
-            .chat-input input {
+            .chat-input textarea {
                 flex: 1;
-                /* border: none; */
-                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+                padding: 8px 10px;
+                font-family: Tahoma;
+                font-size: 14px;
+                line-height: 1.4;
+                resize: none; /* không cho kéo thủ công */
+                overflow-y: auto;
                 outline: none;
-                border-radius: 10px
+                height: 36px;
+                max-height: 120px;
+                white-space: pre-wrap; /* xuống dòng tự nhiên */
+                word-wrap: break-word; /* tự động ngắt từ */
             }
 
             .chat-input button {
                 background-color: #D19C97;
                 color: white;
                 border-radius: 10px;
-                padding: 10px 15px;
+                padding: 8px 10px;
                 cursor: pointer;
+                border: none;
+                transition: background 0.2s;
+            }
+
+            .chat-input button:hover {
+                background-color: #b67d78;
             }
 
         .chat-input-right {
@@ -230,6 +291,7 @@
             .chat-input-right button:hover {
                 background-color: #005fa3;
             }
+        
 
         .message-wrapper {
             display: flex;
@@ -366,11 +428,11 @@
         <div class="row">
             <div class="col-lg-6 d-none d-lg-block">
                 <div class="d-inline-flex align-items-center">
-                    <a class="text-dark" href="">FAQs</a>
+                    <a asp-action="FAQs" asp-controller="Asists" class="text-dark">FAQs</a>
                     <span class="text-muted px-2">|</span>
-                    <a class="text-dark" href="">Giúp đỡ</a>
+                    <a asp-action="GiupDo" asp-controller="Asists" class="text-dark">Giúp đỡ</a>
                     <span class="text-muted px-2">|</span>
-                    <a class="text-dark" href="">Hỗ trợ</a>
+                    <a asp-action="Hotro" asp-controller="Asists" class="text-dark">Hỗ trợ</a>
                 </div>
             </div>
             <div class="col-lg-6 text-center text-lg-right">
@@ -510,7 +572,11 @@
         <!-- Thanh chat ngang -->
         <div id="chatBar" class="chat-bar">
             💬 Chat tư vấn - Giải đáp mọi thắc mắc
+            <span id="newMessageAlert" class="alert-dot"></span>
         </div>
+
+        <!-- Âm thanh thông báo -->
+        <audio id="msgSound" src="~/sounds/new-notification-010-352755.mp3" preload="auto"></audio>
     }
     <!-- Khung chat -->
     <div id="chatBox" class="chat-box">
@@ -521,7 +587,7 @@
         <div class="chat-main">
             <div id="messagesList" class="chat-messages"></div>
             <div id="inputArea" class="chat-input">
-                <input type="text" id="messageInput" placeholder="Nhập tin nhắn..." />
+                <textarea id="messageInput" placeholder="Nhập tin nhắn..." rows="1"></textarea>
                 <button id="emojiButton" class="emoji-btn">😀</button>
                 <button id="sendButton"><i class="fa-solid fa-paper-plane"></i> Gửi</button>
                 <div id="emojiPicker" class="emoji-picker"></div>
@@ -628,6 +694,7 @@
             }
         });
 
+
         const emojiButton = document.getElementById("emojiButton");
         const emojiPicker = document.getElementById("emojiPicker");
         const messageInput = document.getElementById("messageInput");
@@ -643,9 +710,19 @@
             emojiPicker.appendChild(span);
         });
 
+
         emojiButton.addEventListener("click", () => {
             emojiPicker.style.display = emojiPicker.style.display === "flex" ? "none" : "flex";
         });
+
+        // Đóng emoji picker khi click ra ngoài
+        document.addEventListener("click", (e) => {
+            const isClickInside = emojiPicker.contains(e.target) || emojiButton.contains(e.target);
+            if (!isClickInside) {
+                emojiPicker.style.display = "none";
+            }
+        });
+
 
         document.getElementById("chatBar").addEventListener("click", function () {
             document.getElementById("chatBox").style.display = "flex";
@@ -655,6 +732,72 @@
         document.getElementById("minimizeButton").addEventListener("click", function () {
             document.getElementById("chatBox").style.display = "none";
             document.getElementById("chatBar").style.display = "block";
+        });
+
+                // === THÔNG BÁO TIN NHẮN MỚI (hiển thị số lượng) ===
+        let unreadCount = 0;
+
+               // Tạo badge hiển thị số tin nhắn chưa đọc (nếu chưa có)
+        if (!document.getElementById("newMessageAlert")) {
+            const alertBadge = document.createElement("div");
+            alertBadge.id = "newMessageAlert";
+            document.getElementById("chatBar").style.position = "relative";
+            document.getElementById("chatBar").appendChild(alertBadge);
+        }
+
+               // === THÔNG BÁO TIN NHẮN MỚI (cập nhật: chỉ hiển thị 1 thông báo duy nhất) ===
+
+        // Xin quyền gửi thông báo trình duyệt (chỉ hỏi 1 lần)
+        if ("Notification" in window && Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+        // Tạo hoặc cập nhật badge đếm tin nhắn chưa đọc
+        function updateBadge() {
+            const alertDot = document.getElementById("newMessageAlert");
+            let count = parseInt(alertDot.textContent || "0", 10);
+            count++;
+            alertDot.textContent = count;
+            alertDot.style.display = "flex";
+        }
+
+        // Phát âm thanh thông báo
+        const notifySound = new Audio("/sounds/notify.mp3");
+        notifySound.preload = "auto";
+        function playNotifySound() {
+            try {
+                notifySound.currentTime = 0;
+                notifySound.play();
+            } catch (e) {}
+        }
+
+        // Lắng nghe sự kiện từ SignalR
+        connection.on("ReceiveMessage", function (user, message) {
+            const chatBox = document.getElementById("chatBox");
+            const alertDot = document.getElementById("newMessageAlert");
+
+            // Nếu khung chat đang ẩn => hiển thị số tin nhắn và thông báo
+            if (chatBox.style.display === "none" || chatBox.style.display === "") {
+                updateBadge();
+                playNotifySound();
+
+                // Hiển thị thông báo trình duyệt — dùng tag để thay thế cái cũ
+                if (Notification.permission === "granted") {
+                    new Notification("Tin nhắn mới 💬", {
+                        body: `${user}: ${message}`,
+                        tag: "chat-message",   // 👉 Tất cả noti cùng tag này sẽ thay thế nhau
+                        renotify: true,        // 👉 Cho phép thay thế thông báo cũ
+                        icon: "/images/chat-icon.png"
+                    });
+                }
+            }
+        });
+
+        // Khi người dùng mở chat => ẩn badge và reset số
+        document.getElementById("chatBar").addEventListener("click", () => {
+            const alertDot = document.getElementById("newMessageAlert");
+            alertDot.style.display = "none";
+            alertDot.textContent = "";
         });
     </script>
 

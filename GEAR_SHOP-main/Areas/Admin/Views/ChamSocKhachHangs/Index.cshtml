@@ -27,7 +27,7 @@
     <div class="chat-main">
         <div id="messagesList" class="chat-messages"></div>
         <div id="inputArea" class="chat-input">
-            <input type="text" id="messageInput" placeholder="Nhập tin nhắn..." />
+            <textarea type="text" id="messageInput" placeholder="Nhập tin nhắn..."></textarea>
             <button id="emojiButton" class="emoji-btn">😀</button>
             <button id="sendButton"><i class="fa-solid fa-paper-plane"></i> Gửi</button>
             <div id="emojiPicker" class="emoji-picker"></div>
@@ -112,6 +112,15 @@
     emojiButton.addEventListener("click", () => {
         emojiPicker.style.display = emojiPicker.style.display === "flex" ? "none" : "flex";
     });
+
+    // Đóng emoji picker khi click ra ngoài
+    document.addEventListener("click", (e) => {
+        const isClickInside = emojiPicker.contains(e.target) || emojiButton.contains(e.target);
+        if (!isClickInside) {
+            emojiPicker.style.display = "none";
+        }
+    });
+
 
     function sendMessage() {
         const message = messageInput.value.trim();
@@ -236,8 +245,12 @@
         font-size: 14px;
         line-height: 1.4;
         box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        word-wrap: break-word; /* xuống hàng khi quá dài */
-        white-space: pre-wrap; /* giữ khoảng trắng và xuống hàng theo nội dung */
+        /* ⚡ Những dòng quan trọng để tránh tràn */
+        max-width: 80%; /* Giới hạn độ rộng tối đa của tin nhắn */
+        word-wrap: break-word; /* Ngắt từ khi quá dài */
+        word-break: break-word; /* Ngắt chữ dài không có khoảng trắng */
+        overflow-wrap: break-word; /* Tự động xuống dòng */
+        white-space: pre-wrap; /* Giữ xuống dòng theo nội dung */
     }
 
     .message.customer .bubble {
@@ -257,15 +270,27 @@
         display: flex;
         gap: 10px;
         padding: 12px;
-        border-top: 1px solid #eee;
+        border-top: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #fff;
+        align-items: flex-end;
     }
 
-    .chat-input input {
-        flex: 1;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 12px;
-        font-size: 14px;
+    .chat-input textarea {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-family: Tahoma;
+            font-size: 14px;
+            line-height: 1.4;
+            resize: none; /* không cho kéo thủ công */
+            overflow-y: auto;
+            outline: none;
+            height: 50px;
+            max-height: 120px;
+            white-space: pre-wrap; /* xuống dòng tự nhiên */
+            word-wrap: break-word; /* tự động ngắt từ */
     }
 
     .chat-input input:focus {

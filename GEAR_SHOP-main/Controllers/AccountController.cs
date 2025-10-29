@@ -10,7 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using TL4_SHOP.Data;
 using TL4_SHOP.Models;
 using TL4_SHOP.Models.ViewModels;
-using TL4_SHOP.Services.Auth; 
+using TL4_SHOP.Services.Auth;
+using System.Net;
+using System.Net.Mail;
 
 
 namespace TL4_SHOP.Controllers
@@ -271,11 +273,11 @@ namespace TL4_SHOP.Controllers
                 catch (Exception ex)
                 {
                     // Hiển thị lỗi gốc ở môi trường DEBUG để bạn bắt đúng nguyên nhân (độ dài cột, unique, not null,…)
-#if DEBUG
+                #if DEBUG
                     ViewBag.Message = "Lỗi khi đăng ký: " + (ex.GetBaseException()?.Message ?? ex.Message);
-#else
-            ViewBag.Message = "Có lỗi xảy ra khi đăng ký. Vui lòng thử lại.";
-#endif
+                #else
+                    ViewBag.Message = "Có lỗi xảy ra khi đăng ký. Vui lòng thử lại.";
+                #endif
                     return View(account);
                 }
             }
@@ -419,12 +421,44 @@ namespace TL4_SHOP.Controllers
                 // Tạo link reset password
                 var resetLink = Url.Action("ResetPassword", "Account", new { token = token }, Request.Scheme);
 
+                // 3️⃣ Gửi email (thực tế)
+                var fromAddress = new MailAddress("yourgmail@gmail.com", "TL4 Shop");
+                var toAddress = new MailAddress(user.Email);
+                const string fromPassword = "MẬT_KHẨU_ỨNG_DỤNG_GMAIL";
+                const string subject = "Đặt lại mật khẩu TL4 Shop";
+                string body = $@"
+            <p>Xin chào {user.HoTen?? "bạn"},</p>
+            <p>Bạn đã yêu cầu đặt lại mật khẩu. Nhấn vào liên kết bên dưới để đặt lại (hết hạn trong 1 giờ):</p>
+            <p><a href='{resetLink}'>Đặt lại mật khẩu</a></p>
+            <p>Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>
+        ";
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential("tanle8455@gmail.com", "ecwz ttls qtgg ggvp")
+                };
+
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+                })
+                {
+                    smtp.Send(message);
+                }
+
                 ViewBag.Message = "Liên kết đặt lại mật khẩu đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư.";
                 return View();
             }
             catch (Exception ex)
             {
-                ViewBag.Message = "Có lỗi xảy ra khi gửi email. Vui lòng thử lại sau.";
+                ViewBag.Message = "Có lỗi xảy ra khi gửi email: " + ex.Message;
                 return View();
             }
         }
