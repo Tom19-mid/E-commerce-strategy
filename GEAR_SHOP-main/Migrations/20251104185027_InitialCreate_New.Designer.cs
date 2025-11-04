@@ -12,18 +12,52 @@ using TL4_SHOP.Data;
 namespace TL4_SHOP.Migrations
 {
     [DbContext(typeof(_4tlShopContext))]
-    [Migration("20250807084555_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251104185027_InitialCreate_New")]
+    partial class InitialCreate_New
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("TL4_SHOP.Data.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("ReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChatMessages", (string)null);
+                });
 
             modelBuilder.Entity("TL4_SHOP.Data.ChiTietDonHang", b =>
                 {
@@ -52,7 +86,7 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("decimal(18, 3)");
 
                     b.HasKey("ChiTietId")
-                        .HasName("PK__ChiTietD__B117E9EA30C44B1F");
+                        .HasName("PK__ChiTietD__B117E9EAF1299D72");
 
                     b.HasIndex("DonHangId");
 
@@ -97,7 +131,7 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("decimal(18, 3)");
 
                     b.HasKey("ChiTietNhapHangId")
-                        .HasName("PK__ChiTietN__D9FE8A9035A9ABF3");
+                        .HasName("PK__ChiTietN__D9FE8A90D5D8DB80");
 
                     b.HasIndex("PhieuNhapId");
 
@@ -116,12 +150,14 @@ namespace TL4_SHOP.Migrations
             modelBuilder.Entity("TL4_SHOP.Data.DanhMucSanPham", b =>
                 {
                     b.Property<int>("DanhMucId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("DanhMucID");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DanhMucId"));
+
                     b.Property<int?>("DanhMucChaId")
-                        .HasColumnType("int")
-                        .HasColumnName("DanhMucChaId");
+                        .HasColumnType("int");
 
                     b.Property<string>("MoTa")
                         .IsRequired()
@@ -133,7 +169,7 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("DanhMucId")
-                        .HasName("PK__DanhMucS__1C53BA7B81C69B93");
+                        .HasName("PK__DanhMucS__1C53BA7B71EFB0D1");
 
                     b.HasIndex("DanhMucChaId");
 
@@ -190,7 +226,7 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("DiaChiId")
-                        .HasName("PK__DiaChi__94E668E6FB309DBC");
+                        .HasName("PK__DiaChi__94E668E696DC2723");
 
                     b.HasIndex("KhachHangId");
 
@@ -220,7 +256,7 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Nam")
-                        .HasName("PK__DoanhThu__C7D111C2525ECDB1");
+                        .HasName("PK__DoanhThu__C7D111C2C4C815AF");
 
                     b.ToTable("DoanhThuTheoNam", (string)null);
                 });
@@ -243,7 +279,7 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Ngay")
-                        .HasName("PK__DoanhThu__6BCCE7B21837C0EC");
+                        .HasName("PK__DoanhThu__6BCCE7B20FFD82FF");
 
                     b.ToTable("DoanhThuTheoNgay", null, t =>
                         {
@@ -276,7 +312,7 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Nam", "Thang")
-                        .HasName("PK__DoanhThu__750C5E9697939130");
+                        .HasName("PK__DoanhThu__750C5E96CD37571B");
 
                     b.ToTable("DoanhThuTheoThang", (string)null);
                 });
@@ -291,20 +327,19 @@ namespace TL4_SHOP.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DonHangId"));
 
                     b.Property<string>("DiaChiGiaoHang")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("DiaChiId")
                         .HasColumnType("int")
                         .HasColumnName("DiaChiID");
 
-                    b.Property<string>("GhiChu")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("EmailNguoiDat")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<int?>("KhachHangId")
-                        .HasColumnType("int")
-                        .HasColumnName("KhachHangID");
+                    b.Property<string>("GhiChu")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("NgayDatHang")
                         .HasColumnType("datetime");
@@ -313,34 +348,38 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("decimal(18, 3)");
 
                     b.Property<string>("PhuongThucThanhToan")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("SoDienThoai")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int?>("TaiKhoanId")
+                        .HasColumnType("int")
+                        .HasColumnName("KhachHangID");
 
                     b.Property<string>("TenKhachHang")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("TongTien")
                         .HasColumnType("decimal(18, 3)");
 
                     b.Property<string>("TrangThaiDonHangText")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("TrangThaiId")
                         .HasColumnType("int")
                         .HasColumnName("TrangThaiID");
 
                     b.HasKey("DonHangId")
-                        .HasName("PK__DonHang__D159F4DEB7BCC682");
+                        .HasName("PK__DonHang__D159F4DE93253B15");
 
                     b.HasIndex("DiaChiId");
 
-                    b.HasIndex("KhachHangId");
+                    b.HasIndex("TaiKhoanId");
 
                     b.HasIndex("TrangThaiId");
 
@@ -382,7 +421,7 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("KhachHangId")
-                        .HasName("PK__KhachHan__880F211B510C2C99");
+                        .HasName("PK__KhachHan__880F211BBB2BF01B");
 
                     b.ToTable("KhachHang", (string)null);
                 });
@@ -397,7 +436,7 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("SanPhamId")
-                        .HasName("PK__KhoHang__05180FF49CC24F5D");
+                        .HasName("PK__KhoHang__05180FF4F3BF291A");
 
                     b.ToTable("KhoHang", (string)null);
                 });
@@ -429,7 +468,7 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("NhaCungCapId")
-                        .HasName("PK__NhaCungC__8B8917276F4C76AB");
+                        .HasName("PK__NhaCungC__8B8917272738218A");
 
                     b.ToTable("NhaCungCap", (string)null);
                 });
@@ -468,7 +507,7 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("NhanVienId")
-                        .HasName("PK__NhanVien__E27FD7EAB3185254");
+                        .HasName("PK__NhanVien__E27FD7EA80CBD491");
 
                     b.ToTable("NhanVien", (string)null);
                 });
@@ -493,14 +532,54 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("int")
                         .HasColumnName("NhanVienID");
 
+                    b.Property<int?>("TaiKhoanId")
+                        .HasColumnType("int");
+
                     b.HasKey("PhieuNhapId")
-                        .HasName("PK__NhapHang__DE3A388261A47F8B");
+                        .HasName("PK__NhapHang__DE3A3882C632D946");
 
                     b.HasIndex("NhaCungCapId");
 
                     b.HasIndex("NhanVienId");
 
                     b.ToTable("NhapHang", (string)null);
+                });
+
+            modelBuilder.Entity("TL4_SHOP.Data.PasswordResetToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool?>("IsUsed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("TaiKhoanId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Password__3214EC07288ACA41");
+
+                    b.HasIndex("TaiKhoanId");
+
+                    b.ToTable("PasswordResetTokens");
                 });
 
             modelBuilder.Entity("TL4_SHOP.Data.SanPham", b =>
@@ -512,6 +591,9 @@ namespace TL4_SHOP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SanPhamId"));
 
+                    b.Property<string>("ChiTiet")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("DanhMucId")
                         .HasColumnType("int")
                         .HasColumnName("DanhMucID");
@@ -519,11 +601,21 @@ namespace TL4_SHOP.Migrations
                     b.Property<decimal>("Gia")
                         .HasColumnType("decimal(18, 3)");
 
+                    b.Property<decimal?>("GiaSauGiam")
+                        .HasColumnType("decimal(18, 0)");
+
                     b.Property<string>("HinhAnh")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<bool?>("LaNoiBat")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("MoTa")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NhaCungCapId")
@@ -538,8 +630,11 @@ namespace TL4_SHOP.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("ThongSoKyThuat")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("SanPhamId")
-                        .HasName("PK__SanPham__05180FF40BA47994");
+                        .HasName("PK__SanPham__05180FF4AC4878EE");
 
                     b.HasIndex("DanhMucId");
 
@@ -595,17 +690,21 @@ namespace TL4_SHOP.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("VaiTro")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.HasKey("TaiKhoanId")
-                        .HasName("PK__TaoTaiKh__9A124B658F6EA8E5");
+                        .HasName("PK__TaoTaiKh__9A124B658310C38B");
 
                     b.HasIndex("KhachHangId");
 
                     b.HasIndex("NhanVienId");
 
-                    b.HasIndex(new[] { "Phone" }, "UQ__TaoTaiKh__5C7E359EDB66121B")
+                    b.HasIndex(new[] { "Phone" }, "UQ__TaoTaiKh__5C7E359EF074C186")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Email" }, "UQ__TaoTaiKh__A9D1053486347588")
+                    b.HasIndex(new[] { "Email" }, "UQ__TaoTaiKh__A9D1053489221C10")
                         .IsUnique();
 
                     b.ToTable("TaoTaiKhoan", null, t =>
@@ -620,6 +719,65 @@ namespace TL4_SHOP.Migrations
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
+            modelBuilder.Entity("TL4_SHOP.Data.TechNews", b =>
+                {
+                    b.Property<int>("TechNewsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TechNewsId"));
+
+                    b.Property<string>("Author")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ContentHtml")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CoverImage")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<bool>("IsFeatured")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(220)
+                        .HasColumnType("nvarchar(220)");
+
+                    b.Property<string>("Summary")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("Tags")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("TechNewsId");
+
+                    b.HasIndex("PublishedAt");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.HasIndex("IsFeatured", "PublishedAt");
+
+                    b.ToTable("TechNews", (string)null);
+                });
+
             modelBuilder.Entity("TL4_SHOP.Data.TrangThaiDonHang", b =>
                 {
                     b.Property<int>("TrangThaiId")
@@ -632,45 +790,66 @@ namespace TL4_SHOP.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("TrangThaiId")
-                        .HasName("PK__TrangTha__D5BF1E850C628B11");
+                        .HasName("PK__TrangTha__D5BF1E85ABD8D594");
 
                     b.ToTable("TrangThaiDonHang", (string)null);
                 });
 
-            modelBuilder.Entity("TL4_SHOP.Models.PasswordResetToken", b =>
+            modelBuilder.Entity("TL4_SHOP.Data.Wishlist", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("WishlistId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WishlistId"));
 
-                    b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsUsed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<int>("TaiKhoanId")
+                    b.Property<int?>("KhachHangId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<string>("SessionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("Id");
+                    b.Property<int?>("TaiKhoanId")
+                        .HasColumnType("int");
+
+                    b.HasKey("WishlistId")
+                        .HasName("PK__Wishlist__233189EBE961249E");
+
+                    b.HasIndex("KhachHangId");
 
                     b.HasIndex("TaiKhoanId");
 
-                    b.ToTable("PasswordResetTokens");
+                    b.ToTable("Wishlists");
+                });
+
+            modelBuilder.Entity("TL4_SHOP.Data.WishlistItem", b =>
+                {
+                    b.Property<int>("WishlistItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WishlistItemId"));
+
+                    b.Property<int>("SanPhamId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TaiKhoanId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WishlistId")
+                        .HasColumnType("int");
+
+                    b.HasKey("WishlistItemId")
+                        .HasName("PK__Wishlist__171E21A136D407A9");
+
+                    b.HasIndex("SanPhamId");
+
+                    b.HasIndex("TaiKhoanId");
+
+                    b.HasIndex("WishlistId");
+
+                    b.ToTable("WishlistItems");
                 });
 
             modelBuilder.Entity("TL4_SHOP.Data.ChiTietDonHang", b =>
@@ -679,13 +858,13 @@ namespace TL4_SHOP.Migrations
                         .WithMany("ChiTietDonHangs")
                         .HasForeignKey("DonHangId")
                         .IsRequired()
-                        .HasConstraintName("FK__ChiTietDo__DonHa__5FB337D6");
+                        .HasConstraintName("FK__ChiTietDo__DonHa__656C112C");
 
                     b.HasOne("TL4_SHOP.Data.SanPham", "SanPham")
                         .WithMany("ChiTietDonHangs")
                         .HasForeignKey("SanPhamId")
                         .IsRequired()
-                        .HasConstraintName("FK__ChiTietDo__SanPh__60A75C0F");
+                        .HasConstraintName("FK__ChiTietDo__SanPh__66603565");
 
                     b.Navigation("DonHang");
 
@@ -697,12 +876,12 @@ namespace TL4_SHOP.Migrations
                     b.HasOne("TL4_SHOP.Data.NhapHang", "PhieuNhap")
                         .WithMany("ChiTietNhapHangs")
                         .HasForeignKey("PhieuNhapId")
-                        .HasConstraintName("FK__ChiTietNh__Phieu__6383C8BA");
+                        .HasConstraintName("FK__ChiTietNh__Phieu__6754599E");
 
                     b.HasOne("TL4_SHOP.Data.SanPham", "SanPham")
                         .WithMany("ChiTietNhapHangs")
                         .HasForeignKey("SanPhamId")
-                        .HasConstraintName("FK__ChiTietNh__SanPh__6477ECF3");
+                        .HasConstraintName("FK__ChiTietNh__SanPh__68487DD7");
 
                     b.Navigation("PhieuNhap");
 
@@ -714,7 +893,6 @@ namespace TL4_SHOP.Migrations
                     b.HasOne("TL4_SHOP.Data.DanhMucSanPham", "DanhMucCha")
                         .WithMany("DanhMucCon")
                         .HasForeignKey("DanhMucChaId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_DanhMuc_ChaCon");
 
                     b.Navigation("DanhMucCha");
@@ -726,7 +904,7 @@ namespace TL4_SHOP.Migrations
                         .WithMany("DiaChis")
                         .HasForeignKey("KhachHangId")
                         .IsRequired()
-                        .HasConstraintName("FK__DiaChi__KhachHan__4222D4EF");
+                        .HasConstraintName("FK__DiaChi__KhachHan__6A30C649");
 
                     b.Navigation("KhachHang");
                 });
@@ -736,18 +914,18 @@ namespace TL4_SHOP.Migrations
                     b.HasOne("TL4_SHOP.Data.DiaChi", "DiaChi")
                         .WithMany("DonHangs")
                         .HasForeignKey("DiaChiId")
-                        .HasConstraintName("FK__DonHang__DiaChiI__5BE2A6F2");
+                        .HasConstraintName("FK__DonHang__DiaChiI__6B24EA82");
 
                     b.HasOne("TL4_SHOP.Data.KhachHang", "KhachHang")
                         .WithMany("DonHangs")
-                        .HasForeignKey("KhachHangId")
-                        .HasConstraintName("FK__DonHang__KhachHa__5AEE82B9");
+                        .HasForeignKey("TaiKhoanId")
+                        .HasConstraintName("FK__DonHang__KhachHa__6C190EBB");
 
                     b.HasOne("TL4_SHOP.Data.TrangThaiDonHang", "TrangThai")
                         .WithMany("DonHangs")
                         .HasForeignKey("TrangThaiId")
                         .IsRequired()
-                        .HasConstraintName("FK__DonHang__TrangTh__5CD6CB2B");
+                        .HasConstraintName("FK__DonHang__TrangTh__6D0D32F4");
 
                     b.Navigation("DiaChi");
 
@@ -762,7 +940,7 @@ namespace TL4_SHOP.Migrations
                         .WithOne("KhoHang")
                         .HasForeignKey("TL4_SHOP.Data.KhoHang", "SanPhamId")
                         .IsRequired()
-                        .HasConstraintName("FK__KhoHang__SanPham__5070F446");
+                        .HasConstraintName("FK__KhoHang__SanPham__6E01572D");
 
                     b.Navigation("SanPham");
                 });
@@ -772,16 +950,27 @@ namespace TL4_SHOP.Migrations
                     b.HasOne("TL4_SHOP.Data.NhaCungCap", "NhaCungCap")
                         .WithMany("NhapHangs")
                         .HasForeignKey("NhaCungCapId")
-                        .HasConstraintName("FK__NhapHang__NhaCun__48CFD27E");
+                        .HasConstraintName("FK__NhapHang__NhaCun__6EF57B66");
 
                     b.HasOne("TL4_SHOP.Data.NhanVien", "NhanVien")
                         .WithMany("NhapHangs")
                         .HasForeignKey("NhanVienId")
-                        .HasConstraintName("FK__NhapHang__NhanVi__49C3F6B7");
+                        .HasConstraintName("FK__NhapHang__NhanVi__6FE99F9F");
 
                     b.Navigation("NhaCungCap");
 
                     b.Navigation("NhanVien");
+                });
+
+            modelBuilder.Entity("TL4_SHOP.Data.PasswordResetToken", b =>
+                {
+                    b.HasOne("TL4_SHOP.Data.TaoTaiKhoan", "TaiKhoan")
+                        .WithMany("PasswordResetTokens")
+                        .HasForeignKey("TaiKhoanId")
+                        .IsRequired()
+                        .HasConstraintName("FK__PasswordR__TaiKh__70DDC3D8");
+
+                    b.Navigation("TaiKhoan");
                 });
 
             modelBuilder.Entity("TL4_SHOP.Data.SanPham", b =>
@@ -789,13 +978,13 @@ namespace TL4_SHOP.Migrations
                     b.HasOne("TL4_SHOP.Data.DanhMucSanPham", "DanhMuc")
                         .WithMany("SanPhams")
                         .HasForeignKey("DanhMucId")
-                        .HasConstraintName("FK__SanPham__DanhMuc__4CA06362");
+                        .HasConstraintName("FK__SanPham__DanhMuc__71D1E811");
 
                     b.HasOne("TL4_SHOP.Data.NhaCungCap", "NhaCungCap")
                         .WithMany("SanPhams")
                         .HasForeignKey("NhaCungCapId")
                         .IsRequired()
-                        .HasConstraintName("FK__SanPham__NhaCung__4D94879B");
+                        .HasConstraintName("FK__SanPham__NhaCung__72C60C4A");
 
                     b.Navigation("DanhMuc");
 
@@ -807,27 +996,56 @@ namespace TL4_SHOP.Migrations
                     b.HasOne("TL4_SHOP.Data.KhachHang", "KhachHang")
                         .WithMany("TaoTaiKhoans")
                         .HasForeignKey("KhachHangId")
-                        .HasConstraintName("FK__TaoTaiKho__Khach__3F466844");
+                        .HasConstraintName("FK__TaoTaiKho__Khach__73BA3083");
 
                     b.HasOne("TL4_SHOP.Data.NhanVien", "NhanVien")
                         .WithMany("TaoTaiKhoans")
                         .HasForeignKey("NhanVienId")
-                        .HasConstraintName("FK__TaoTaiKho__NhanV__3E52440B");
+                        .HasConstraintName("FK__TaoTaiKho__NhanV__74AE54BC");
 
                     b.Navigation("KhachHang");
 
                     b.Navigation("NhanVien");
                 });
 
-            modelBuilder.Entity("TL4_SHOP.Models.PasswordResetToken", b =>
+            modelBuilder.Entity("TL4_SHOP.Data.Wishlist", b =>
                 {
-                    b.HasOne("TL4_SHOP.Data.TaoTaiKhoan", "TaiKhoan")
-                        .WithMany()
-                        .HasForeignKey("TaiKhoanId")
-                        .IsRequired()
-                        .HasConstraintName("FK_PasswordResetToken_TaiKhoan");
+                    b.HasOne("TL4_SHOP.Data.KhachHang", null)
+                        .WithMany("Wishlists")
+                        .HasForeignKey("KhachHangId");
 
-                    b.Navigation("TaiKhoan");
+                    b.HasOne("TL4_SHOP.Data.TaoTaiKhoan", "TaoTaiKhoan")
+                        .WithMany("Wishlists")
+                        .HasForeignKey("TaiKhoanId")
+                        .HasConstraintName("FK__Wishlists__TaiKhoan__778AC167");
+
+                    b.Navigation("TaoTaiKhoan");
+                });
+
+            modelBuilder.Entity("TL4_SHOP.Data.WishlistItem", b =>
+                {
+                    b.HasOne("TL4_SHOP.Data.SanPham", "SanPham")
+                        .WithMany("WishlistItems")
+                        .HasForeignKey("SanPhamId")
+                        .IsRequired()
+                        .HasConstraintName("FK__WishlistI__SanPh__75A278F5");
+
+                    b.HasOne("TL4_SHOP.Data.TaoTaiKhoan", "TaoTaiKhoan")
+                        .WithMany("WishlistItems")
+                        .HasForeignKey("TaiKhoanId")
+                        .HasConstraintName("FK_WishlistItem_TaoTaiKhoan");
+
+                    b.HasOne("TL4_SHOP.Data.Wishlist", "Wishlist")
+                        .WithMany("WishlistItems")
+                        .HasForeignKey("WishlistId")
+                        .IsRequired()
+                        .HasConstraintName("FK__WishlistI__Wishl__76969D2E");
+
+                    b.Navigation("SanPham");
+
+                    b.Navigation("TaoTaiKhoan");
+
+                    b.Navigation("Wishlist");
                 });
 
             modelBuilder.Entity("TL4_SHOP.Data.DanhMucSanPham", b =>
@@ -854,6 +1072,8 @@ namespace TL4_SHOP.Migrations
                     b.Navigation("DonHangs");
 
                     b.Navigation("TaoTaiKhoans");
+
+                    b.Navigation("Wishlists");
                 });
 
             modelBuilder.Entity("TL4_SHOP.Data.NhaCungCap", b =>
@@ -882,11 +1102,27 @@ namespace TL4_SHOP.Migrations
                     b.Navigation("ChiTietNhapHangs");
 
                     b.Navigation("KhoHang");
+
+                    b.Navigation("WishlistItems");
+                });
+
+            modelBuilder.Entity("TL4_SHOP.Data.TaoTaiKhoan", b =>
+                {
+                    b.Navigation("PasswordResetTokens");
+
+                    b.Navigation("WishlistItems");
+
+                    b.Navigation("Wishlists");
                 });
 
             modelBuilder.Entity("TL4_SHOP.Data.TrangThaiDonHang", b =>
                 {
                     b.Navigation("DonHangs");
+                });
+
+            modelBuilder.Entity("TL4_SHOP.Data.Wishlist", b =>
+                {
+                    b.Navigation("WishlistItems");
                 });
 #pragma warning restore 612, 618
         }

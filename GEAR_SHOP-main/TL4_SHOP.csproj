@@ -5,6 +5,8 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<SelfContained>true</SelfContained>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -20,6 +22,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.7" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.8" />
+		<PackageReference Include="Microsoft.Azure.SignalR" Version="1.30.2" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.8" />
@@ -42,7 +45,6 @@
 	<ItemGroup>
 		<Folder Include="Areas\Admin\Views\DanhMucs\" />
 		<Folder Include="Areas\Admin\Views\DonHangs\" />
-		<Folder Include="Migrations\" />
 		<Folder Include="ViewModels\" />
 		<Folder Include="wwwroot\admin\" />
 		<Folder Include="wwwroot\sounds\" />

@@ -5,96 +5,78 @@
 
 <div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-lg border-0">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 payment-processing-card">
                 <div class="card-body text-center p-5">
-                    <!-- Spinner Loading Animation -->
                     <div class="mb-4">
-                        <div class="spinner-border text-primary" role="status" style="width: 5rem; height: 5rem; border-width: 0.4rem;">
-                            <span class="visually-hidden">Loading...</span>
+                        <div class="loader-circle">
+                            <div class="loader-circle-inner">
+                                <i class="fas fa-credit-card fa-3x text-primary-pink"></i>
+                            </div>
                         </div>
                     </div>
 
-                    <h3 class="mb-3" style="font-family: Tahoma;">
-                        <i class="fas fa-sync fa-spin me-2"></i>Đang xử lý thanh toán...
-                    </h3>
-                    <p class="text-muted mb-4">Vui lòng chờ trong giây lát. Không tắt trình duyệt!</p>
+                    <h2 class="mb-3 fw-bold text-dark-header">
+                        Đang xử lý thanh toán
+                    </h2>
+                    <p class="text-dark-label mb-4 fs-5">Vui lòng không tắt trình duyệt trong quá trình xử lý</p>
 
-                    <!-- Logo và tên phương thức thanh toán -->
-                    <div class="payment-method-display mt-4 p-4 bg-light rounded">
+                    <div class="payment-method-box mt-4 mb-4">
                         @if (ViewBag.Method == "MoMo")
                         {
                             <img src="https://developers.momo.vn/v3/assets/images/icon-52bd5808cecdb1970e1aeec3c31a3ee1.png"
-                                 alt="MoMo" class="mb-3" style="width: 80px; animation: pulse 1.5s infinite;">
-                            <p class="mb-0"><strong>Đang kết nối với MoMo</strong></p>
-                            <small class="text-muted">Đang xử lý giao dịch qua ví điện tử MoMo...</small>
+                                 alt="MoMo" class="payment-logo">
+                            <h5 class="mt-3 mb-2 fw-bold text-dark-content">Đang kết nối với MoMo</h5>
+                            <p class="text-dark-label small mb-0">Đang xử lý giao dịch qua ví điện tử MoMo</p>
                         }
                         else if (ViewBag.Method == "ZaloPay")
                         {
                             <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Icon-ZaloPay-Square.png"
-                                 alt="ZaloPay" class="mb-3" style="width: 80px; animation: pulse 1.5s infinite;">
-                            <p class="mb-0"><strong>Đang kết nối với ZaloPay</strong></p>
-                            <small class="text-muted">Đang xử lý giao dịch qua ví điện tử ZaloPay...</small>
+                                 alt="ZaloPay" class="payment-logo">
+                            <h5 class="mt-3 mb-2 fw-bold text-dark-content">Đang kết nối với ZaloPay</h5>
+                            <p class="text-dark-label small mb-0">Đang xử lý giao dịch qua ví điện tử ZaloPay</p>
                         }
                         else if (ViewBag.Method == "VNPay")
                         {
                             <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png"
-                                 alt="VNPay" class="mb-3" style="width: 80px; animation: pulse 1.5s infinite;">
-                            <p class="mb-0"><strong>Đang kết nối với VNPay</strong></p>
-                            <small class="text-muted">Đang xử lý giao dịch qua cổng thanh toán VNPay...</small>
+                                 alt="VNPay" class="payment-logo">
+                            <h5 class="mt-3 mb-2 fw-bold text-dark-content">Đang kết nối với VNPay</h5>
+                            <p class="text-dark-label small mb-0">Đang xử lý giao dịch qua cổng thanh toán VNPay</p>
                         }
                         else if (ViewBag.Method == "PayPal")
                         {
                             <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
-                                 alt="PayPal" class="mb-3" style="width: 80px; animation: pulse 1.5s infinite;">
-                            <p class="mb-0"><strong>Đang kết nối với PayPal</strong></p>
-                            <small class="text-muted">Đang xử lý giao dịch quốc tế qua PayPal...</small>
-                        }
-                        else if (ViewBag.Method == "Stripe")
-                        {
-                            <div class="mb-3" style="animation: pulse 1.5s infinite;">
-                                <i class="fab fa-cc-stripe fa-5x text-primary"></i>
-                            </div>
-                            <p class="mb-0"><strong>Đang kết nối với Stripe</strong></p>
-                            <small class="text-muted">Đang xử lý thanh toán thẻ quốc tế...</small>
+                                 alt="PayPal" class="payment-logo">
+                            <h5 class="mt-3 mb-2 fw-bold text-dark-content">Đang kết nối với PayPal</h5>
+                            <p class="text-dark-label small mb-0">Đang xử lý giao dịch quốc tế qua PayPal</p>
                         }
                         else if (ViewBag.Method == "COD")
                         {
-                            <div class="mb-3" style="animation: pulse 1.5s infinite;">
-                                <i class="fas fa-money-bill-wave fa-5x text-success"></i>
-                            </div>
-                            <p class="mb-0"><strong>Đang xác nhận đơn hàng COD</strong></p>
-                            <small class="text-muted">Đang xử lý đơn hàng thanh toán khi nhận hàng...</small>
+                            <i class="fas fa-money-bill-wave fa-5x text-success-light payment-icon-animate"></i>
+                            <h5 class="mt-3 mb-2 fw-bold text-dark-content">Đang xác nhận đơn hàng COD</h5>
+                            <p class="text-dark-label small mb-0">Thanh toán khi nhận hàng</p>
                         }
                         else
                         {
-                            <div class="mb-3" style="animation: pulse 1.5s infinite;">
-                                <i class="fas fa-credit-card fa-5x text-info"></i>
-                            </div>
-                            <p class="mb-0"><strong>Đang xử lý thanh toán</strong></p>
-                            <small class="text-muted">Vui lòng chờ...</small>
+                            <i class="fas fa-credit-card fa-5x text-primary-pink payment-icon-animate"></i>
+                            <h5 class="mt-3 mb-2 fw-bold text-dark-content">Đang xử lý thanh toán</h5>
+                            <p class="text-dark-label small mb-0">Vui lòng chờ trong giây lát</p>
                         }
                     </div>
 
-                    <!-- Progress bar giả lập -->
-                    <div class="progress mt-4" style="height: 10px; border-radius: 10px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
-                             role="progressbar"
-                             style="width: 0%"
-                             id="progressBar"
-                             aria-valuenow="0"
-                             aria-valuemin="0"
-                             aria-valuemax="100">
+                    <div class="progress-wrapper">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="progress-label-dark">Tiến độ xử lý</span>
+                            <span class="progress-percentage-dark" id="progressText">0%</span>
+                        </div>
+                        <div class="modern-progress">
+                            <div class="modern-progress-bar" id="progressBar"></div>
                         </div>
                     </div>
-                    <small class="text-muted mt-2 d-block">
-                        <span id="progressText">0%</span> hoàn thành
-                    </small>
 
-                    <!-- Thông báo bảo mật -->
-                    <div class="mt-4">
-                        <i class="fas fa-lock text-success me-2"></i>
-                        <small class="text-muted">Giao dịch được bảo mật</small>
+                    <div class="security-badge-primary mt-4">
+                        <i class="fas fa-shield-alt me-2"></i>
+                        <span>Giao dịch được mã hóa và bảo mật SSL</span>
                     </div>
                 </div>
             </div>
@@ -103,30 +85,197 @@
 </div>
 
 <style>
-    @@keyframes pulse {
+    /* Định nghĩa màu Primary Pink */
+    :root {
+        --primary-pink: #D19C97;
+        --dark-pink: #C88C8C;
+        --dark-text: #2C3E50;
+        --success-light: #28a745;
+        --light-grey-bg: #f8f9fa; /* Màu nền nhẹ */
+    }
+
+    /* Đổi nền Card chính sang màu Trắng/Xám nhạt */
+    .payment-processing-card {
+        border-radius: 25px;
+        background: white;
+        color: var(--dark-text);
+        overflow: hidden;
+        position: relative;
+        border: 1px solid var(--light-grey-bg) !important;
+    }
+
+        /* Bỏ hiệu ứng lấp lánh trên nền trắng (hoặc dùng màu Primary Pink rất nhạt) */
+        .payment-processing-card::before {
+            content: none;
+        }
+
+    /* Màu chữ đen/xám trên nền trắng/nhạt */
+    .text-dark-header {
+        color: var(--dark-text) !important;
+    }
+
+    .text-dark-content {
+        color: var(--dark-text) !important;
+    }
+
+    .text-dark-label {
+        color: #6c757d !important;
+    }
+
+    .text-primary-pink {
+        color: var(--primary-pink) !important;
+    }
+
+
+    /* Vòng tròn loading */
+    .loader-circle {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+        position: relative;
+        animation: rotate 2s linear infinite;
+    }
+        /* Vòng tròn loading ngoài (Primary Pink nhạt) */
+        .loader-circle::before {
+            border: 6px solid rgba(209, 156, 151, 0.2);
+        }
+        /* Vòng tròn loading xoay (Primary Pink) */
+        .loader-circle::after {
+            border: 6px solid transparent;
+            border-top-color: var(--primary-pink);
+            animation: rotate 1.5s linear infinite;
+        }
+    /* Inner Circle (Nền trắng đục, viền Primary Pink) */
+    .loader-circle-inner {
+        background: white;
+        border: 2px solid var(--primary-pink);
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+        .loader-circle-inner .fa-credit-card {
+            color: var(--primary-pink) !important;
+        }
+
+    @@keyframes rotate {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+
+    /* Payment Method Box: Nền Primary Pink cực nhạt */
+    .payment-method-box {
+        background: #fef5f4; /* Primary Pink rất nhạt */
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid rgba(209, 156, 151, 0.5);
+    }
+
+    .payment-logo, .payment-icon-animate {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .text-success-light {
+        color: var(--success-light) !important;
+    }
+    /* Giữ màu xanh lá cho COD */
+
+    @@keyframes float {
         0%, 100% {
-            transform: scale(1);
-            opacity: 1;
+            transform: translateY(0px);
         }
 
         50% {
-            transform: scale(1.05);
-            opacity: 0.8;
+            transform: translateY(-10px);
         }
     }
 
-    .spinner-border {
-        animation: spinner-border 0.75s linear infinite;
+    /* Progress Bar */
+    .progress-wrapper {
+        margin-top: 30px;
     }
+
+    .progress-label-dark {
+        color: var(--dark-text);
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .progress-percentage-dark {
+        color: var(--dark-text);
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .modern-progress {
+        height: 12px;
+        background: var(--light-grey-bg); /* Nền xám nhạt */
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .modern-progress-bar {
+        height: 100%;
+        /* Gradient thanh tiến trình: Màu primary đậm -> Màu Primary */
+        background: linear-gradient(90deg, var(--dark-pink), var(--primary-pink));
+        background-size: 200% 100%;
+        border-radius: 10px;
+        width: 0%;
+        transition: width 0.3s ease;
+        animation: gradient-flow 2s ease infinite;
+        box-shadow: 0 0 10px rgba(200, 140, 140, 0.5);
+    }
+
+    @@keyframes gradient-flow {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    /* Security Badge (Primary Pink) */
+    .security-badge-primary {
+        background: linear-gradient(135deg, var(--dark-pink) 0%, var(--primary-pink) 100%);
+        border: none;
+        padding: 12px 20px;
+        border-radius: 50px;
+        display: inline-flex;
+        align-items: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 10px rgba(200, 140, 140, 0.4);
+        margin-right: 5px; /* Giữ khoảng cách với các phần tử khác */
+    }
+
+        .security-badge-primary i {
+            color: white;
+            margin-right: 5px;
+        }
 </style>
 
 <script>
-    // Giả lập quá trình thanh toán với progress bar
     let progress = 0;
     const progressBar = document.getElementById('progressBar');
     const progressText = document.getElementById('progressText');
-
-    // Thời gian xử lý ngẫu nhiên từ 2-4 giây
+    // Giả lập thời gian xử lý: 2 - 4 giây
     const processingTime = Math.random() * 2000 + 2000;
     const steps = 100;
     const interval = processingTime / steps;
@@ -134,36 +283,27 @@
     const progressInterval = setInterval(() => {
         progress += 1;
         progressBar.style.width = progress + '%';
-        progressBar.setAttribute('aria-valuenow', progress);
         progressText.textContent = progress + '%';
 
-        // Khi đạt 100%
         if (progress >= 100) {
             clearInterval(progressInterval);
+            // 5% tỉ lệ thất bại
+            const isSuccess = Math.random() > 0.05;
+            // Giả định ViewBag.OrderId đã được truyền từ Controller
+            const orderId = @(ViewBag.OrderId ?? "0");
 
-            // Giả lập kết quả: 92% thành công, 8% thất bại (để demo cả 2 trường hợp)
-            const isSuccess = Math.random() > 0.08;
-
-            // Hiển thị icon check/error trước khi chuyển trang
-            if (isSuccess) {
-                progressBar.classList.remove('bg-primary');
-                progressBar.classList.add('bg-success');
-
-                setTimeout(() => {
-                    window.location.href = '@Url.Action("Success", "Payment")';
-                }, 500);
-            } else {
-                progressBar.classList.remove('bg-primary');
-                progressBar.classList.add('bg-danger');
-
-                setTimeout(() => {
-                    window.location.href = '@Url.Action("Failed", "Payment")';
-                }, 500);
-            }
+            setTimeout(() => {
+                // Giả lập chuyển hướng sau khi xử lý xong
+                if (isSuccess) {
+                    window.location.href = '/Payment/Success?orderId=' + orderId;
+                } else {
+                    window.location.href = '/Payment/Failed?orderId=' + orderId;
+                }
+            }, 500);
         }
     }, interval);
 
-    // Ngăn người dùng tắt trang trong khi xử lý
+    // Cảnh báo khi người dùng muốn tắt/tải lại trang
     window.addEventListener('beforeunload', function(e) {
         if (progress < 100) {
             e.preventDefault();
