@@ -1,0 +1,241 @@
+﻿@model TL4_SHOP.Models.PaymentMethodViewModel
+@{
+    ViewData["Title"] = "Chọn phương thức thanh toán";
+    Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0" style="font-family: Tahoma;">
+                        <i class="fas fa-credit-card me-2"></i> Chọn phương thức thanh toán
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Thông tin đơn hàng -->
+                    <div class="alert alert-info d-flex align-items-center">
+                        <i class="fas fa-info-circle fa-2x me-3"></i>
+                        <div class="flex-grow-1">
+                            <h5 class="mb-2">Thông tin đơn hàng</h5>
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Mã đơn hàng:</strong> <span class="text-primary">#@Model.OrderId</span>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>Tổng tiền:</strong> <span class="text-danger h5">@Model.TotalAmount.ToString("N0")₫</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="ProcessPayment" method="post" id="paymentForm">
+                        <input type="hidden" asp-for="OrderId" />
+                        <input type="hidden" asp-for="TotalAmount" />
+
+                        <h5 class="mb-3 mt-4" style="font-family: Tahoma;">
+                            <i class="fas fa-hand-pointer me-2"></i>Chọn phương thức thanh toán:
+                        </h5>
+
+                        <!-- COD - Thanh toán khi nhận hàng -->
+                        <div class="payment-option mb-3">
+                            <div class="card border-2 payment-card" data-method="COD">
+                                <div class="card-body d-flex align-items-center p-3">
+                                    <input class="form-check-input me-3" type="radio" name="SelectedMethod" value="COD" id="cod" checked>
+                                    <label class="form-check-label d-flex align-items-center w-100" for="cod" style="cursor: pointer;">
+                                        <div class="payment-icon me-3">
+                                            <i class="fas fa-money-bill-wave fa-3x text-success"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">Thanh toán khi nhận hàng (COD)</h6>
+                                            <small class="text-muted">Thanh toán bằng tiền mặt khi nhận hàng</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MoMo -->
+                        <div class="payment-option mb-3">
+                            <div class="card border-2 payment-card" data-method="MoMo">
+                                <div class="card-body d-flex align-items-center p-3">
+                                    <input class="form-check-input me-3" type="radio" name="SelectedMethod" value="MoMo" id="momo">
+                                    <label class="form-check-label d-flex align-items-center w-100" for="momo" style="cursor: pointer;">
+                                        <div class="payment-icon me-3">
+                                            <img src="https://developers.momo.vn/v3/assets/images/icon-52bd5808cecdb1970e1aeec3c31a3ee1.png"
+                                                 alt="MoMo" style="width: 50px; height: 50px;">
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">Ví MoMo</h6>
+                                            <small class="text-muted">Thanh toán qua ví điện tử MoMo</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ZaloPay -->
+                        <div class="payment-option mb-3">
+                            <div class="card border-2 payment-card" data-method="ZaloPay">
+                                <div class="card-body d-flex align-items-center p-3">
+                                    <input class="form-check-input me-3" type="radio" name="SelectedMethod" value="ZaloPay" id="zalopay">
+                                    <label class="form-check-label d-flex align-items-center w-100" for="zalopay" style="cursor: pointer;">
+                                        <div class="payment-icon me-3">
+                                            <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Icon-ZaloPay-Square.png"
+                                                 alt="ZaloPay" style="width: 50px; height: 50px;">
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">ZaloPay</h6>
+                                            <small class="text-muted">Thanh toán qua ví điện tử ZaloPay</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- VNPay -->
+                        <div class="payment-option mb-3">
+                            <div class="card border-2 payment-card" data-method="VNPay">
+                                <div class="card-body d-flex align-items-center p-3">
+                                    <input class="form-check-input me-3" type="radio" name="SelectedMethod" value="VNPay" id="vnpay">
+                                    <label class="form-check-label d-flex align-items-center w-100" for="vnpay" style="cursor: pointer;">
+                                        <div class="payment-icon me-3">
+                                            <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png"
+                                                 alt="VNPay" style="width: 50px; height: 50px;">
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">VNPay</h6>
+                                            <small class="text-muted">Thanh toán qua cổng VNPay (ATM/Visa/Master)</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PayPal -->
+                        <div class="payment-option mb-3">
+                            <div class="card border-2 payment-card" data-method="PayPal">
+                                <div class="card-body d-flex align-items-center p-3">
+                                    <input class="form-check-input me-3" type="radio" name="SelectedMethod" value="PayPal" id="paypal">
+                                    <label class="form-check-label d-flex align-items-center w-100" for="paypal" style="cursor: pointer;">
+                                        <div class="payment-icon me-3">
+                                            <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
+                                                 alt="PayPal" style="width: 50px; height: 50px;">
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">PayPal</h6>
+                                            <small class="text-muted">Thanh toán quốc tế qua PayPal</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stripe -->
+                        <div class="payment-option mb-3">
+                            <div class="card border-2 payment-card" data-method="Stripe">
+                                <div class="card-body d-flex align-items-center p-3">
+                                    <input class="form-check-input me-3" type="radio" name="SelectedMethod" value="Stripe" id="stripe">
+                                    <label class="form-check-label d-flex align-items-center w-100" for="stripe" style="cursor: pointer;">
+                                        <div class="payment-icon me-3">
+                                            <i class="fab fa-cc-stripe fa-3x text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">Stripe</h6>
+                                            <small class="text-muted">Thanh toán bằng thẻ quốc tế (Visa/Master/Amex)</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="/Cart/Index" class="btn btn-secondary btn-lg px-4">
+                                <i class="fas fa-arrow-left me-2"></i> Quay lại giỏ hàng
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-check-circle me-2"></i> Xác nhận thanh toán
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Thông báo bảo mật -->
+            <div class="alert alert-light mt-3 text-center">
+                <i class="fas fa-shield-alt text-success me-2"></i>
+                <small class="text-muted">Giao dịch của bạn được bảo mật với công nghệ mã hóa SSL 256-bit</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payment-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-color: #dee2e6 !important;
+    }
+
+        .payment-card:hover {
+            border-color: #007bff !important;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.15);
+            transform: translateY(-2px);
+        }
+
+        .payment-card:has(input:checked) {
+            border-color: #007bff !important;
+            background-color: #f0f8ff;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.2);
+        }
+
+    .form-check-input {
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+    }
+
+    .payment-icon {
+        min-width: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Responsive cho mobile */
+    @@media (max-width: 768px) {
+        .payment-card .card-body {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .payment-icon {
+            margin-bottom: 10px;
+        }
+    }
+</style>
+
+<script>
+    // Click vào card để chọn radio button
+    document.querySelectorAll('.payment-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Nếu click vào input hoặc label thì không cần xử lý
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
+
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+        });
+    });
+
+    // Validate form trước khi submit
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        const selectedMethod = document.querySelector('input[name="SelectedMethod"]:checked');
+        if (!selectedMethod) {
+            e.preventDefault();
+            alert('Vui lòng chọn phương thức thanh toán!');
+            return false;
+        }
+    });
+</script>

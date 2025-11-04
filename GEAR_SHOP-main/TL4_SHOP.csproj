@@ -14,6 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Anthropic.SDK" Version="5.8.0" />
 		<PackageReference Include="MailKit" Version="4.13.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="9.0.7" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.7" />

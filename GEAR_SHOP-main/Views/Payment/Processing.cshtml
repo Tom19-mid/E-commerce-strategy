@@ -1,0 +1,174 @@
+﻿@{
+    ViewData["Title"] = "Đang xử lý thanh toán";
+    Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center p-5">
+                    <!-- Spinner Loading Animation -->
+                    <div class="mb-4">
+                        <div class="spinner-border text-primary" role="status" style="width: 5rem; height: 5rem; border-width: 0.4rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+
+                    <h3 class="mb-3" style="font-family: Tahoma;">
+                        <i class="fas fa-sync fa-spin me-2"></i>Đang xử lý thanh toán...
+                    </h3>
+                    <p class="text-muted mb-4">Vui lòng chờ trong giây lát. Không tắt trình duyệt!</p>
+
+                    <!-- Logo và tên phương thức thanh toán -->
+                    <div class="payment-method-display mt-4 p-4 bg-light rounded">
+                        @if (ViewBag.Method == "MoMo")
+                        {
+                            <img src="https://developers.momo.vn/v3/assets/images/icon-52bd5808cecdb1970e1aeec3c31a3ee1.png"
+                                 alt="MoMo" class="mb-3" style="width: 80px; animation: pulse 1.5s infinite;">
+                            <p class="mb-0"><strong>Đang kết nối với MoMo</strong></p>
+                            <small class="text-muted">Đang xử lý giao dịch qua ví điện tử MoMo...</small>
+                        }
+                        else if (ViewBag.Method == "ZaloPay")
+                        {
+                            <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Icon-ZaloPay-Square.png"
+                                 alt="ZaloPay" class="mb-3" style="width: 80px; animation: pulse 1.5s infinite;">
+                            <p class="mb-0"><strong>Đang kết nối với ZaloPay</strong></p>
+                            <small class="text-muted">Đang xử lý giao dịch qua ví điện tử ZaloPay...</small>
+                        }
+                        else if (ViewBag.Method == "VNPay")
+                        {
+                            <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png"
+                                 alt="VNPay" class="mb-3" style="width: 80px; animation: pulse 1.5s infinite;">
+                            <p class="mb-0"><strong>Đang kết nối với VNPay</strong></p>
+                            <small class="text-muted">Đang xử lý giao dịch qua cổng thanh toán VNPay...</small>
+                        }
+                        else if (ViewBag.Method == "PayPal")
+                        {
+                            <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
+                                 alt="PayPal" class="mb-3" style="width: 80px; animation: pulse 1.5s infinite;">
+                            <p class="mb-0"><strong>Đang kết nối với PayPal</strong></p>
+                            <small class="text-muted">Đang xử lý giao dịch quốc tế qua PayPal...</small>
+                        }
+                        else if (ViewBag.Method == "Stripe")
+                        {
+                            <div class="mb-3" style="animation: pulse 1.5s infinite;">
+                                <i class="fab fa-cc-stripe fa-5x text-primary"></i>
+                            </div>
+                            <p class="mb-0"><strong>Đang kết nối với Stripe</strong></p>
+                            <small class="text-muted">Đang xử lý thanh toán thẻ quốc tế...</small>
+                        }
+                        else if (ViewBag.Method == "COD")
+                        {
+                            <div class="mb-3" style="animation: pulse 1.5s infinite;">
+                                <i class="fas fa-money-bill-wave fa-5x text-success"></i>
+                            </div>
+                            <p class="mb-0"><strong>Đang xác nhận đơn hàng COD</strong></p>
+                            <small class="text-muted">Đang xử lý đơn hàng thanh toán khi nhận hàng...</small>
+                        }
+                        else
+                        {
+                            <div class="mb-3" style="animation: pulse 1.5s infinite;">
+                                <i class="fas fa-credit-card fa-5x text-info"></i>
+                            </div>
+                            <p class="mb-0"><strong>Đang xử lý thanh toán</strong></p>
+                            <small class="text-muted">Vui lòng chờ...</small>
+                        }
+                    </div>
+
+                    <!-- Progress bar giả lập -->
+                    <div class="progress mt-4" style="height: 10px; border-radius: 10px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                             role="progressbar"
+                             style="width: 0%"
+                             id="progressBar"
+                             aria-valuenow="0"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                    <small class="text-muted mt-2 d-block">
+                        <span id="progressText">0%</span> hoàn thành
+                    </small>
+
+                    <!-- Thông báo bảo mật -->
+                    <div class="mt-4">
+                        <i class="fas fa-lock text-success me-2"></i>
+                        <small class="text-muted">Giao dịch được bảo mật</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @@keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        50% {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+    }
+
+    .spinner-border {
+        animation: spinner-border 0.75s linear infinite;
+    }
+</style>
+
+<script>
+    // Giả lập quá trình thanh toán với progress bar
+    let progress = 0;
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+
+    // Thời gian xử lý ngẫu nhiên từ 2-4 giây
+    const processingTime = Math.random() * 2000 + 2000;
+    const steps = 100;
+    const interval = processingTime / steps;
+
+    const progressInterval = setInterval(() => {
+        progress += 1;
+        progressBar.style.width = progress + '%';
+        progressBar.setAttribute('aria-valuenow', progress);
+        progressText.textContent = progress + '%';
+
+        // Khi đạt 100%
+        if (progress >= 100) {
+            clearInterval(progressInterval);
+
+            // Giả lập kết quả: 92% thành công, 8% thất bại (để demo cả 2 trường hợp)
+            const isSuccess = Math.random() > 0.08;
+
+            // Hiển thị icon check/error trước khi chuyển trang
+            if (isSuccess) {
+                progressBar.classList.remove('bg-primary');
+                progressBar.classList.add('bg-success');
+
+                setTimeout(() => {
+                    window.location.href = '@Url.Action("Success", "Payment")';
+                }, 500);
+            } else {
+                progressBar.classList.remove('bg-primary');
+                progressBar.classList.add('bg-danger');
+
+                setTimeout(() => {
+                    window.location.href = '@Url.Action("Failed", "Payment")';
+                }, 500);
+            }
+        }
+    }, interval);
+
+    // Ngăn người dùng tắt trang trong khi xử lý
+    window.addEventListener('beforeunload', function(e) {
+        if (progress < 100) {
+            e.preventDefault();
+            e.returnValue = 'Giao dịch đang được xử lý. Bạn có chắc muốn rời khỏi trang?';
+            return e.returnValue;
+        }
+    });
+</script>
