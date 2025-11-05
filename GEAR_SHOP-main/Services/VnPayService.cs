@@ -3,8 +3,8 @@ using TL4_SHOP.Models.ViewModels;
 using TL4_SHOP.Data.VnPay;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Net; // Thêm thư viện này
-using System.Linq; // Thêm thư viện này
+using System.Net;
+using System.Linq;
 
 namespace TL4_SHOP.Services
 {
@@ -14,41 +14,47 @@ namespace TL4_SHOP.Services
         private readonly string _tmnCode;
         private readonly string _hashSecret;
         private readonly string _baseUrl;
-        private readonly string _returnUrl;
 
         public VnPayService(IConfiguration config)
         {
             _config = config;
+
             // Đọc cấu hình từ appsettings.json
             _tmnCode = _config["Vnpay:TmnCode"];
             _hashSecret = _config["Vnpay:HashSecret"];
             _baseUrl = _config["Vnpay:BaseUrl"];
-            _returnUrl = _config["Vnpay:ReturnUrl"];
+
+            // ❌ KHÔNG ĐỌC ReturnUrl từ config nữa
+            // _returnUrl = _config["Vnpay:ReturnUrl"];
         }
 
         public string CreatePaymentUrl(int orderId, decimal amount, HttpContext context, string orderInfo)
         {
-            // Sử dụng các class Helper đã tạo trong Data/VnPay
             var tick = DateTime.Now.Ticks.ToString();
 
-            // Khởi tạo VnPayRequest - tmnCode và ReturnUrl đã được thêm ở đây!
-            var pay = new VnPayRequest(_tmnCode, _hashSecret, _baseUrl, _returnUrl);
+            // ✅ TẠO RETURNURL ĐỘNG DỰA TRÊN REQUEST HIỆN TẠI
+            string returnUrl = GetDynamicReturnUrl(context);
 
-            // 1. CHUYỂN ĐỔI SỐ TIỀN sang long (Integer)
-            // Đảm bảo số tiền không bị mất độ chính xác khi nhân 100 (đơn vị VNĐ nhỏ nhất)
+            Console.WriteLine("=== VNPAY PAYMENT URL CREATION ===");
+            Console.WriteLine($"🔗 Dynamic ReturnUrl: {returnUrl}");
+            Console.WriteLine($"🆔 OrderId: {orderId}");
+            Console.WriteLine($"💰 Amount: {amount}");
+
+            // Khởi tạo VnPayRequest với ReturnUrl động
+            var pay = new VnPayRequest(_tmnCode, _hashSecret, _baseUrl, returnUrl);
+
+            // 1. CHUYỂN ĐỔI SỐ TIỀN sang long
             long amountLong = (long)(amount * 100);
 
-            // 2. LẤY IP (Fix lỗi IPv6 hoặc null)
+            // 2. LẤY IP
             string ipAddress = GetIpAddress(context);
-
 
             pay.AddRequestData("vnp_Version", "2.1.0");
             pay.AddRequestData("vnp_Command", "pay");
-
-            pay.AddRequestData("vnp_Amount", amountLong.ToString()); // <<< FIX: Số tiền đã ép kiểu Long
+            pay.AddRequestData("vnp_Amount", amountLong.ToString());
             pay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             pay.AddRequestData("vnp_CurrCode", "VND");
-            pay.AddRequestData("vnp_IpAddr", ipAddress); // <<< FIX: Sử dụng hàm GetIpAddress
+            pay.AddRequestData("vnp_IpAddr", ipAddress);
             pay.AddRequestData("vnp_Locale", "vn");
             pay.AddRequestData("vnp_OrderInfo", orderInfo);
             pay.AddRequestData("vnp_OrderType", "other");
@@ -56,7 +62,32 @@ namespace TL4_SHOP.Services
             pay.AddRequestData("vnp_ExpireDate", DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss"));
 
             string paymentUrl = pay.GetVnPayUrl();
+
+            Console.WriteLine($"🌐 Full VNPay URL: {paymentUrl}");
+            Console.WriteLine("===================================");
+
             return paymentUrl;
+        }
+
+        /// <summary>
+        /// Tạo ReturnUrl động dựa trên request hiện tại
+        /// Hoạt động cho cả localhost và Azure
+        /// </summary>
+        private string GetDynamicReturnUrl(HttpContext context)
+        {
+            var request = context.Request;
+
+            // Lấy scheme (http hoặc https)
+            string scheme = request.Scheme;
+
+            // Lấy host (bao gồm port nếu có)
+            // Ví dụ: localhost:7095 hoặc tl4shop-demo.azurewebsites.net
+            string host = request.Host.Value;
+
+            // Tạo ReturnUrl đầy đủ
+            string returnUrl = $"{scheme}://{host}/Payment/Result";
+
+            return returnUrl;
         }
 
         private string GetIpAddress(HttpContext context)
@@ -65,13 +96,12 @@ namespace TL4_SHOP.Services
             var remoteIpAddress = context.Connection.RemoteIpAddress;
             if (remoteIpAddress == null)
             {
-                // Nếu null, dùng IP Local hoặc một IP mặc định an toàn cho test
                 return "127.0.0.1";
             }
 
             if (remoteIpAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
             {
-                // Nếu là IPv6 (như ::1), tìm IPv4 hoặc trả về IP Loopback IPv4
+                // Nếu là IPv6, tìm IPv4 hoặc trả về IP Loopback IPv4
                 var ipv4Address = Dns.GetHostEntry(Dns.GetHostName())
                     .AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
 
@@ -81,14 +111,26 @@ namespace TL4_SHOP.Services
             return remoteIpAddress.ToString();
         }
 
-
         public VnPayResponseModel PaymentExecute(IQueryCollection collections)
         {
-            // Sử dụng các class Helper đã tạo trong Data/VnPay
+            Console.WriteLine("=== VnPayService.PaymentExecute START ===");
+
+            // In ra tất cả params nhận được
+            Console.WriteLine("Received parameters:");
+            foreach (var key in collections.Keys)
+            {
+                Console.WriteLine($"  {key} = {collections[key]}");
+            }
+
             var pay = new VnPayResponse(_hashSecret, collections);
 
-            if (!pay.IsRequestValid())
+            // Kiểm tra chữ ký
+            bool isValid = pay.IsRequestValid();
+            Console.WriteLine($"Signature Valid: {isValid}");
+
+            if (!isValid)
             {
+                Console.WriteLine("❌ Invalid signature!");
                 return new VnPayResponseModel { Success = false, Message = "Chữ ký không hợp lệ" };
             }
 
@@ -99,17 +141,25 @@ namespace TL4_SHOP.Services
             var vnpAmount = pay.GetResponseData("vnp_Amount");
             var vnpTransactionNo = pay.GetResponseData("vnp_TransactionNo");
 
+            Console.WriteLine($"ResponseCode: {vnpResponseCode}");
+            Console.WriteLine($"TransactionStatus: {vnpTransactionStatus}");
+            Console.WriteLine($"TxnRef: {vnpTxnRef}");
+
             // Xử lý logic nghiệp vụ
             int orderId = 0;
             if (vnpTxnRef != null && vnpTxnRef.Contains("_"))
             {
                 int.TryParse(vnpTxnRef.Split('_')[0], out orderId);
             }
+
+            Console.WriteLine($"Extracted OrderId: {orderId}");
+
             decimal amount = 0;
             decimal.TryParse(vnpAmount, out amount);
 
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
             {
+                Console.WriteLine("✅ Payment SUCCESS");
                 return new VnPayResponseModel
                 {
                     Success = true,
@@ -122,6 +172,7 @@ namespace TL4_SHOP.Services
             }
             else
             {
+                Console.WriteLine($"❌ Payment FAILED - Code: {vnpResponseCode}, Status: {vnpTransactionStatus}");
                 return new VnPayResponseModel
                 {
                     Success = false,

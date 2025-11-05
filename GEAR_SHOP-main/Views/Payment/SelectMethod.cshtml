@@ -383,7 +383,8 @@
                         </div>
                     </div>
 
-                    <form asp-action="ProcessPayment" method="post" id="paymentForm">
+                    <form asp-controller="Payment" asp-action="ProcessPayment" method="post" id="paymentForm">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="OrderId" />
                         <input type="hidden" asp-for="TotalAmount" />
 
@@ -460,20 +461,38 @@
 </div>
 
 <script>
+    // ✅ THÊM LOGGING
+    console.log('✅ SelectMethod page loaded');
+
     document.querySelectorAll('.payment-card').forEach(card => {
         card.addEventListener('click', function() {
+            console.log('💳 Payment card clicked:', this.dataset.method);
+
             document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
             this.classList.add('selected');
             this.querySelector('input[type="radio"]').checked = true;
+
+            console.log('✅ Selected method:', this.dataset.method);
         });
     });
 
     document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        console.log('🚀 Form submit triggered');
+
         const selectedMethod = document.querySelector('input[name="SelectedMethod"]:checked');
+        console.log('Selected method value:', selectedMethod ? selectedMethod.value : 'NONE');
+
         if (!selectedMethod) {
             e.preventDefault();
+            console.error('❌ No payment method selected!');
             alert('Vui lòng chọn phương thức thanh toán!');
             return false;
         }
+
+        console.log('✅ Form is submitting to /Payment/ProcessPayment');
+        console.log('   OrderId:', document.querySelector('input[name="OrderId"]').value);
+        console.log('   TotalAmount:', document.querySelector('input[name="TotalAmount"]').value);
+        console.log('   SelectedMethod:', selectedMethod.value);
+        // Form sẽ submit bình thường
     });
 </script>

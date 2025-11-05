@@ -5,7 +5,7 @@ using TL4_SHOP.Hubs;
 using QuestPDF.Infrastructure;
 using TL4_SHOP.Extensions;       // AddAppAuth()
 using TL4_SHOP.Services.Auth;   // IRoleResolver (nếu bạn có DI)
-using TL4_SHOP.Services;       // <<< Thêm using cho IVnPayService và VnPayService
+using TL4_SHOP.Services;       // Thêm using cho IVnPayService và VnPayService
 using Microsoft.Azure.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -130,6 +130,7 @@ static void ConfigurePipeline(WebApplication app)
 {
     if (!app.Environment.IsDevelopment())
     {
+         
         app.UseExceptionHandler("/Home/Error");
         app.UseHsts();
     }
