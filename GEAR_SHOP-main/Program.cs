@@ -18,6 +18,9 @@ QuestPDF.Settings.License = LicenseType.Community;
 ConfigureServices(builder.Services, builder.Configuration);
 // builder.Services.AddSignalR().AddAzureSignalR(builder.Configuration["Azure:SignalR:ConnectionString"]!); (COMMENT TẠM)
 
+builder.Services.AddSingleton(sp => TL4_SHOP.Services.PayPalClient.Client(sp.GetRequiredService<IConfiguration>()));
+builder.Services.AddScoped<IPayPalService, TL4_SHOP.Services.PayPalService>();
+
 // ===== Build app =====
 var app = builder.Build();
 
