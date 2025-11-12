@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-    <!-- Font Awesome -->
+    <!-- Font Awesome sử dụng bên thứ 3 để chat -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
@@ -37,6 +37,7 @@
     <!-- CSS -->
     <link href="~/css/shop.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/mega-menu.css" />
+    <link rel="stylesheet" href="~/css/index.css"/>
 
     <!-- [ADD] Google Font có tiếng Việt -->
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -113,45 +114,11 @@
                 color: #ccc;
             }
 
-        .chat-bar {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            width: 20%;
-            background-color: #D19C97;
-            color: white;
-            text-align: center;
-            padding: 1px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 1000;
-            transition: background-color 0.3s;
-            border-radius: 10px 10px 0px 0px;
-            font-family: Tahoma;
-            font-size: 80%;
-        }
 
             .chat-bar:hover {
                 background-color: #d48e84;
             }
 
-        /* 🔔 Chấm đỏ thông báo tin nhắn mới */
-        /* .alert-dot {
-            position: absolute;
-            top: -6px;
-            right: 6px;
-            width: 20px;
-            height: 20px;
-            background: #ff3b30;
-            border-radius: 50%;
-            display: none;
-            box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.2);
-        }
-
-            .alert-dot.visible {
-                display: inline-block;
-            } */
-        /* 🔔 Badge hiển thị số tin nhắn chưa đọc */
         #newMessageAlert {
             position: absolute;
             top: -8px;
@@ -175,8 +142,6 @@
                 display: inline-block;
             }
 
-
-
         .chat-box {
             position: fixed;
             bottom: 30px;
@@ -192,7 +157,6 @@
             z-index: 1000;
             animation: slideUp 0.3s ease-out;
         }
-
 
         .chat-header {
             background-color: #D19C97;
@@ -217,7 +181,7 @@
             border-top: 1px solid #ccc;
             border-radius: 10px;
             background-color: #fff;
-            gap: 6px;
+            gap: 6px;s
         }
 
             .chat-input textarea {
@@ -334,9 +298,9 @@
         .emoji-picker {
             display: none;
             position: absolute;
-            bottom: 50px;
+            bottom: 45px;
             right: 0; /* đặt bên phải */
-            width: 250px;
+            width: 220px;
             max-height: 200px;
             overflow-y: auto;
             background: #fff;
@@ -359,6 +323,100 @@
                 .emoji-picker span:hover {
                     background: #f1f1f1;
                 }
+
+        /* ---------- contact pill ---------- */
+        .contact-widget {
+            position: fixed;
+            right: 1%;
+            bottom: 2%;
+            z-index: 1400;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        .contact-widget button{
+            outline: none;
+            border: none;
+        }
+
+        /* pill */
+        .contact-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #D19C97;
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 14px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 1;
+            transition: background .12s ease, transform .06s ease;
+        }
+
+            .contact-pill:hover {
+                background: #FF6666;
+                transform: translateY(-1px);
+            }
+
+        .pill-icon {
+            font-size: 18px;
+        }
+
+        /* popup card */
+        .contact-card {
+            position: absolute;
+            bottom: 110%;
+            right: 0;
+            width: 260px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            overflow: hidden;
+            animation: cardPop .14s ease;
+        }
+
+        /* Căn đồng đều cho cả nút và liên kết trong card */
+        .card-action {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* Căn trái đều cho cả 2 */
+            width: 100%;
+            padding: 10px 14px;
+            gap: 10px;
+            border: none;
+            background: transparent;
+            text-align: left;
+            cursor: pointer;
+            font-weight: 600;
+            color: #222;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+            /* Khi hover thì đổi màu nền nhẹ */
+            .card-action:hover {
+                background: #f6f6f6;
+                text-decoration: none;
+            }
+
+            /* Ảnh icon trong card */
+            .card-action img {
+                width: 36px !important;
+                height: 36px !important;
+                object-fit: cover;
+                border-radius: 50%;
+            }
+
+        /* Văn bản trong card */
+        .card-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #222;
+        }
+
 
         /*Thông báo khi mà thêm yêu thích sẩn phẩm*/
         .popup-overlay {
@@ -420,6 +478,32 @@
             }
 
     </style>
+
+    <title>@(ViewData["Title"] ?? "YourShop")</title>
+    <link rel="canonical" href="@(ViewData["Canonical"] ?? $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")" />
+    <meta name="description" content="@(ViewData["Description"] ?? "YourShop - Thời trang cao cấp")" />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="YourShop" />
+    <meta property="og:type" content="@(ViewData["OgType"] ?? "website")" />
+    <meta property="og:title" content="@(ViewData["OgTitle"] ?? ViewData["Title"] ?? "YourShop")" />
+    <meta property="og:description" content="@(ViewData["OgDescription"] ?? ViewData["Description"] ?? "Mua sắm tại YourShop")" />
+    <meta property="og:image" content="@(ViewData["OgImage"] ?? $"{Context.Request.Scheme}://{Context.Request.Host}/images/default-share.jpg")" />
+    <meta property="og:url" content="@(ViewData["OgUrl"] ?? $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@(ViewData["OgTitle"] ?? ViewData["Title"])" />
+    <meta name="twitter:description" content="@(ViewData["OgDescription"] ?? ViewData["Description"])" />
+    <meta name="twitter:image" content="@(ViewData["OgImage"] ?? $"{Context.Request.Scheme}://{Context.Request.Host}/images/default-share.jpg")" />
+
+    @if (ViewData["JsonLd"] != null)
+    {
+        <script type="application/ld+json">
+            @Html.Raw(ViewData["JsonLd"])
+        </script>
+    }
+
 </head>
 
 <body>
@@ -430,9 +514,7 @@
                 <div class="d-inline-flex align-items-center">
                     <a asp-action="FAQs" asp-controller="Asists" class="text-dark">FAQs</a>
                     <span class="text-muted px-2">|</span>
-                    <a asp-action="GiupDo" asp-controller="Asists" class="text-dark">Giúp đỡ</a>
-                    <span class="text-muted px-2">|</span>
-                    <a asp-action="Hotro" asp-controller="Asists" class="text-dark">Hỗ trợ</a>
+                    <a asp-action="Hotro" asp-controller="Asists" class="text-dark">Hỗ trợ trực tuyến</a>
                 </div>
             </div>
             <div class="col-lg-6 text-center text-lg-right">
@@ -477,7 +559,7 @@
                 <!-- Wishlist -->
                 <a href="/Wishlist" class="btn border mx-1 p-2 position-relative d-inline-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
                     <i class="fas fa-heart text-primary"></i>
-                    <span id="wishlist-count" class="badge badge-danger position-absolute" style="top: 0; right: 0; transform: translate(50%, -50%); font-size: 12px; min-width: 18px; height: 18px; line-height: 18px; padding: 0;">
+                    <span id="wishlist-count" class="badge badge-danger position-absolute" style="top: 0; right: 0; transform: translate(50%, -50%); font-size: 12px; min-width: 18px; height: 18px; line-height: 18px; padding: 0; background-color: red; color: white;">
                         0
                     </span>
                 </a>
@@ -567,7 +649,35 @@
 
     @await Html.PartialAsync("_footer")
 
-    @if (ViewBag.HideChat == null || ViewBag.HideChat == false)
+    <!-- CONTACT WIDGET: nút Liên hệ + popup card -->
+    <div id="contactWidget" class="contact-widget" aria-hidden="false">
+        <button id="contactButton" class="contact-pill" aria-haspopup="true" aria-expanded="false" title="Liên hệ">
+            <span class="pill-text">Liên hệ</span>
+            <i class="fa-solid fa-headset pill-icon" aria-hidden="true"></i>
+        </button>
+
+        <div id="contactCard" class="contact-card" hidden>
+            <div class="card-list">
+                <div class="card-row">
+                    <button id="openChatBtn" class="card-action">
+                        <img style="width: 10%; height: 10%" src="~/img/supports/Supports.png" alt="nv" class="card-avatar" />
+                        <span class="card-label">Chat với nhân viên</span>
+                    </button>
+                </div>
+                <div class="card-row">
+                    <a class="card-action" href="https://m.me/827172840485226" target="_blank" rel="noopener">
+                        <img style="width: 1%; height: 1%; margin-right: 3%;" src="~/img/supports/Messenger.png" alt="zalo" class="card-avatar" />
+                        <span class="card-label">Liên hệ Messenger</span>
+                    </a>
+                </div> 
+            </div>
+        </div>
+    </div>
+
+
+
+
+    @* @if (ViewBag.HideChat == null || ViewBag.HideChat == false)
     {
         <!-- Thanh chat ngang -->
         <div id="chatBar" class="chat-bar">
@@ -577,7 +687,7 @@
 
         <!-- Âm thanh thông báo -->
         <audio id="msgSound" src="~/sounds/new-notification-010-352755.mp3" preload="auto"></audio>
-    }
+    } *@
     <!-- Khung chat -->
     <div id="chatBox" class="chat-box">
         <div class="chat-header" style="font-family: Tahoma;">
@@ -798,6 +908,60 @@
             const alertDot = document.getElementById("newMessageAlert");
             alertDot.style.display = "none";
             alertDot.textContent = "";
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+          const contactButton = document.getElementById('contactButton');
+          const contactCard = document.getElementById('contactCard');
+          const contactWidget = document.querySelector('.contact-widget');
+          const openChatBtn = document.getElementById('openChatBtn');
+          const chatBox = document.getElementById('chatBox'); // khung chat của bạn
+
+          // Toggle card
+          contactButton.addEventListener('click', function(e){
+            e.stopPropagation();
+            if(contactCard.hasAttribute('hidden')) contactCard.removeAttribute('hidden');
+            else contactCard.setAttribute('hidden','');
+          });
+
+          // click ngoài đóng card
+          document.addEventListener('click', function(e){
+            if(!contactWidget.contains(e.target)) contactCard.setAttribute('hidden','');
+          });
+
+          // ESC đóng
+          document.addEventListener('keydown', function(e){
+            if(e.key === 'Escape') contactCard.setAttribute('hidden','');
+          });
+
+          // "Chat với nhân viên" -> mở khung chat (bạn đã có)
+          if(openChatBtn){
+            openChatBtn.addEventListener('click', function(e){
+              e.preventDefault();
+              contactCard.setAttribute('hidden','');
+              contactButton.style.display = 'none'; // ẩn pill khi mở chat
+              if(chatBox){
+                chatBox.style.display = 'flex';
+                // focus input (nếu có)
+                const input = chatBox.querySelector('#messageInput');
+                if(input) setTimeout(()=> input.focus(), 120);
+              } else {
+                // fallback: chuyển tới trang hỗ trợ
+                window.location.href = '/support';
+              }
+            });
+          }
+
+          // Nếu bạn có nút thu gọn trong chatBox, đảm bảo nó hiện pill lại:
+          const minimizeBtn = document.getElementById('minimizeButton');
+          if(minimizeBtn){
+            minimizeBtn.addEventListener('click', () => {
+              if(chatBox) chatBox.style.display = 'none';
+              contactButton.style.display = 'inline-flex';
+            });
+          }
         });
     </script>
 

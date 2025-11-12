@@ -67,4 +67,16 @@ namespace TL4_SHOP.Models.ViewModels
         [Display(Name = "Thông số kỹ thuật (HTML)")]
         public string? ThongSoKyThuat { get; set; }
     }
+
+    public class ProductViewModel
+    {
+        public int Id { get; set; }
+        public string Slug { get; set; } = string.Empty; // ao-thun-nam-cao-cap
+        public string Title { get; set; } = string.Empty;
+        public string ShortDescription { get; set; } = string.Empty;
+        public string ImageFileName { get; set; } = string.Empty; // images/products/...
+        public decimal Price { get; set; }
+        public string Sku { get; set; } = string.Empty;
+    }
+
 }

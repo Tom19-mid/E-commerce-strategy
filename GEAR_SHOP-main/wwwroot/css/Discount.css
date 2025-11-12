@@ -1,0 +1,12 @@
+﻿/* --- Bảo đảm badge giảm giá trong product card vẫn ở vị trí absolute và đỏ --- */
+.card.product-item .badge.badge-danger {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    background-color: #e3342f; /* giữ màu đỏ nếu muốn */
+    color: #fff;
+    border: none;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 30px;
+}

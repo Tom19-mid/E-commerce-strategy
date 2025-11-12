@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TL4_SHOP.Data;
+using TL4_SHOP.Models.ViewModels;
 
 namespace TL4_SHOP.Controllers
 {
@@ -28,6 +29,7 @@ namespace TL4_SHOP.Controllers
 
         public IActionResult HoTro()
         {
+            ViewBag.HideChat = true; // Báo cho view biến cần ẩn thanh chat nổi
             return View();
         }
     }

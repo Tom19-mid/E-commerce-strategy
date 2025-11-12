@@ -1,0 +1,154 @@
+﻿@keyframes cardPop {
+    from
+
+{
+    transform: translateY(6px) scale(.99);
+    opacity: 0;
+}
+
+to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+}
+}
+
+@media (max-width:520px) {
+    .contact-card
+
+{
+    right: 6px;
+    width: 220px;
+    bottom: 64px;
+}
+}
+
+
+/* CSS */
+.zalo-card {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    background: #fff;
+    padding: 28px;
+    border-radius: 12px;
+    box-shadow: 0 6px 14px rgba(20,30,40,0.06);
+    max-width: 1100px;
+    margin: 24px auto;
+}
+
+/* left avatar */
+.zalo-avatar {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* center content */
+.zalo-card-center {
+    flex: 1;
+    min-width: 0;
+}
+
+.zalo-title {
+    margin: 0;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.badge {
+    background: #ffd966;
+    color: #111;
+    padding: 2px 8px;
+    border-radius: 50%;
+    font-size: 13px;
+}
+
+/* sub line */
+.zalo-sub {
+    margin: 6px 0 16px;
+    color: #6b7280;
+}
+
+/* button */
+.zalo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    background: #0b74ff; /* zalo blue */
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(11,116,255,0.14);
+    border: none;
+    cursor: pointer;
+    transition: transform .08s ease, box-shadow .08s ease;
+}
+
+    .zalo-btn:active {
+        transform: translateY(1px);
+    }
+
+    /* preserve keyboard focus but remove the default thick outline for mouse clicks */
+    .zalo-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(11,116,255,0.18);
+    }
+
+        .zalo-btn:focus:not(:focus-visible) {
+            box-shadow: none;
+        }
+/* hide when focus not keyboard-driven */
+
+/* description area */
+.zalo-desc h3 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+.zalo-desc p {
+    margin: 0;
+    color: #374151;
+    line-height: 1.6;
+}
+
+/* right QR */
+.zalo-card-right {
+    width: 180px;
+    text-align: center;
+}
+
+.zalo-qr {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(10,20,30,0.06);
+}
+
+/* responsive */
+@media (max-width: 880px) {
+    .zalo-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .zalo-card-left, .zalo-card-right {
+        width: 100%;
+    }
+
+    .zalo-card-center {
+        width: 100%;
+    }
+
+    .zalo-card-right {
+        margin-top: 8px;
+    }
+}

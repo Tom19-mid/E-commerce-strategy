@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace TL4_SHOP.Data;
 
@@ -40,4 +41,11 @@ public partial class SanPham
     public virtual NhaCungCap NhaCungCap { get; set; } = null!;
 
     public virtual ICollection<WishlistItem> WishlistItems { get; set; } = new List<WishlistItem>();
+
+    [StringLength(100)]
+    public string? Sku { get; set; }
+
+    [StringLength(200)]
+    public string? Slug { get; set; } // đường dẫn thân thiện (vd: ao-thun-nam-cao-cap)
+
 }

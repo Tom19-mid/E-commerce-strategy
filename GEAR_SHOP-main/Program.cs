@@ -151,3 +151,37 @@ static void ConfigurePipeline(WebApplication app)
     app.MapHub<ChatHub>("/chatHub");
     app.MapHub<TL4_SHOP.Hubs.NotificationHub>("/notifyHub");
 }
+
+// 
+// services
+builder.Services.AddControllersWithViews();
+// register your product repository service here, ví dụ:
+// builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles(); // ensure wwwroot is served
+
+app.UseRouting();
+app.UseAuthorization();
+
+// route cho product theo slug
+app.MapControllerRoute(
+    name: "product-slug",
+    pattern: "san-pham/{slug}",
+    defaults: new { controller = "SanPham", action = "Details" }
+);
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
+
+
+app.Run();
+

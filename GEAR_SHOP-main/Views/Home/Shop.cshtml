@@ -4,7 +4,37 @@
     Layout = "~/Views/Shared/_Layout_4TL.cshtml";
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<link rel="stylesheet" href="~/css/Discount.css"/>
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<style>
+         /* --- GHI ĐÈ CHO BADGE TRONG SIDEBAR (chỉ ảnh hưởng phần filter bên trái) --- */
+    /* Thay .col-lg-3 bằng selector wrapper thực tế nếu khác */
+    .col-lg-3 .custom-control {
+      position: relative;       /* giữ layout theo từng dòng nếu có badge absolute */
+    }
+
+    /* Kiểu xám nhạt giống bootstrap / ban đầu */
+    .col-lg-3 .custom-control .badge {
+      position: static !important;        /* cho badge theo layout flex, không absolute */
+      display: inline-block;
+      background-color: #f8f9fa !important;  /* nền xám nhạt */
+      color: #495057 !important;              /* chữ xám đậm */
+      border: 1px solid #dee2e6 !important;   /* viền mảnh */
+      padding: 4px 8px !important;
+      font-size: 0.85rem !important;
+      border-radius: 6px !important;
+      box-shadow: none !important;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    /* Tùy chọn: nếu theme có rule .badge { background: #ffce59 } (vàng),
+       bạn vẫn có thể thêm 1 rule chung "mềm" để về mặc định */
+    .badge {
+      box-shadow: none;
+    }
+</style>
 
 <div class="container-fluid pt-5">
     <div class="row px-xl-5">
