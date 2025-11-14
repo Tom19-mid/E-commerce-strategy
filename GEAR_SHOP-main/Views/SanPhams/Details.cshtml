@@ -15,17 +15,6 @@
 <!-- Customized Bootstrap Stylesheet -->
 <link href="~/css/style.css" rel="stylesheet">
 
-
-<a href="~/">← Trang chủ</a>
-
-<h1>@(Model.TenSanPham ?? "Sản phẩm")</h1>
-
-<img src="@(Model.HinhAnh ?? "/images/default.jpg")" alt="@(Model.TenSanPham ?? "Sản phẩm")" />
-
-<p>@(Model.MoTa ?? "")</p>
-
-<p>Giá: @((Model.GiaSauGiam ?? Model.Gia).ToString("N0")) VND</p>
-
 <!-- CSS -->
 <style>
     /* ----- Product details readability ----- */

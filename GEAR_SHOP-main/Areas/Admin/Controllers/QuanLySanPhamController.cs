@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TL4_SHOP.Data;
-using TL4_SHOP.Models.ViewModels;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using TL4_SHOP.Data;
+using TL4_SHOP.Helpers_ProductHelpers;
+//using TL4_SHOP.Models;
+using TL4_SHOP.Models.ViewModels;
+using TL4_SHOP.Data;
+
 
 namespace TL4_SHOP.Areas.Admin.Controllers
 {
@@ -98,9 +103,9 @@ namespace TL4_SHOP.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            ProductFormVM model,
-            IFormFile? HinhAnhFile,
-            [FromQuery] ProductFilterVM filter) // để có thể quay lại danh sách hiện tại
+    ProductFormVM model,
+    IFormFile? HinhAnhFile,
+    [FromQuery] ProductFilterVM filter)
         {
             if (!ModelState.IsValid)
             {
@@ -119,7 +124,8 @@ namespace TL4_SHOP.Areas.Admin.Controllers
                 LaNoiBat = model.LaNoiBat,
                 ChiTiet = model.ChiTiet,
                 GiaSauGiam = model.GiaSauGiam,
-                ThongSoKyThuat = model.ThongSoKyThuat
+                ThongSoKyThuat = model.ThongSoKyThuat,
+                // Sku và Slug sẽ set ở dưới
             };
 
             if (HinhAnhFile != null && HinhAnhFile.Length > 0)
@@ -130,18 +136,49 @@ namespace TL4_SHOP.Areas.Admin.Controllers
 
             try
             {
+                // 1) Tạo slug base từ tên (không dấu)
+                var baseSlug = ProductHelpers.ToUrlSlug(sp.TenSanPham ?? "san-pham");
+
+                // 2) đảm bảo slug unique (chưa commit, sẽ kiểm tra DB)
+                var slug = baseSlug;
+                int suffix = 1;
+                while (await _context.SanPhams.AnyAsync(x => x.Slug == slug))
+                {
+                    slug = $"{baseSlug}-{suffix}";
+                    suffix++;
+                }
+                sp.Slug = slug;
+
+                // 3) Lưu lần 1 để EF gán SanPhamId (nếu bạn dùng SKU dạng SP + Id)
                 _context.SanPhams.Add(sp);
                 await _context.SaveChangesAsync();
+
+                // 4) Tạo SKU nếu người dùng không nhập (dùng ID)
+                if (string.IsNullOrWhiteSpace(sp.Sku))
+                {
+                    sp.Sku = ProductHelpers.GenerateSkuById(sp.SanPhamId);
+                    _context.SanPhams.Update(sp);
+                    await _context.SaveChangesAsync();
+                }
+
                 TempData["ok"] = "Tạo sản phẩm thành công!";
                 return BackToList(filter);
             }
+            catch (DbUpdateException dbex)
+            {
+                // xử lý lỗi unique constraint hoặc vướng FK
+                ModelState.AddModelError(string.Empty, dbex.InnerException?.Message ?? dbex.Message);
+                await BuildFormViewBags();
+                return View(model);
+            }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, ex.InnerException?.Message ?? ex.Message);
+                ModelState.AddModelError(string.Empty, ex.Message);
                 await BuildFormViewBags();
                 return View(model);
             }
         }
+
 
         // GET: /Admin/QuanLySanPham/Edit/5
         public async Task<IActionResult> Edit(int id, string? returnUrl = null)
@@ -174,11 +211,11 @@ namespace TL4_SHOP.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
-            int id,
-            ProductFormVM model,
-            IFormFile? HinhAnhFile,
-            [FromQuery] ProductFilterVM filter,
-            string? returnUrl = null)
+     int id,
+     ProductFormVM model,
+     IFormFile? HinhAnhFile,
+     [FromQuery] ProductFilterVM filter,
+     string? returnUrl = null)
         {
             if (id != model.SanPhamID) return BadRequest();
 
@@ -192,6 +229,11 @@ namespace TL4_SHOP.Areas.Admin.Controllers
             var sp = await _context.SanPhams.FindAsync(id);
             if (sp == null) return NotFound();
 
+            // LẤY THÔNG TIN CŨ TRƯỚC KHI GÁN
+            var oldName = sp.TenSanPham;
+            var oldSlug = sp.Slug ?? "";
+
+            // cập nhật các trường
             sp.TenSanPham = model.TenSanPham;
             sp.MoTa = model.MoTa;
             sp.Gia = model.Gia;
@@ -208,10 +250,32 @@ namespace TL4_SHOP.Areas.Admin.Controllers
             if (HinhAnhFile == null && !string.IsNullOrWhiteSpace(sp.HinhAnh))
                 sp.HinhAnh = NormalizeImagePath(sp.HinhAnh);
 
+            // Nếu tên thay đổi -> tạo slug mới (dùng helper)
+            if (!string.Equals(oldName?.Trim(), model.TenSanPham?.Trim(), StringComparison.Ordinal))
+            {
+                var baseSlug = ProductHelpers.ToUrlSlug(model.TenSanPham);
+                var newSlug = await ProductHelpers.EnsureUniqueSlugAsync(_context, baseSlug, sp.SanPhamId);
+
+                // nếu slug thay đổi so với cũ -> lưu lịch sử
+                if (!string.Equals(oldSlug, newSlug, StringComparison.OrdinalIgnoreCase))
+                {
+                    // lưu history
+                    _context.SlugHistories.Add(new SlugHistory
+                    {
+                        SanPhamId = sp.SanPhamId,
+                        OldSlug = oldSlug
+                    });
+
+                    sp.Slug = newSlug;
+                }
+            }
+
             await _context.SaveChangesAsync();
             TempData["ok"] = "Cập nhật sản phẩm thành công!";
             return BackToList(filter, returnUrl);
         }
+
+
 
         // POST: /Admin/QuanLySanPham/Delete/5
         [HttpPost]

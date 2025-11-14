@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TL4_SHOP.Data;
+using System.Text.Json;
 
 namespace TL4_SHOP.Controllers
 {
@@ -29,6 +30,11 @@ namespace TL4_SHOP.Controllers
             {
                 return NotFound();
             }
+            if (!string.IsNullOrWhiteSpace(sanPham.Slug))
+            {
+                var canonical = Url.Action("DetailsBySlug", "SanPham", new { slug = sanPham.Slug }, Request.Scheme);
+                return RedirectPermanent(canonical);
+            }
 
             // (Tùy chọn) populate meta nếu muốn cho id-based link
             PopulateMetaForProduct(sanPham);
@@ -36,88 +42,104 @@ namespace TL4_SHOP.Controllers
             return View("~/Views/SanPhams/Details.cshtml", sanPham);
         }
 
-          // MỚI: action lấy theo slug -> route: /san-pham/{slug}
+        // route: /san-pham/{slug}
         [HttpGet]
         public async Task<IActionResult> DetailsBySlug(string slug)
         {
-            if (string.IsNullOrWhiteSpace(slug))
-                return NotFound();
+            if (string.IsNullOrWhiteSpace(slug)) return NotFound();
 
-            var sanPham = await _context.SanPhams
-                .Include(sp => sp.DanhMuc)
-                .Include(sp => sp.NhaCungCap)
-                .FirstOrDefaultAsync(sp => sp.Slug == slug); // đảm bảo bạn có cột Slug trong DB
+            // 1) tìm sản phẩm theo slug hiện tại
+            var product = await _context.SanPhams
+                .Include(p => p.DanhMuc)
+                .Include(p => p.NhaCungCap)
+                .FirstOrDefaultAsync(p => p.Slug == slug);
 
-            if (sanPham == null)
+            if (product != null)
             {
-                return NotFound();
+                // render same view as Details(id)
+                PopulateMetaForProduct(product);
+                return View("~/Views/SanPhams/Details.cshtml", product);
             }
 
-            // Thiết lập meta/og cho layout/view
-            PopulateMetaForProduct(sanPham);
+            // 2) nếu không tìm thấy -> kiểm tra lịch sử slug và redirect tới slug mới
+            var hist = await _context.SlugHistories
+                .Include(h => h.SanPham)
+                .FirstOrDefaultAsync(h => h.OldSlug == slug);
 
-            // Render cùng view Details.cshtml (giữ nguyên)
-            return View("~/Views/SanPhams/Details.cshtml", sanPham);
+            if (hist != null && hist.SanPham != null)
+            {
+                var newUrl = Url.Action("DetailsBySlug", "SanPham", new { slug = hist.SanPham.Slug}, protocol: Request.Scheme);
+                // RedirectPermanent dùng URL tuyệt đối
+                return RedirectPermanent(newUrl);
+            }
+
+            return NotFound();
         }
 
-        // Helper: set các ViewData để _Layout.cshtml dùng cho meta + og
-        private void PopulateMetaForProduct(dynamic sanPham)
+
+        // PRIVATE helper: đặt meta cho layout (og, twitter, canonical, json-ld)
+        private void PopulateMetaForProduct(TL4_SHOP.Data.SanPham product)
         {
-            // Thay tên các property nếu entity bạn khác (TenSanPham, MoTaNgan, HinhAnh,...)
-            // Mình dùng dynamic để tránh phải biết chính xác kiểu entity; bạn có thể đổi sang kiểu cụ thể.
-            string title = sanPham.TenSanPham ?? sanPham.TenSanPham ?? sanPham.Title ?? "Sản phẩm";
-            string shortDesc = sanPham.MoTa ?? sanPham.MoTaNgan ?? sanPham.ShortDescription ?? "";
-            string slug = sanPham.Slug ?? "";
-            string imageFile = sanPham.HinhAnh ?? sanPham.ImageFileName ?? sanPham.ImageUrl ?? "";
+            // Host absolute
+            var host = $"{Request.Scheme}://{Request.Host}";
 
-            // canonical (absolute)
-            var request = HttpContext.Request;
-            string canonical = $"{request.Scheme}://{request.Host}/san-pham/{slug}";
+            // 1) Ảnh: dùng ảnh product nếu có, fallback về default
+            // => đảm bảo ảnh lưu ở wwwroot/images/sanpham/{HinhAnh}
+            string imageRelative = string.IsNullOrEmpty(product.HinhAnh)
+                ? "/images/default-share.jpg"
+                : $"/images/sanpham/{product.HinhAnh}";
+            string imageAbsolute = host + Url.Content(imageRelative); // absolute image url
 
-            // absolute image url
-            string ogImage;
-            if (string.IsNullOrWhiteSpace(imageFile))
-            {
-                ogImage = $"{request.Scheme}://{request.Host}/images/default-share.jpg";
-            }
-            else
-            {
-                // nếu imageFile đã là absolute thì giữ nguyên, else build từ wwwroot/images/...
-                if (imageFile.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-                    ogImage = imageFile;
-                else
-                    ogImage = $"{request.Scheme}://{request.Host}{(imageFile.StartsWith("/") ? "" : "/")}{imageFile}";
-            }
+            // 2) canonical / og:url -> dùng Url.Action với protocol để có absolute url
+            string productUrl = Url.Action(
+                action: "DetailsBySlug",
+                controller: "SanPham",                       // chỉnh nếu controller tên khác
+                values: new { slug = product.Slug },
+                protocol: Request.Scheme
+            );
 
-            ViewData["Title"] = $"{title} - YourShop";
-            ViewData["Description"] = shortDesc;
-            ViewData["Canonical"] = canonical;
-            ViewData["OgType"] = "product";
+            // 3) title & description (ngắn gọn)
+            string title = string.IsNullOrWhiteSpace(product.TenSanPham) ? "YourShop" : product.TenSanPham;
+            string description = product.MoTa ?? "";
+            description = HtmlToPlainText(description); // loại bỏ tag nếu cần
+            if (description.Length > 200) description = description.Substring(0, 197) + "...";
+
+            // 4) gán vào ViewData keys mà _Layout.cshtml đang đọc
+            ViewData["Title"] = title;
+            ViewData["Description"] = description;
+            ViewData["Canonical"] = productUrl;
+
             ViewData["OgTitle"] = title;
-            ViewData["OgDescription"] = shortDesc;
-            ViewData["OgImage"] = ogImage;
-            ViewData["OgUrl"] = canonical;
+            ViewData["OgDescription"] = description;
+            ViewData["OgImage"] = imageAbsolute;
+            ViewData["OgUrl"] = productUrl;
+            ViewData["OgType"] = "product";
 
-            // Optional: JSON-LD (nếu muốn) - bạn có thể build schema tương tự
+            // 5) JSON-LD (schema.org) tùy chọn
             var jsonLd = new
             {
-                @context = "https://schema.org",
+                @context = "https://schema.org/",
                 @type = "Product",
                 name = title,
-                image = new[] { ogImage },
-                description = shortDesc,
-                sku = sanPham.Sku ?? "",
-                offers = new
-                {
-                    @type = "Offer",
-                    priceCurrency = "VND",
-                    price = sanPham.Gia ?? 0,
-                    availability = "https://schema.org/InStock"
-                }
+                image = new[] { imageAbsolute },
+                description = description,
+                url = productUrl,
+                brand = product.NhaCungCap?.TenNhaCungCap ?? "",
+                category = product.DanhMuc?.TenDanhMuc ?? ""
+                // bạn có thể mở rộng với price, currency, sku nếu có
             };
-            ViewData["JsonLd"] = System.Text.Json.JsonSerializer.Serialize(jsonLd);
+            ViewData["JsonLd"] = JsonSerializer.Serialize(jsonLd);
         }
 
+        // helper đơn giản: loại bỏ HTML tags (nếu MoTa chứa HTML). Nếu content của bạn đã plain text, có thể bỏ hàm này.
+        private string HtmlToPlainText(string html)
+        {
+            if (string.IsNullOrEmpty(html)) return "";
+            // rất đơn giản: remove tags; nếu cần robust hơn dùng HtmlAgilityPack
+            var withoutTags = System.Text.RegularExpressions.Regex.Replace(html, "<.*?>", " ");
+            // decode HTML entities
+            return System.Net.WebUtility.HtmlDecode(withoutTags).Trim();
+        }
         public static string ToUrlSlug(string value)
         {
             if (string.IsNullOrWhiteSpace(value)) return "";

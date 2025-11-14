@@ -11,6 +11,8 @@
     <meta name="request-verification-token"
           content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
 
+    <link rel="stylesheet" href="~/_content/site.css" />
+
     <link rel="icon" href="~/img/4TL.png" type="image/png" asp-append-version="true">
 
     <!-- Fonts & Icons -->
@@ -479,15 +481,15 @@
 
     </style>
 
-    <title>@(ViewData["Title"] ?? "YourShop")</title>
+    <title>@(ViewData["Title"] ?? "4TL-SHOP")</title>
     <link rel="canonical" href="@(ViewData["Canonical"] ?? $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")" />
-    <meta name="description" content="@(ViewData["Description"] ?? "YourShop - Thời trang cao cấp")" />
+    <meta name="description" content="@(ViewData["Description"] ?? "4TL-SHOP - Thời trang cao cấp")" />
 
     <!-- Open Graph -->
     <meta property="og:site_name" content="YourShop" />
     <meta property="og:type" content="@(ViewData["OgType"] ?? "website")" />
-    <meta property="og:title" content="@(ViewData["OgTitle"] ?? ViewData["Title"] ?? "YourShop")" />
-    <meta property="og:description" content="@(ViewData["OgDescription"] ?? ViewData["Description"] ?? "Mua sắm tại YourShop")" />
+    <meta property="og:title" content="@(ViewData["OgTitle"] ?? ViewData["Title"] ?? "4TL-SHOP")" />
+    <meta property="og:description" content="@(ViewData["OgDescription"] ?? ViewData["Description"] ?? "Mua sắm tại 4TL-SHOP")" />
     <meta property="og:image" content="@(ViewData["OgImage"] ?? $"{Context.Request.Scheme}://{Context.Request.Host}/images/default-share.jpg")" />
     <meta property="og:url" content="@(ViewData["OgUrl"] ?? $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")" />
 

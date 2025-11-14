@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using TL4_SHOP.Models;
 
 namespace TL4_SHOP.Data;
 
@@ -47,5 +48,8 @@ public partial class SanPham
 
     [StringLength(200)]
     public string? Slug { get; set; } // đường dẫn thân thiện (vd: ao-thun-nam-cao-cap)
+
+    public virtual ICollection<SlugHistory> SlugHistories { get; set; } = new List<SlugHistory>();
+
 
 }

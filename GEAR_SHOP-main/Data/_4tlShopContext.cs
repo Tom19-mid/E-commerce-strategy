@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using TL4_SHOP.Models;
 
 namespace TL4_SHOP.Data;
 
@@ -55,6 +56,9 @@ public partial class _4tlShopContext : DbContext
 
     public virtual DbSet<TechNews> TechNews { get; set; } = null!;
     public virtual DbSet<ChatMessage> ChatMessages { get; set; } = null!;
+
+    public virtual DbSet<SlugHistory> SlugHistories { get; set; }
+
 
     //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -333,6 +337,8 @@ public partial class _4tlShopContext : DbContext
             entity.Property(e => e.LaNoiBat).HasDefaultValue(false);
             entity.Property(e => e.NhaCungCapId).HasColumnName("NhaCungCapID");
             entity.Property(e => e.TenSanPham).HasMaxLength(100);
+            entity.Property(e => e.Slug).HasMaxLength(200).HasColumnName("Slug");
+            entity.Property(e => e.Sku).HasMaxLength(100).HasColumnName("Sku");
 
             entity.HasOne(d => d.DanhMuc).WithMany(p => p.SanPhams)
                 .HasForeignKey(d => d.DanhMucId)
@@ -461,6 +467,36 @@ public partial class _4tlShopContext : DbContext
                 .IsRequired()
                 .HasDefaultValueSql("GETDATE()"); // ngày giờ gửi
         });
+
+        modelBuilder.Entity<SlugHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_SlugHistory");
+
+            entity.ToTable("SlugHistory");
+
+            entity.Property(e => e.Id)
+                .HasColumnName("Id");
+
+            entity.Property(e => e.SanPhamId)
+                .HasColumnName("SanPhamID")
+                .IsRequired();
+
+            entity.Property(e => e.OldSlug)
+                .HasMaxLength(255)
+                .HasColumnType("nvarchar(255)");
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            entity.HasOne(d => d.SanPham)
+                .WithMany(p => p.SlugHistories)
+                .HasForeignKey(d => d.SanPhamId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_SlugHistory_SanPham");
+        });
+
+
 
 
 
