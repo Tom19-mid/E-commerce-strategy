@@ -41,7 +41,7 @@ namespace TL4_SHOP.Controllers
 
 
         [HttpPost]
-        public IActionResult Checkout(string tenKhachHang, string soDienThoai, string diaChiGiaoHang, string ghiChu, string phuongThucThanhToan, int phiVanChuyen, decimal tongTien)
+        public IActionResult Checkout(string tenKhachHang, string soDienThoai, string diaChiGiaoHang, string ghiChu, int phiVanChuyen, decimal tongTien)
         {
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("GioHang");
             if (cart == null || cart.Count == 0)
@@ -73,7 +73,6 @@ namespace TL4_SHOP.Controllers
                 SoDienThoai = soDienThoai,
                 DiaChiGiaoHang = diaChiGiaoHang,
                 GhiChu = ghiChu,
-                PhuongThucThanhToan = phuongThucThanhToan,
                 NgayDatHang = DateTime.Now,
                 PhiVanChuyen = phiVanChuyen,
                 TrangThaiId = 1,
@@ -116,7 +115,7 @@ namespace TL4_SHOP.Controllers
             // Gửi email xác nhận nếu có
             SendConfirmationEmail(email, donHang);
 
-            return RedirectToAction("Detail", new { id = donHang.DonHangId });
+            return RedirectToAction("SelectMethod", "Payment", new { orderId = donHang.DonHangId });
         }
 
         private void SendConfirmationEmail(string email, DonHang donHang)
