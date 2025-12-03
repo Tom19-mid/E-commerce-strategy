@@ -1,0 +1,498 @@
+﻿@model TL4_SHOP.Models.PaymentMethodViewModel
+@{
+    ViewData["Title"] = "Chọn phương thức thanh toán";
+    Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+}
+
+<style>
+    .payment-page {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .payment-header {
+        background: linear-gradient(135deg, #D19C97 0%, #C88C8C 100%);
+        padding: 60px 0;
+        margin-bottom: 50px;
+    }
+
+        .payment-header h1 {
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+    .breadcrumb-custom {
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .breadcrumb-custom li {
+            display: inline-block;
+        }
+
+        .breadcrumb-custom a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+
+            .breadcrumb-custom a:hover {
+                color: white;
+            }
+
+        .breadcrumb-custom .separator {
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0 10px;
+        }
+
+    .payment-card-container {
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 30px;
+        padding: 15px 20px;
+        background: linear-gradient(135deg, #D19C97 0%, #C88C8C 100%);
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .order-info-box {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-left: 5px solid #D19C97;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 35px;
+    }
+
+        .order-info-box h5 {
+            color: #2C3E50;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+    .order-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+
+        .order-info-row strong {
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .order-info-row .order-id {
+            color: #D19C97;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .order-info-row .total-amount {
+            color: #C88C8C;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+    .payment-method-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2C3E50;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #D19C97;
+    }
+
+    .payment-option {
+        margin-bottom: 20px;
+    }
+
+    .payment-card {
+        display: block;
+        padding: 25px;
+        border: 3px solid #e9ecef;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+        .payment-card:hover {
+            border-color: #D19C97;
+            box-shadow: 0 4px 15px rgba(209, 156, 151, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .payment-card.selected {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #f0fff4 0%, #e6f9ed 100%);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+    .payment-row {
+        display: grid;
+        grid-template-columns: 70px 1fr 30px;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .payment-icon {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .payment-icon i {
+            font-size: 3rem;
+        }
+
+        .payment-icon img {
+            width: 55px;
+            height: 55px;
+            object-fit: contain;
+        }
+
+    .payment-text h6 {
+        color: #2C3E50;
+        font-weight: 700;
+        margin: 0 0 5px 0;
+        font-size: 1.1rem;
+    }
+
+    .payment-text small {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .payment-radio {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #D19C97;
+        border-radius: 50%;
+        position: relative;
+    }
+
+    .payment-card.selected .payment-radio {
+        border-color: #28a745;
+        background: #28a745;
+    }
+
+        .payment-card.selected .payment-radio::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+    .form-check-input {
+        display: none;
+    }
+
+    .btn-back {
+        background: white;
+        border: 2px solid #6c757d;
+        color: #6c757d;
+        font-size: 1.1rem;
+        font-weight: 600;
+        padding: 15px 35px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-back:hover {
+            background: #6c757d;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+    .btn-confirm {
+        background: linear-gradient(135deg, #D19C97 0%, #C88C8C 100%);
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        padding: 15px 45px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(209, 156, 151, 0.3);
+    }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(209, 156, 151, 0.5);
+            background: linear-gradient(135deg, #C88C8C 0%, #B87C7C 100%);
+        }
+
+    .security-notice {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 30px;
+        text-align: center;
+        border: 1px solid #e9ecef;
+    }
+
+        .security-notice i {
+            color: #28a745;
+            font-size: 1.3rem;
+            margin-right: 10px;
+        }
+
+        .security-notice small {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+    @@media (max-width: 768px) {
+        .payment-header {
+            padding: 40px 0;
+        }
+
+            .payment-header h1 {
+                font-size: 1.8rem;
+            }
+
+        .payment-card-container {
+            padding: 25px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            padding: 12px 15px;
+        }
+
+        .payment-row {
+            grid-template-columns: 60px 1fr 24px;
+            gap: 12px;
+        }
+
+        .payment-icon {
+            width: 60px;
+            height: 60px;
+        }
+
+            .payment-icon i {
+                font-size: 2.5rem;
+            }
+
+            .payment-icon img {
+                width: 45px;
+                height: 45px;
+            }
+
+        .btn-back, .btn-confirm {
+            font-size: 1rem;
+            padding: 12px 25px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .order-info-row {
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+        }
+    }
+
+    .section-title {
+        text-decoration: none !important;
+        border: none !important;
+    }
+
+        .section-title::before,
+        .section-title::after {
+            content: none !important;
+            display: none !important;
+            border: none !important;
+            background: none !important;
+        }
+
+    .order-info-box {
+        background: linear-gradient(135deg, #fef9f8 0%, #fef5f4 100%);
+        border-left: 5px solid #D19C97;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 35px;
+    }
+
+        .order-info-box h5 {
+            color: #D19C97;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+</style>
+
+<div class="payment-header">
+    <div class="container">
+        <div class="text-center">
+            <h1>CHỌN PHƯƠNG THỨC THANH TOÁN</h1>
+            <ul class="breadcrumb-custom">
+                <li><a href="/">Trang chủ</a></li>
+                <li class="separator">/</li>
+                <li><a href="/Cart/Index">Giỏ hàng</a></li>
+                <li class="separator">/</li>
+                <li><a href="/Order/Checkout">Thanh toán</a></li>
+                <li class="separator">/</li>
+                <li class="text-white">Phương thức</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="payment-page">
+    <div class="container pb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="payment-card-container">
+                    <div class="section-title">
+                        💳 Thông tin thanh toán
+                    </div>
+
+                    <div class="order-info-box">
+                        <h5>📦 Thông tin đơn hàng</h5>
+                        <div class="order-info-row">
+                            <strong>Mã đơn hàng:</strong>
+                            <span class="order-id">#@Model.OrderId</span>
+                        </div>
+                        <div class="order-info-row">
+                            <strong>Tổng tiền thanh toán:</strong>
+                            <span class="total-amount">@Model.TotalAmount.ToString("N0")₫</span>
+                        </div>
+                    </div>
+
+                    <form asp-controller="Payment" asp-action="ProcessPayment" method="post" id="paymentForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="OrderId" />
+                        <input type="hidden" asp-for="TotalAmount" />
+
+                        <div class="payment-method-title">
+                            Chọn phương thức thanh toán
+                        </div>
+
+                        <div class="payment-option">
+                            <label class="payment-card selected" data-method="COD">
+                                <div class="payment-row">
+                                    <div class="payment-icon">
+                                        <i class="fas fa-money-bill-wave text-success"></i>
+                                    </div>
+                                    <div class="payment-text">
+                                        <h6>Thanh toán khi nhận hàng (COD)</h6>
+                                        <small>Thanh toán bằng tiền mặt khi nhận hàng</small>
+                                    </div>
+                                    <div class="payment-radio"></div>
+                                </div>
+                                <input class="form-check-input" type="radio" name="SelectedMethod" value="COD" checked>
+                            </label>
+                        </div>
+
+                        <div class="payment-option">
+                            <label class="payment-card" data-method="VNPay">
+                                <div class="payment-row">
+                                    <div class="payment-icon">
+                                        <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png" alt="VNPay">
+                                    </div>
+                                    <div class="payment-text">
+                                        <h6>VNPay</h6>
+                                        <small>Thanh toán qua cổng VNPay (ATM/Visa/Master)</small>
+                                    </div>
+                                    <div class="payment-radio"></div>
+                                </div>
+                                <input class="form-check-input" type="radio" name="SelectedMethod" value="VNPay">
+                            </label>
+                        </div>
+
+                        <div class="payment-option">
+                            <label class="payment-card" data-method="PayPal">
+                                <div class="payment-row">
+                                    <div class="payment-icon">
+                                        <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
+                                    </div>
+                                    <div class="payment-text">
+                                        <h6>PayPal</h6>
+                                        <small>Thanh toán quốc tế qua PayPal</small>
+                                    </div>
+                                    <div class="payment-radio"></div>
+                                </div>
+                                <input class="form-check-input" type="radio" name="SelectedMethod" value="PayPal">
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4 flex-wrap">
+                            <a href="/Cart/Index" class="btn btn-back">
+                                <i class="fas fa-arrow-left me-2"></i> Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-confirm">
+                                <i class="fas fa-check-circle me-2"></i> Xác nhận thanh toán
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="security-notice">
+                    <i class="fas fa-shield-alt"></i>
+                    <small>Giao dịch của bạn được bảo mật với công nghệ mã hóa SSL 256-bit</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ✅ THÊM LOGGING
+    console.log('✅ SelectMethod page loaded');
+
+    document.querySelectorAll('.payment-card').forEach(card => {
+        card.addEventListener('click', function() {
+            console.log('💳 Payment card clicked:', this.dataset.method);
+
+            document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            this.querySelector('input[type="radio"]').checked = true;
+
+            console.log('✅ Selected method:', this.dataset.method);
+        });
+    });
+
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        console.log('🚀 Form submit triggered');
+
+        const selectedMethod = document.querySelector('input[name="SelectedMethod"]:checked');
+        console.log('Selected method value:', selectedMethod ? selectedMethod.value : 'NONE');
+
+        if (!selectedMethod) {
+            e.preventDefault();
+            console.error('❌ No payment method selected!');
+            alert('Vui lòng chọn phương thức thanh toán!');
+            return false;
+        }
+
+        console.log('✅ Form is submitting to /Payment/ProcessPayment');
+        console.log('   OrderId:', document.querySelector('input[name="OrderId"]').value);
+        console.log('   TotalAmount:', document.querySelector('input[name="TotalAmount"]').value);
+        console.log('   SelectedMethod:', selectedMethod.value);
+        // Form sẽ submit bình thường
+    });
+</script>

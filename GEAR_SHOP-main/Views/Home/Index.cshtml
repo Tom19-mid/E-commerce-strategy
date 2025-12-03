@@ -1,0 +1,536 @@
+﻿@model TL4_SHOP.Models.ViewModels.ShopViewModel
+@{
+	ViewData["Title"] = "Trang chủ";
+	Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/Discount.css" />
+
+@if (TempData["Message"] != null)
+{
+	<div class="alert alert-success text-center">
+		@TempData["Message"]
+	</div>
+}
+
+<style>
+    .box-modern {
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 15px;
+        padding: 26px 30px;
+        transition: 0.3s;
+    }
+
+        .box-modern:hover {
+            border-color: rgba(0,0,0,0.15);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+
+    .box-gradient {
+        border: 2px solid transparent;
+        border-radius: 15px;
+        background: linear-gradient(white, white) padding-box, linear-gradient(45deg, #ff9a9e, #fad0c4) border-box;
+        padding: 26px 30px;
+    }
+
+    .box-glass {
+        border: 1px solid rgba(255,255,255,0.3);
+        backdrop-filter: blur(8px);
+        border-radius: 15px;
+        padding: 26px 30px;
+        background: rgba(255,255,255,0.7);
+    }
+
+
+</style>
+
+@* --- Thay block sản phẩm: hiển thị badge giảm giá nếu có --- *@
+<!-- Khung hình ảnh -->
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div id="header-carousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item" style="height: 410px;">
+                        <img class="img-fluid" src="~/img/quang_Cao.jpg" alt="Quảng cáo phím cơ không dây">
+                        <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                            <div class="p-3" style="max-width: 700px;">
+                                <h4 class="text-light text-uppercase font-weight-medium mb-3">Giảm ngay 10% cho đơn hàng đầu tiên</h4>
+                                <h3 class="display-4 text-white font-weight-semi-bold mb-4">Phím Cơ Không Dây</h3>
+                                <a asp-controller="Home" asp-action="Shop" class="btn btn-light py-2 px-3">Xem Ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item active" style="height: 410px;">
+                        <img class="img-fluid" src="~/img/quang_cao_laptop.jpg" alt="Quảng cáo màn hình">
+                        <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                            <div class="p-3" style="max-width: 700px;">
+                                <h4 class="text-light text-uppercase font-weight-medium mb-3">Giảm ngay 10% cho đơn hàng đầu tiên</h4>
+                                <h3 class="display-4 text-white font-weight-semi-bold mb-4">Màn Hình Chính Hãng</h3>
+                                <a asp-controller="Home" asp-action="Shop" class="btn btn-light py-2 px-3">Xem Ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#header-carousel" data-slide="prev">
+                    <div class="btn btn-dark" style="width: 45px; height: 45px;">
+                        <span class="carousel-control-prev-icon mb-n2"></span>
+                    </div>
+                </a>
+                <a class="carousel-control-next" href="#header-carousel" data-slide="next">
+                    <div class="btn btn-dark" style="width: 45px; height: 45px;">
+                        <span class="carousel-control-next-icon mb-n2"></span>
+                    </div>
+                </a>
+            </div>
+        </div> <!-- đóng col-lg-10 -->
+    </div> <!-- đóng row -->
+</div> <!-- đóng container-fluid -->
+<!-- Khung hình ảnh -->
+<!-- Featured Start -->
+<div class="container-fluid pt-5">
+    <div class="row px-xl-5 pb-3">
+        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+            <div class="d-flex align-items-center mb-4 box-modern" style="padding: 30px; border-radius: 15px;">
+                <h1 class="fa fa-check text-primary m-0 mr-3"></h1>
+                <h5 class="font-weight-semi-bold m-0">Sản phẩm chất lượng cao</h5>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+            <div class="d-flex align-items-center box-modern mb-4" style="padding: 30px; border-radius: 15px;">
+                <h1 class="fa fa-shipping-fast text-primary m-0 mr-2"></h1>
+                <h5 class="font-weight-semi-bold m-0">Miễn phí giao hàng</h5>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+            <div class="d-flex align-items-center box-modern mb-4" style="padding: 30px; border-radius: 15px;">
+                <h1 class="fas fa-exchange-alt text-primary m-0 mr-3"></h1>
+                <h5 class="font-weight-semi-bold m-0">Trả hàng trong 14 ngày</h5>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+            <div class="d-flex align-items-center box-modern mb-4" style="padding: 30px; border-radius: 15px;">
+                <h1 class="fa fa-phone-volume text-primary m-0 mr-3"></h1>
+                <h5 class="font-weight-semi-bold m-0">Hỗ trợ 24/7</h5>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Featured End -->
+<!-- Categories Start -->
+<!--Sản phẩm hiện ra lúc đầu -->
+<div class="container-fluid pt-5">
+    <div class="row px-xl-5 pb-3">
+        @if (Model.SanPhams != null && Model.SanPhams.Any())
+        {
+            @foreach (var sp in Model.SanPhams)
+            {
+                <div class="col-lg-4 col-md-6 col-sm-12 pb-3">
+                    <div class="card product-item border-0 mb-4" style="box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); border-radius: 15px;">
+                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                            <a asp-controller="SanPham" asp-action="Details" asp-route-id="@sp.SanPhamId">
+                                <img class="img-fluid w-100"
+                                     src="@Url.Content("~/" + ((sp.HinhAnh?.Contains('/') ?? false) ? sp.HinhAnh : $"img/{sp.HinhAnh}"))"
+                                     alt="@sp.TenSanPham"
+                                     style="height: 220px; object-fit: contain;"
+                                     onerror="this.onerror=null;this.src='@Url.Content("~/img/placeholder.png")';" />
+                            </a>
+
+                            @{
+                                // tính toán giảm giá an toàn
+                                bool hasDiscount = sp.GiaSauGiam.HasValue && sp.GiaSauGiam.Value < sp.Gia && sp.Gia > 0;
+                                int discountPercent = 0;
+                                if (hasDiscount)
+                                {
+                                    discountPercent = (int)Math.Round((1m - sp.GiaSauGiam.Value / sp.Gia) * 100m);
+                                    if (discountPercent < 1) discountPercent = 1;
+                                }
+                            }
+                        </div>
+                        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                            <h6 class="text-truncate mb-2" style="min-height: 48px;">@sp.TenSanPham</h6>
+
+                            <div class="d-flex justify-content-center flex-column align-items-center position-relative">
+                                @if (sp.GiaSauGiam != null && sp.GiaSauGiam < sp.Gia)
+                                {
+                                    <h6 class="text-muted ml-2"><del>@sp.Gia.ToString("N0")đ</del></h6>
+                                    <h5 class="text-danger">@sp.GiaSauGiam?.ToString("N0")đ</h5>
+                                    <span class="badge badge-danger position-absolute" style="top:0; right:0; font-size:0.8rem;">
+                                        -@Math.Round((1 - (decimal)sp.GiaSauGiam / (decimal)sp.Gia) * 100)%
+                                    </span>
+                                }
+                                else
+                                {
+                                    <h6 class="m-0" style="font-size: 130%;">@sp.Gia.ToString("N0")đ</h6>
+                                }
+                            </div>
+                        </div>
+
+
+                        <div class="card-footer d-flex justify-content-between bg-light border">
+                            <a asp-controller="SanPham" asp-action="Details" asp-route-id="@sp.SanPhamId" class="btn btn-sm text-dark p-0">
+                                <i class="fas fa-eye text-primary mr-1"></i> Xem chi tiết
+                            </a>
+                            <a href="javascript:void(0);" class="btn btn-sm text-dark p-0 btn-add-to-cart" data-product-id="@sp.SanPhamId">
+                                <i class="fas fa-shopping-cart text-primary mr-1"></i> Thêm vào giỏ hàng
+                            </a>
+                            <a href="javascript:void(0);" onclick="addToWishlist(@sp.SanPhamId)" class="btn btn-sm text-dark p-0">
+                                <i class="fas fa-heart text-danger mr-1"></i> Yêu thích
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <p class="text-center">Hiện chưa có sản phẩm để hiển thị.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Categories End -->
+<!-- Flash Sale Start -->
+<div class="container-fluid bg-danger text-white text-center py-5 mb-5">
+    <h3 class="mb-3">⚡ FLASH SALE HÔM NAY ⚡</h3>
+    <p class="mb-2">Giảm giá sốc đến 50% - Chỉ còn:</p>
+    <div id="countdown" style="font-size: 32px; font-weight: bold;"></div>
+    <a asp-controller="Home" asp-action="Shop" class="btn btn-light mt-3 px-4 py-2 font-weight-bold">
+        Xem Sản Phẩm
+    </a>
+</div>
+
+<script>
+    // Đặt thời gian kết thúc lúc 23:59:59 hôm nay
+    const now = new Date();
+    const countDownDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).getTime();
+
+    const x = setInterval(function () {
+        const nowTime = new Date().getTime();
+        const distance = countDownDate - nowTime;
+
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("countdown").innerHTML = "Đã hết giờ!";
+        } else {
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            document.getElementById("countdown").innerHTML = `${hours}h ${minutes}m ${seconds}s`;
+        }
+    }, 1000);
+</script>
+<!-- Flash Sale End -->
+<!-- Products Start -->
+<!--Sản phẩm nổi bật nhất-->
+<div class="container-fluid pt-5">
+    <div class="text-center mb-4">
+        <h2 class="section-title px-5">
+            <span class="px-2" style="font-family: Tahoma">SẢN PHẨM NỔI BẬT NHẤT</span>
+        </h2>
+    </div>
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5 pb-3">
+            @if (ViewBag.FeaturedProducts != null)
+            {
+                @foreach (var sp in ViewBag.FeaturedProducts)
+                {
+
+                    <div class="col-lg-4 col-md-6 col-sm-12 pb-3">
+                        <div class="card product-item border-0 mb-4" style="box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); border-radius: 8px;">
+                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                <a asp-controller="SanPham" asp-action="Details" asp-route-id="@sp.SanPhamId">
+                                    <img class="img-fluid w-100"
+                                         src="@Url.Content("~/" + ((sp.HinhAnh?.Contains('/') ?? false) ? sp.HinhAnh : $"images/products/{sp.HinhAnh}"))"
+                                         alt="@sp.TenSanPham"
+                                         style="height: 220px; object-fit: contain;"
+                                         onerror="this.onerror=null;this.src='@Url.Content("~/images/placeholder-product.png")';" />
+                                </a>
+                            </div>
+
+                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                                <h6 class="text-truncate mb-2" style="min-height: 48px;">@sp.TenSanPham</h6>
+
+                                <div class="d-flex justify-content-center flex-column align-items-center position-relative">
+                                    @if (sp.GiaSauGiam != null && sp.GiaSauGiam < sp.Gia)
+                                    {
+                                        <h6 class="text-muted ml-2"><del>@sp.Gia.ToString("N0")đ</del></h6>
+                                        <h5 class="text-danger">@sp.GiaSauGiam?.ToString("N0")đ</h5>
+                                        <span class="badge badge-danger position-absolute" style="top:0; right:0; font-size:0.8rem;">
+                                            -@Math.Round((1 - (decimal)sp.GiaSauGiam / (decimal)sp.Gia) * 100)%
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <h6 class="m-0">@sp.Gia.ToString("N0")đ</h6>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="card-footer d-flex justify-content-between bg-light border">
+                                <a asp-controller="SanPham" asp-action="Details" asp-route-id="@sp.SanPhamId" class="btn btn-sm text-dark p-0">
+                                    <i class="fas fa-eye text-primary mr-1"></i> Xem chi tiết
+                                </a>
+                                <a href="javascript:void(0);" onclick="addToWishlist(@sp.SanPhamId)" class="btn btn-sm text-dark p-0">
+                                    <i class="fas fa-heart text-danger mr-1"></i> Yêu thích
+                                </a>
+                                <a href="javascript:void(0);" class="btn btn-sm text-dark p-0 btn-add-to-cart" data-product-id="@sp.SanPhamId">
+                                    <i class="fas fa-shopping-cart text-primary mr-1"></i> Thêm vào giỏ hàng
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Chưa có sản phẩm nổi bật.</p>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Products End -->
+<!-- Products Start -->
+<!--LapTop-->
+@{
+    var laptopProducts = new List<dynamic>
+    {
+        new { Id = 109, Ten = "Apple MacBook Air M2 2024 8CPU 8GPU 16GB 256GB", Gia = 19790000, GiamGia = 24990000, Hinh = "Apple_MacBook_Air_M2.jpg" },
+        new { Id = 110, Ten = "MacBook Air M4 13 inch 2025 10CPU 8GPU 16GB 256GB", Gia = 25390000, GiamGia = 26990000, Hinh = "MacBook_Air_M4.jpg" },
+        new { Id = 111, Ten = "Laptop HP Gaming Victus 15-FA1139TX", Gia = 16490000, GiamGia = 24590000, Hinh = "Laptop_HP_Gaming_Victus_15.jpg" },
+        new { Id = 112, Ten = "Laptop ASUS Vivobook 15 X1502VA-BQ885W", Gia = 13990000, GiamGia = 15990000, Hinh = "Laptop_ASUS_Vivobook_15.jpg" },
+        new { Id = 113, Ten = "Laptop ASUS Gaming Vivobook 16X K3605VC-RP431W", Gia = 18490000, GiamGia = 20990000, Hinh = "Laptop_ASUS_Gaming_Vivobook_16X.jpg" },
+        new { Id = 114, Ten = "Laptop Acer Aspire Lite 15 AL15-41P-R3U5", Gia = 12590000, GiamGia = 12990000, Hinh = "Laptop Acer Aspire Lite 15.jpg" },
+        new { Id = 115, Ten = "Laptop Acer Gaming Nitro Lite 16 NL16-71G-71UJ", Gia = 22590000, GiamGia = 23990000, Hinh = "Laptop Acer Gaming Nitro Lite 16.jpg" },
+        new { Id = 116, Ten = "Laptop HP 245 G10 B8PF8AT", Gia = 11690000, GiamGia = 15590000, Hinh = "Laptop HP 245 G10.jpg" }
+    };
+}
+<div class="container-fluid pt-5">
+    <div class="text-center mb-4">
+        <h2 class="section-title px-5"><span class="px-2" style="font-family: Tahoma">LAPTOP</span></h2>
+    </div>
+    <div class="row px-xl-5 pb-3">
+        @foreach (var sp in laptopProducts)
+        {
+            <div class="col-lg-4 col-md-6 col-sm-12 pb-3">
+                <div class="card product-item border-0 mb-4" style="box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); border-radius: 8px;">
+                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                            <img class="img-fluid w-100" src="~/img/@sp.Hinh" alt="@sp.Ten" style="height: 220px; object-fit: contain;" />
+                    </div>
+
+                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                        <h6 class="text-truncate mb-2" style="min-height: 48px;">@sp.Ten</h6>
+
+                        <div class="d-flex justify-content-center flex-column align-items-center position-relative">
+                            @* Nếu có giá gốc cao hơn (đang giảm) thì gạch giá gốc *@
+                            @if (sp.GiamGia > sp.Gia)
+                            {
+                                <h6 class="text-muted ml-2"><del>@sp.GiamGia.ToString("N0")đ</del></h6>
+                                <h5 class="text-danger">@sp.Gia.ToString("N0")đ</h5>
+                                <span class="badge badge-danger position-absolute" style="top:0; right:0; font-size:0.8rem;">
+                                    -@Math.Round((1 - (decimal)sp.Gia / (decimal)sp.GiamGia) * 100)%
+                                </span>
+                            }
+                            else
+                            {
+                                <h6 class="m-0">@sp.Gia.ToString("N0")đ</h6>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-center bg-light border">
+                        <span class="btn btn-sm text-muted p-0" style="cursor: not-allowed;">
+                            <i class="fas fa-times text-danger mr-1"></i> Sắp ra mắt
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Subscribe Start -->
+<div class="container-fluid bg-secondary my-5">
+    <div class="row">
+        <div class="col-md-12 col-12 py-5">
+            <div class="text-center mb-2 pb-2">
+                <h2 class="section-title px-5 mb-3">
+                    <span class="bg-secondary px-2" style="font-family: Tahoma">Tin công nghệ</span>
+                </h2>
+            </div>
+
+            @* --- LẤY 4 TIN MỚI NHẤT TỪ ViewBag do Controller đã truyền sang --- *@
+            @{
+                var latestNews = ViewBag.LatestNews as IEnumerable<TL4_SHOP.Data.TechNews>;
+
+                string ImgPath(string? p) =>
+                Url.Content((p?.StartsWith("/") ?? false) ? "~" + p : "~/" + p);
+            }
+
+            <div class="flex-container">
+                @if (latestNews != null && latestNews.Any())
+                {
+                    foreach (var n in latestNews)
+                    {
+                        var href = Url.Action("Detail", "TechNews", new { slug = n.Slug });
+                        var src = string.IsNullOrWhiteSpace(n.CoverImage)
+                        ? Url.Content("~/img/placeholder.png")
+                        : ImgPath(n.CoverImage);
+
+                        <a class="divInformation d-block text-decoration-none" href="@href" title="@n.Title" style="box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); border-radius: 8px;">
+                            <img class="imagess"
+                                 src="@src"
+                                 alt="@n.Title"
+                                 onerror="this.onerror=null;this.src='@Url.Content("~/img/placeholder.png")';" />
+                            <div class="vanBan"><p>@n.Title</p></div>
+                        </a>
+                    }
+                }
+                else
+                {
+                    <div class="divInformation">
+                        <div class="vanBan"><p>Chưa có tin công nghệ.</p></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Subscribe End -->
+<!-- Vendor Start -->
+<div class="container-fluid py-5">
+    <div class="row px-xl-5">
+        <div class="col">
+            <div class="owl-carousel vendor-carousel">
+                <div class="vendor-item border p-4">
+                    <img src="~/img/NVIDIA.jpg" alt="NVIDIA">
+                </div>
+                <div class="vendor-item border p-4">
+                    <img src="~/img/Razer.jpg" alt="Razer">
+                </div>
+                <div class="vendor-item border p-4">
+                    <img src="~/img/MSI.jpg" alt="MSI">
+                </div>
+                <div class="vendor-item border p-4">
+                    <img src="~/img/Acer.jpg" alt="Acer">
+                </div>
+                <div class="vendor-item border p-4">
+                    <img src="~/img/ASUS.jpg" alt="ASUS">
+                </div>
+                <div class="vendor-item border p-4">
+                    <img src="~/img/Gigabyte.jpg" alt="Gigabyte">
+                </div>
+                <div class="vendor-item border p-4">
+                    <img src="~/img/Cosair.jpg" alt="Corsair">
+                </div>
+                <div class="vendor-item border p-4">
+                    <img src="~/img/Logitech.jpg" alt="Logitech G">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Vendor End -->
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        // Lấy token từ meta (đã đặt ở layout)
+        function getCsrf() {
+            return document.querySelector('meta[name="request-verification-token"]')?.content || null;
+        }
+
+        // Đồng bộ: click cho tất cả nút có class .btn-add-to-cart
+        $(document).on('click', '.btn-add-to-cart', function (e) {
+            e.preventDefault();
+            const pid = $(this).data('product-id');
+            if (pid) addToCart(pid);
+        });
+
+        function addToCart(productId) {
+            const token = getCsrf();
+            $.ajax({
+                url: '@Url.Action("AddToCart", "Cart")',   // nếu action này redirect -> fallback bên dưới
+                type: 'POST',
+                data: { productId: productId, quantity: 1 },
+                headers: token ? { 'RequestVerificationToken': token } : {},
+                dataType: 'json'
+            })
+            .done(function (response) {
+                // Trường hợp backend trả JSON {success, cartCount, message}
+                if (response && typeof response === 'object' && 'success' in response) {
+                    if (response.success) {
+                        if (response.cartCount !== undefined) $('#cart-count').text(response.cartCount);
+                        Toastify({ text: "🎉 Đã thêm sản phẩm vào giỏ!", duration: 3000, gravity: "top", position: "right", backgroundColor: "#28a745", close: true }).showToast();
+                    } else {
+                        Toastify({ text: "❌ " + (response.message || "Không thể thêm vào giỏ."), duration: 3000, gravity: "top", position: "right", backgroundColor: "#dc3545", close: true }).showToast();
+                    }
+                } else {
+                    // Nếu không phải JSON (ví dụ redirect HTML), fallback: hỏi lại số lượng giỏ rồi hiện toast
+                    refreshCartCountAndToast();
+                }
+            })
+            .fail(function (xhr) {
+                if (xhr.status === 400) {
+                    Toastify({ text: "⚠️ Thiếu hoặc sai CSRF token. Hãy refresh trang!", duration: 3000, gravity: "top", position: "right", backgroundColor: "#ffc107", close: true }).showToast();
+                } else {
+                    // fallback sang endpoint AJAX thuần nếu có
+                    addToCartAjaxFallback(productId, token);
+                }
+            });
+        }
+
+        // Fallback 1: gọi endpoint JSON chuyên dụng (nếu bạn thêm ở bước C)
+        function addToCartAjaxFallback(productId, token) {
+            $.ajax({
+                url: '/Cart/AddToCartAjax',
+                type: 'POST',
+                data: { productId: productId, quantity: 1 },
+                headers: token ? { 'RequestVerificationToken': token } : {},
+                dataType: 'json'
+            }).done(function (res) {
+                if (res && res.success) {
+                    if (res.cartCount !== undefined) $('#cart-count').text(res.cartCount);
+                    Toastify({ text: "🎉 Đã thêm sản phẩm vào giỏ!", duration: 3000, gravity: "top", position: "right", backgroundColor: "#28a745", close: true }).showToast();
+                } else {
+                    Toastify({ text: "❌ " + (res?.message || "Không thể thêm vào giỏ."), duration: 3000, gravity: "top", position: "right", backgroundColor: "#dc3545", close: true }).showToast();
+                }
+            }).fail(function () {
+                Toastify({ text: "❌ Lỗi hệ thống khi thêm sản phẩm!", duration: 3000, gravity: "top", position: "right", backgroundColor: "#dc3545", close: true }).showToast();
+            });
+        }
+
+        // Fallback 2: chỉ cần refresh được số lượng giỏ là coi như ok
+        function refreshCartCountAndToast() {
+            $.getJSON('/Cart/Count', function (res) {
+                if (res && typeof res.count !== 'undefined') $('#cart-count').text(res.count);
+                Toastify({ text: "🎉 Đã thêm sản phẩm vào giỏ!", duration: 3000, gravity: "top", position: "right", backgroundColor: "#28a745", close: true }).showToast();
+            }).fail(function () {
+                Toastify({ text: "✔️ Đã thêm vào giỏ (không lấy được số lượng).", duration: 3000, gravity: "top", position: "right", backgroundColor: "#17a2b8", close: true }).showToast();
+            });
+        }
+
+        // Wishlist giữ nguyên
+        function addToWishlist(productId) {
+            const token = getCsrf();
+            $.ajax({
+                url: '/Wishlist/AddToWishlistAjax',
+                type: 'POST',
+                data: { productId: productId },
+                headers: token ? { 'RequestVerificationToken': token } : {},
+                dataType: 'json'
+            }).done(function (response) {
+                if (response && response.success) {
+                    $('#wishlist-count').text(response.wishlistCount);
+                    Toastify({ text: "💖 " + response.message, duration: 3000, gravity: "top", position: "right", backgroundColor: "#ff4081", close: true, stopOnFocus: true }).showToast();
+                } else {
+                    Toastify({ text: "⚠️ " + (response?.message || "Không thể thêm vào yêu thích."), duration: 3000, gravity: "top", position: "right", backgroundColor: "#ffc107", close: true }).showToast();
+                }
+            }).fail(function () {
+                Toastify({ text: "❌ Có lỗi xảy ra khi thêm vào yêu thích!", duration: 3000, gravity: "top", position: "right", backgroundColor: "#dc3545", close: true }).showToast();
+            });
+        }
+    </script>
+}

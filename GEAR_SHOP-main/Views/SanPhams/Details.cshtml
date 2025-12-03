@@ -1,0 +1,338 @@
+﻿@model TL4_SHOP.Data.SanPham
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+<!-- Libraries Stylesheet -->
+<link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+<!-- Customized Bootstrap Stylesheet -->
+<link href="~/css/style.css" rel="stylesheet">
+
+<!-- CSS -->
+<style>
+    /* ----- Product details readability ----- */
+    .product-detail .desc-text {
+        color: #2b2f33; /* đậm, dễ đọc hơn */
+        font-size: 1.06rem; /* to hơn chút */
+        line-height: 1.75;
+        letter-spacing: .2px;
+        margin-bottom: 12px;
+    }
+
+    /* Tabs title rõ ràng hơn */
+    .nav-tabs .nav-link {
+        color: #8a8f98;
+        border: none;
+    }
+
+        .nav-tabs .nav-link.active {
+            color: #D19C97;
+            font-weight: 600;
+            border-bottom: 2px solid #D19C97;
+        }
+
+    /* ----- Specs table look ----- */
+    .spec-card {
+        padding: 14px;
+        border: 1px solid #e9ecf1;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,.03);
+    }
+
+    #tab-specs table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+        font-size: 0.98rem;
+    }
+
+    #tab-specs th, #tab-specs td {
+        border: 1px solid #eef0f4;
+        padding: 10px 12px;
+        color: #2f3440;
+    }
+
+    #tab-specs th {
+        width: 30%;
+        background: #f7f8fb;
+        font-weight: 600;
+    }
+
+    #tab-specs tr:nth-child(even) td {
+        background: #fbfcfe;
+    }
+    /* zebra */
+
+    button:focus,
+    .contact-pill:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<!-- Page Header -->
+<div class="container-fluid bg-secondary mb-5">
+    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+        <h1 class="font-weight-semi-bold text-uppercase mb-3">Chi tiết sản phẩm</h1>
+        <div class="d-inline-flex">
+            @* <p class="m-0"><a href="/">Trang chủ</a></p> *@
+            @* <p class="m-0 px-2">-</p> *@
+            <p class="m-0">@Model.TenSanPham</p>
+        </div>
+    </div>
+</div>
+
+<!-- Product Detail -->
+<div class="container-fluid py-5">
+    <div class="row px-xl-5">
+        <div class="col-lg-5 pb-5">
+            <img class="w-100 h-auto border"
+                 src="@Url.Content("~/" + ((Model.HinhAnh?.Contains('/') ?? false) ? Model.HinhAnh : $"images/products/{Model.HinhAnh}"))"
+                 alt="@Model.TenSanPham"
+                 onerror="this.onerror=null;this.src='@Url.Content("~/images/placeholder-product.png")';" />
+        </div>
+
+        <div class="col-lg-7 pb-5 protduct-info">
+            <h3 class="font-weight-semi-bold">@Model.TenSanPham</h3>
+            <div class="d-flex mb-3">
+                <div class="text-primary mr-2">
+                    <small class="fas fa-star"></small>
+                    <small class="fas fa-star"></small>
+                    <small class="fas fa-star"></small>
+                    <small class="fas fa-star-half-alt"></small>
+                    <small class="far fa-star"></small>
+                </div>
+                <small class="pt-1">(Đánh giá sản phẩm)</small>
+            </div>
+            @{
+                bool coGiamGia = Model.GiaSauGiam.HasValue
+                            && Model.GiaSauGiam.Value < Model.Gia && Model.Gia > 0;
+            }
+            @* Giá gốc *@
+            <h3 class="@(coGiamGia ? "old-price font-weight-semi-bold mb-4" : "font-weight-semi-bold mb-4")">@Model.Gia.ToString("N0")₫</h3>
+            <div class="price-block mb-3">
+                @* Nếu có giá sau giảm => show giá giảm và badge *@
+                @if (coGiamGia)
+                {
+                    var giaSau = Model.GiaSauGiam.Value;
+                    var percent = Math.Round((1 - (giaSau / Model.Gia)) * 100);
+                    <span class="discount-badge">
+                        -@percent%
+                    </span>
+                    <h2 class="text-danger">@string.Format("{0:N0}đ", giaSau)</h2>
+                }
+                else
+                {
+                    @* Không giảm giá *@
+                    <p class="text-muted mb-3"></p> <!--Hoặc không hiển thị gì cả-->
+                }
+            </div>
+
+            <p class="mb-4">@Model.MoTa</p>
+
+            <div class="d-flex align-items-center mb-4 pt-2">
+                <button class="btn btn-primary px-3" onclick="addToCart(@(Model.SanPhamId))">
+                    <i class="fa fa-shopping-cart mr-1"></i> Thêm vào giỏ hàng
+                </button>
+                <button class="btn btn-outline-danger px-3 ml-2" onclick="addToWishlist(@Model.SanPhamId)">
+                    <i class="fa fa-heart mr-1"></i> Yêu thích
+                </button>
+            </div>
+
+            <div class="mt-3">
+                <p><strong>Danh mục:</strong> @Model.DanhMuc?.TenDanhMuc</p>
+                <p><strong>Nhà cung cấp:</strong> @Model.NhaCungCap?.TenNhaCungCap</p>
+                <p><strong>Tồn kho:</strong> @Model.SoLuongTon</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AddToAny BEGIN -->
+    <style>
+        #my_centered_buttons { display: flex; justify-content: center; }
+    </style>
+    <div id="my_centered_buttons" class="a2a_kit a2a_kit_size_32 a2a_default_style" data-a2a-title="4TL-SHOP">
+        <a class="a2a_button_facebook"></a>
+        <a class="a2a_button_facebook_messenger"></a>
+        <a class="a2a_button_x"></a>
+        <a class="a2a_button_threads"></a>
+        <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+    </div>
+    <script>
+        var a2a_config = a2a_config || {};
+        a2a_config.onclick = 1;
+        a2a_config.locale = "vi";
+        a2a_config.counts = 
+        { 
+            recover_protocol: 'http', 
+            // recover_domain: 'old.4tl-shop.com' dùng cho domain cũ
+        };
+    </script>
+    <script defer src="https://static.addtoany.com/menu/page.js"></script>
+    <!-- AddToAny END -->
+
+    <!-- Tab Mô tả -->
+    <div class="row px-xl-5 mt-5">
+        <div class="col">
+            <div class="nav nav-tabs justify-content-center border-secondary mb-4">
+                <a class="nav-item nav-link active" data-toggle="tab" href="#tab-pane-1">Mô tả chi tiết</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-specs">Thông số kỹ thuật</a>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab-pane-1">
+                    @if (!string.IsNullOrWhiteSpace(Model.ChiTiet))
+                    {
+                        <div class="product-detail desc-text spec-card">
+                            @Html.Raw(Model.ChiTiet)
+                        </div>
+                    }
+                </div>
+
+                <div class="tab-pane fade" id="tab-specs">
+                    @if (!string.IsNullOrWhiteSpace(Model.ThongSoKyThuat))
+                    {
+                        <div class="spec-card table-responsive">
+                            @Html.Raw(Model.ThongSoKyThuat)
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted m-0">Chưa có thông số kỹ thuật.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Phần làm cái Microformats *@
+@* <div class="h-product">
+    <h1 class="p-name">@Model.TenSanPham</h1>
+
+    <img class="u-photo"
+         src="@Url.Content("~/" + ((Model.HinhAnh?.Contains('/') ?? false) ? Model.HinhAnh : $"images/products/{Model.HinhAnh}"))"
+         alt="@Model.TenSanPham" />
+
+    <p class="p-description">@Html.Raw(Model.MoTa)</p>
+
+    <p>Danh mục: <span class="p-category">@Model.DanhMuc?.TenDanhMuc</span></p>
+
+    <p>SKU: <span class="p-identifier">@Model.SanPhamId</span></p>
+
+    <p>Giá: <span class="p-price u-price">@Model.Gia</span> <span class="p-currency">VND</span></p>
+
+    <a class="u-url" href="@Url.Action("DetailsBySlug", "SanPham", new { slug = Model.Slug }, Context.Request.Scheme)">Xem chi tiết</a>
+</div> *@
+
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        $(document).ready(function () {
+            window.addToCart = function (productId) {
+                $.ajax({
+                    url: '/Cart/AddToCartAjax',
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#cart-count').text(response.cartCount);
+                            Toastify({
+                                text: "🎉 Đã thêm sản phẩm vào giỏ hàng!",
+                                duration: 3000,
+                                gravity: "top",
+                                position: "right",
+                                backgroundColor: "#28a745",
+                                close: true,
+                                stopOnFocus: true
+                            }).showToast();
+                        } else {
+                            Toastify({
+                                text: "❌ Lỗi: " + response.message,
+                                duration: 3000,
+                                gravity: "top",
+                                position: "right",
+                                backgroundColor: "#dc3545",
+                                close: true
+                            }).showToast();
+                        }
+                    },
+                    error: function () {
+                        Toastify({
+                            text: "❌ Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "#dc3545",
+                            close: true
+                        }).showToast();
+                    }
+                });
+            }
+
+            window.addToWishlist = function (productId) {
+                $.ajax({
+                    url: '/Wishlist/AddToWishlistAjax',
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#wishlist-count').text(response.wishlistCount);
+                            Toastify({
+                                text: "💖 " + response.message,
+                                duration: 3000,
+                                gravity: "top",
+                                position: "right",
+                                backgroundColor: "#ff4081",
+                                close: true,
+                                stopOnFocus: true
+                            }).showToast();
+                        } else {
+                            Toastify({
+                                text: "⚠️ " + response.message,
+                                duration: 3000,
+                                gravity: "top",
+                                position: "right",
+                                backgroundColor: "#ffc107",
+                                close: true
+                            }).showToast();
+                        }
+                    },
+                    error: function () {
+                        Toastify({
+                            text: "❌ Có lỗi xảy ra khi thêm vào yêu thích!",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "#dc3545",
+                            close: true
+                        }).showToast();
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        $(function () {
+          // auto format bảng trong thông số
+          $('#tab-specs table')
+            .addClass('table table-hover align-middle')
+            .find('th').addClass('text-nowrap'); // header gọn
+        });
+    </script>
+    <script type="application/ld+json">
+        @Html.Raw(ViewData["JsonLd"])
+    </script> 
+}

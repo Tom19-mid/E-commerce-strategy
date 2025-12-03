@@ -1,0 +1,1448 @@
+﻿@{
+    ViewData["Title"] = "FAQs";
+    Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+}
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <!-- Font Awesome cho icon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --accent: #FF6666; /* màu chủ đạo */
+            --muted: #6b6b6b;
+            --bg: #fffaf9;
+            --card-bg: #ffffff;
+            --max-width: 1200px;
+            --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Tahoma;
+            color: #222;
+            background: #fafafa;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Top search bar like the screenshot */
+        .hero-search {
+            background: var(--accent);
+            padding: 28px 16px;
+            color: white;
+        }
+
+        .hero-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 20px;
+            color: white;
+        }
+
+        .search-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .search-wrap input {
+                width: 100%;
+                padding: 14px 18px;
+                border-radius: 6px;
+                border: 2px solid rgba(255,255,255,0.2);
+                font-size: 16px;
+                background: white;
+                color: black;
+                outline: none;
+            }
+
+            .search-wrap button {
+                background: transparent;
+                color: white;
+                border: 2px solid white;
+                padding: 12px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 16px;
+                margin-left: 2%;
+                transition: all 0.4s ease; 
+            }
+
+            .search-wrap button:hover {
+                background-color: #FFCCCC;
+            }
+
+
+        /* Main layout: left nav + right content */
+        .main {
+            max-width: var(--max-width);
+            margin: 26px auto;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            padding: 0 16px 60px;
+        }
+
+        /* Left categories */
+        .left-nav {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 16px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+            .left-nav h4 {
+                margin: 0 0 10px;
+                font-size: 20px;
+                color: #222;
+            }
+
+        .cat-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            padding: 10px 10px; /* nếu muốn tiêu đề sát hơn có thể giảm padding-bottom */
+            margin: 0; /* loại margin thừa */
+            font-weight: 600;
+            color: #222;
+        }
+
+            .cat-toggle:hover {
+                color: #FF6666;
+            }
+
+            /* chevron rotate */
+            .cat-toggle .chev i {
+                transition: transform 240ms ease;
+                display: inline-block;
+            }
+
+                .cat-toggle .chev i.rotate {
+                    transform: rotate(180deg);
+                }
+
+            /* focus styles */
+            .cat-toggle:focus-visible {
+                outline: 2px solid #FF6666;
+                outline-offset: 3px;
+                border-radius: 4px;
+            }
+
+            .cat-toggle:focus:not(:focus-visible) {
+                outline: none;
+            }
+
+        /* ===== smooth accordion ===== */
+        .cat-list {
+            margin: 0; /* ← QUAN TRỌNG: loại margin-top:8px */
+            padding-left: 10px;
+            font-size: 16px;
+            box-sizing: border-box; /* tránh padding làm thay đổi box model */
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            padding-top: 0; /* ban đầu không có khoảng thừa */
+            transition: max-height 320ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease, padding-top 220ms ease;
+            will-change: max-height, opacity;
+        }
+
+            .cat-list.open {
+                opacity: 1;
+                padding-top: 4px; /* khoảng nhẹ khi mở — chỉnh 2-6px tuỳ thích */
+            }
+
+            /* link styling */
+            .cat-list a {
+                display: block;
+                color: var(--muted);
+                padding: 6px 0;
+                text-decoration: none;
+                color: black;
+            }
+
+                .cat-list a:hover {
+                    color: #FF6666;
+                }
+
+                .cat-list a.active {
+                    color: #FF6666;
+                    font-weight: 600;
+                }
+
+
+        /* Right: FAQ content */
+        .content {
+            min-height: 300px;
+        }
+
+            .content h2 {
+                margin: 0 0 18px;
+                font-size: 26px;
+                display: flex;
+                gap: 12px;
+                align-items: center;
+            }
+
+        .faq-grid {
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* Accordion card */
+        .faq-card {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .faq-q {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            cursor: pointer;
+            background: linear-gradient(0deg, rgba(231,74,43,0.03), transparent);
+            gap: 12px;
+        }
+
+            .faq-q .left {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+            }
+
+            .faq-q h3 {
+                margin: 0;
+                font-size: 16px;
+                font-weight: 700;
+            }
+
+        .faq-a {
+            padding: 16px 20px;
+            border-top: 1px solid #f3f3f3;
+            color: #333;
+            display: none;
+            line-height: 1.6;
+            background: linear-gradient(180deg, rgba(0,0,0,0.01), transparent);
+        }
+
+        /* open state */
+        .faq-card.open .faq-a {
+            display: block;
+        }
+
+        .faq-card.open .faq-q .chev {
+            transform: rotate(180deg);
+        }
+
+        /* small helper text */
+        .muted {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* responsive */
+        @@media (max-width: 600px) {
+            .foo {
+                font-size: 14px;
+            }
+        }
+
+        .left-nav {
+            position: relative;
+            top: auto;
+            margin-bottom: 12px;
+        }
+
+        {
+            grid-template-columns: 1fr;
+            padding-bottom: 40px;
+        }
+
+        .left-nav {
+            position: relative;
+            top: auto;
+            margin-bottom: 12px;
+        }
+
+        {
+            grid-template-columns: 1fr;
+            padding-bottom: 40px;
+        }
+
+        .left-nav {
+            position: relative;
+            top: auto;
+            margin-bottom: 12px;
+        }
+
+        /* {
+            grid-template-columns: 1fr;
+            padding-bottom: 40px;
+        } */
+
+        .left-nav {
+            position: relative;
+            top: auto;
+            margin-bottom: 12px;
+        }
+        /* Chữ phát sáng khi tìm thấy khớp */
+        .highlight{
+            color: #FF6666;
+            font-weight: 600;
+        }
+
+
+        /* Thanh trang */
+        /* container */
+        .faq-pagination {
+            display: flex;
+            justify-content: flex-end; /* canh phải */
+            margin: 20px 0;
+            padding-right: 40px; /* tránh dính sát mép */
+            max-width: 900px; /* hoặc 100% tùy layout */
+            margin-left: auto;
+            margin-right: auto; /* giúp canh trong vùng nội dung */
+        }
+
+
+        /* số trang */
+        .page-numbers {
+            display: inline-flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .page-btn {
+            display: inline-block;
+            min-width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            font-weight: 500;
+            color: #333;
+            background: transparent;
+            border: none;
+        }
+
+            .page-btn:hover {
+                text-decoration: underline;
+            }
+
+            /* nút active */
+            .page-btn.active {
+                color: var(--accent);
+                font-weight: 700;
+            }
+
+            /* Ẩn viền mặc định khi click bằng chuột */
+            .page-btn:focus {
+                outline: none; /* ẩn focus mặc định */
+                box-shadow: none;
+            }
+
+            /* Hiển thị dấu focus thân thiện cho keyboard users */
+            .page-btn:focus-visible {
+                outline: 2px solid var(--accent); /* hoặc màu khác bạn thích */
+                outline-offset: 3px;
+                border-radius: 6px;
+            }
+
+
+        /* ẩn nếu chỉ 1 trang */
+        .faq-pagination.hidden {
+            display: none;
+        }
+
+        /* Gợi ý đang được chọn bằng phím */
+        #suggestionsList li.active {
+            background: rgba(255, 102, 102, 0.1);
+            color: #FF6666;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- HERO / Search -->
+    <div class="hero-search">
+        <div class="hero-container">
+            <div class="brand">
+                <i class="fa-solid fa-headset"></i>
+                <span>Trung tâm trợ giúp 4TL-SHOP</span>
+            </div>
+
+            <div class="search-wrap" style="max-width:760px; position:relative;">
+                <form id="globalSearchForm" style="display:flex; width:100%;" autocomplete="off">
+                    <input id="globalSearch" placeholder="Nhập từ khóa hoặc nội dung cần tìm (ví dụ: bảo hành, đổi trả, giao hàng...)" />
+                    <button id="globalSearchBtn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+
+                <!-- Suggestions dropdown -->
+                <div id="searchSuggestions" style="display:none; position:absolute; left:0; right: 9%; top:58px; background:#fff; color: black;border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.12); z-index:999; max-height:320px; overflow:auto;">
+                    <ul id="suggestionsList" style="list-style:none; margin:0; padding:8px;"></ul>
+                </div>
+            </div>
+
+            <!-- overlay "no results" (ẩn mặc định) -->
+            <div id="noResultsOverlay" style="display:none; position:fixed; left:50%; top:30%; transform:translateX(-50%); width:80%; max-width:900px; background:#fff; box-shadow:0 8px 30px rgba(0,0,0,0.2); border-radius:8px; padding:40px; z-index:9999; text-align:center;">
+                <!-- bạn có thể thay ảnh / bỏ ảnh -->
+                <div style="font-size:56px; opacity:0.12; margin-bottom:8px;">🔍</div>
+                <h3 style="margin:0 0 6px;">Không tìm được kết quả phù hợp</h3>
+                <p style="color:#777; margin:0 0 18px;">Vui lòng thử với từ khóa khác hoặc kiểm tra chính tả.</p>
+                <button id="noResultsClose" style="padding:8px 14px; border-radius:6px; border:1px solid #ddd; background:#fff; cursor:pointer;">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+        <!-- LEFT NAV -->
+        <aside class="left-nav" aria-label="Danh mục trợ giúp">
+            <h4>Danh mục trợ giúp</h4>
+            @* MUA SẮM *@
+            <div>
+                <button class="cat-toggle">Mua sắm cùng 4TL <span class="chev"><i class="fa-solid fa-chevron-down"></i></span></button>
+                <div class="cat-list">
+                    <a href="#" data-filter="Đặt hàng">Đặt hàng</a>
+                    <a href="#" data-filter="Thanh toán">Thanh toán</a>
+                    <a href="#" data-filter="Khuyến mãi & Voucher">Khuyến mãi & Voucher</a>
+                    <a href="#" data-filter="Khuyến mãi">Khuyến mãi</a>
+                </div>
+            </div>
+            @* ĐƠN HÀNG & GIAO HÀNG *@
+            <div>
+                <button class="cat-toggle">Đơn hàng & Vận chuyển <span class="chev"><i class="fa-solid fa-chevron-down"></i></span></button>
+                <div class="cat-list">
+                    <a href="#" data-filter="Theo dõi đơn hàng">Theo dõi đơn hàng</a>
+                    <a href="#" data-filter="Chính sách giao hàng">Chính sách giao hàng</a>
+                    <a href="#" data-filter="Giao hàng nhanh">Giao hàng nhanh</a>
+                    <a href="#" data-filter="Hủy đơn hàng">Hủy đơn hàng</a>
+                </div>
+            </div>
+            @* BẢO HÀNH & ĐỔI TRẢ *@
+            <div>
+                <button class="cat-toggle">Bảo hành & Đổi trả <span class="chev"><i class="fa-solid fa-chevron-down"></i></span></button>
+                <div class="cat-list">
+                    <a href="#" data-filter="Chính sách bảo hành">Chính sách bảo hành</a>
+                    <a href="#" data-filter="Đổi trả hàng">Đổi trả hàng</a>
+                </div>
+            </div>
+            @* TÀI KHOẢN & BẢO MẬT *@
+            <div>
+                <button class="cat-toggle">Thông tin chung <span class="chev"><i class="fa-solid fa-chevron-down"></i></span></button>
+                <div class="cat-list">
+                    <a href="#" data-filter="Tài khoản & Đăng nhập">Tài khoản & Đăng nhập</a>
+                    <a href="#" data-filter="Tài khoản">Quên mật khẩu</a>
+                    <a href="#" data-filter="Chính sách bảo mật">Chính sách bảo mật</a>
+                </div>
+            </div>
+            @* HỖ TRỢ KHÁCH HÀNG *@
+            <div>
+                <button class="cat-toggle">Hỗ trợ khách hàng
+                    <span class="chev"><i class="fa-solid fa-chevron-down"></i></span>
+                </button>
+                <div class="cat-list">
+                    <a href="#" data-filter="Liên hệ hỗ trợ">Liên hệ hỗ trợ</a>
+                    <a href="#" data-filter="Sản phẩm hết hàng">Sản phẩm hết hàng</a>
+                </div>
+            </div>
+        </aside>
+
+
+        <!-- RIGHT CONTENT -->
+        <section class="content" aria-labelledby="faqTitle">
+            <h2 id="faqTitle"><i class="fa-solid fa-circle-info" style="color:var(--accent)"></i> Câu hỏi thường gặp (FAQs)</h2>
+
+            <!-- FAQ list -->
+            <div id="faqList" class="faq-grid">
+                <!-- FAQ 1 -->
+                <article class="faq-card" data-tags="Đặt hàng">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-phone" style="color:var(--accent)"></i>
+                            <h3>Tôi có thể đặt hàng qua điện thoại không?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Có. Bạn có thể gọi đến <strong>1900.1111</strong> để nhân viên hỗ trợ đặt hàng trực tiếp. Khi đặt qua điện thoại, nhân viên sẽ xác nhận đơn và phương thức giao/nhận.</p>
+                        <p class="muted">Gợi ý: Bạn cũng có thể đặt nhanh qua website hoặc ứng dụng để kiểm tra chi tiết kho hàng và khuyến mãi.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 2 -->
+                <article class="faq-card" data-tags="Theo dõi đơn hàng">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-truck-fast" style="color:var(--accent)"></i>
+                            <h3>Thời gian giao hàng mất bao lâu?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Thời gian giao hàng thông thường từ <strong>24–72 giờ</strong> tùy khu vực. Với khu vực nông thôn hoặc huyện đảo, thời gian có thể lâu hơn. Trong trang chi tiết đơn hàng bạn có thể xem dự kiến ngày giao.</p>
+                        <p class="muted">Lưu ý: các chương trình sale lớn (Flash Sale) có thể dẫn đến thời gian xử lý lâu hơn 1-2 ngày.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 3 -->
+                <article class="faq-card" data-tags="Chính sách giao hàng">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-box-open" style="color:var(--accent)"></i>
+                            <h3>Tôi có được kiểm tra hàng trước khi thanh toán không?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Có. Khi nhận hàng tại nhà (COD hoặc thanh toán tại điểm giao), bạn có quyền kiểm tra ngoại quan, nguồn điện và phụ kiện đi kèm trước khi thanh toán. Tuy nhiên không nên mở toàn bộ hộp để tránh mất quyền đổi trả theo chính sách.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 4 -->
+                <article class="faq-card" data-tags="Chính sách bảo hành">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-shield" style="color:var(--accent)"></i>
+                            <h3>Chính sách bảo hành cho điện thoại và laptop như thế nào?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Sản phẩm chính hãng thường được bảo hành từ <strong>12 - 24 tháng</strong> tùy hãng. Linh kiện (ví dụ: sạc, cáp) thường bảo hành <strong>6 tháng</strong>. Thời gian và điều kiện bảo hành cụ thể được ghi trên hóa đơn kèm phiếu bảo hành.</p>
+                        <p class="muted">Để bảo hành, bạn cần: hóa đơn/phiếu giao hàng và phiếu bảo hành (nếu có), đồng thời sản phẩm không thuộc trường hợp hỏng do va đập, rơi vỡ, vào nước.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 5 -->
+                <article class="faq-card" data-tags="Đổi trả hàng">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-rotate-left" style="color:var(--accent)"></i>
+                            <h3>Điều kiện đổi trả / hoàn tiền là gì?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Chúng tôi chấp nhận đổi trả trong <strong>7 ngày</strong> kể từ khi nhận hàng nếu sản phẩm có lỗi nhà sản xuất hoặc không đúng mô tả. Sản phẩm phải còn nguyên vẹn, phụ kiện và tem hãng.</p>
+                        <p class="muted">Hoàn tiền sẽ được xử lý khi cửa hàng xác nhận tình trạng sản phẩm; thời gian hoàn về tài khoản có thể mất 3–7 ngày làm việc tùy ngân hàng.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 6 -->
+                <article class="faq-card" data-tags="Thanh toán">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-credit-card" style="color:var(--accent)"></i>
+                            <h3>Hỗ trợ các phương thức thanh toán nào?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Hỗ trợ: COD (thu hộ), Thẻ nội địa/Quốc tế, Chuyển khoản ngân hàng, và các ví điện tử phổ biến.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 7 -->
+                <article class="faq-card" data-tags="Tài khoản & Đăng nhập">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-user" style="color:var(--accent)"></i>
+                            <h3>Tôi có cần đăng ký tài khoản để mua hàng không?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Có. Khi đăng ký tài khoản, bạn sẽ có lịch sử đơn hàng, dễ dàng đổi trả và hưởng được khuyến mãi dành cho thành viên.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 8 -->
+                <article class="faq-card" data-tags="Khuyến mãi & Voucher">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-ticket" style="color:var(--accent)"></i>
+                            <h3>Làm sao để sử dụng mã khuyến mãi / voucher?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Trong bước thanh toán, ô "Mã giảm giá" cho phép bạn nhập voucher hợp lệ. Mỗi voucher có điều kiện áp dụng (sản phẩm, đơn hàng tối thiểu, thời gian). Nếu không áp dụng được, kiểm tra điều kiện hoặc hạn sử dụng.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 9 -->
+                <article class="faq-card" data-tags="Giao hàng nhanh">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-bolt" style="color:var(--accent)"></i>
+                            <h3>Có hỗ trợ giao hàng trong ngày không?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Có. Dịch vụ giao hàng trong ngày áp dụng tại khu vực nội thành Hà Nội và TP. Hồ Chí Minh cho đơn đặt trước <strong>14h</strong> và có sẵn hàng tại kho.</p>
+                        <p class="muted">Phí giao nhanh có thể thay đổi tùy vị trí và loại sản phẩm.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 10 -->
+                <article class="faq-card" data-tags="Hủy đơn hàng">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-ban" style="color:var(--accent)"></i>
+                            <h3>Tôi có thể hủy đơn hàng sau khi đặt không?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Bạn có thể hủy đơn hàng trước khi đơn được xác nhận hoặc chuyển sang trạng thái “Đang giao”. Hãy truy cập mục “Lịch sử đơn hàng” và chọn <strong>Hủy đơn hàng</strong>.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 11 -->
+                <article class="faq-card" data-tags="Chính sách bảo mật">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-lock" style="color:var(--accent)"></i>
+                            <h3>Thông tin cá nhân của tôi được bảo vệ như thế nào?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Chúng tôi tuân thủ nghiêm ngặt quy định bảo mật dữ liệu. Mọi thông tin thanh toán được mã hóa SSL và không lưu trữ số thẻ. Dữ liệu cá nhân chỉ được sử dụng để phục vụ giao dịch và chăm sóc khách hàng.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 12 -->
+                <article class="faq-card" data-tags="Liên hệ hỗ trợ">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-headset" style="color:var(--accent)"></i>
+                            <h3>Làm sao để liên hệ bộ phận chăm sóc khách hàng?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Bạn có thể gọi hotline <strong>1900.6009</strong> hoặc gửi email đến <strong>cskh@4tlshop.com</strong>. Thời gian hỗ trợ: <strong>8h00 – 21h00</strong> hàng ngày, kể cả cuối tuần.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 13 -->
+                <article class="faq-card" data-tags="Tài khoản">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-envelope-circle-check" style="color:var(--accent)"></i>
+                            <h3>Tôi quên mật khẩu tài khoản thì phải làm sao?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Vào trang đăng nhập, chọn <strong>“Quên mật khẩu”</strong>. Hệ thống sẽ gửi email khôi phục đến <strong>địa chỉ email mà bạn đã đăng ký</strong>. Làm theo hướng dẫn để tạo mật khẩu mới.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 14 -->
+                <article class="faq-card" data-tags="Khuyến mãi">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-gift" style="color:var(--accent)"></i>
+                            <h3>Tôi có thể áp dụng nhiều mã khuyến mãi cùng lúc không?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Không. Mỗi đơn hàng chỉ áp dụng được một mã giảm giá cùng lúc. Tuy nhiên bạn vẫn có thể kết hợp với điểm thưởng hoặc voucher quà tặng khác nếu đủ điều kiện.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 15 -->
+                <article class="faq-card" data-tags="Sản phẩm hết hàng">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-box" style="color:var(--accent)"></i>
+                            <h3>Sản phẩm tôi muốn mua đang hết hàng thì sao?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Bạn có thể bấm nút <strong>“Thông báo khi có hàng”</strong> trên trang sản phẩm. Khi hàng về lại, hệ thống sẽ gửi thông báo qua email hoặc SMS cho bạn.</p>
+                    </div>
+                </article>
+                <!-- FAQ 16 -->
+                <article class="faq-card" data-tags="Trả góp">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-hand-holding-dollar" style="color:var(--accent)"></i>
+                            <h3>Có hỗ trợ mua trả góp không?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Có. Chúng tôi hợp tác với nhiều đối tác tài chính để cung cấp hình thức trả góp 0% hoặc trả góp có lãi. Khi checkout, chọn hình thức <strong>Trả góp</strong> và làm theo hướng dẫn để hoàn tất hồ sơ.</p>
+                        <p class="muted">Điều kiện phê duyệt trả góp phụ thuộc vào đối tác tài chính và hồ sơ khách hàng.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 17 -->
+                <article class="faq-card" data-tags="Mã giảm giá">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-ticket-simple" style="color:var(--accent)"></i>
+                            <h3>Tôi nhập mã giảm giá nhưng báo lỗi, phải làm sao?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Kiểm tra lại điều kiện của mã: thời gian hiệu lực, danh mục sản phẩm áp dụng, và giá trị đơn hàng tối thiểu. Nếu mã chỉ áp dụng cho thành viên, bạn cần đăng nhập. Nếu vẫn lỗi, liên hệ CSKH để kiểm tra.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 18 -->
+                <article class="faq-card" data-tags="Bảo hành mở rộng">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-award" style="color:var(--accent)"></i>
+                            <h3>Có thể mua gói bảo hành mở rộng không?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Có. Một số sản phẩm cho phép mua <strong>bảo hành mở rộng</strong> trong lúc thanh toán hoặc trong vòng 7 ngày sau khi nhận hàng. Xem chi tiết trên trang sản phẩm hoặc liên hệ hỗ trợ.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 19 -->
+                <article class="faq-card" data-tags="Theo dõi đơn hàng, Tracking">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-qrcode" style="color:var(--accent)"></i>
+                            <h3>Làm sao để theo dõi đơn hàng bằng mã vận đơn?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Khi đơn hàng được chuyển cho đơn vị vận chuyển, bạn sẽ nhận được <strong>mã vận đơn (tracking)</strong> qua SMS/email. Dùng mã này tra cứu trên website của đơn vị vận chuyển để xem trạng thái giao.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 21 -->
+                <article class="faq-card" data-tags="Đặt hàng quốc tế">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-plane" style="color:var(--accent)"></i>
+                            <h3>Có giao hàng quốc tế không?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Hiện tại chúng tôi hỗ trợ giao hàng nội địa. Với nhu cầu giao quốc tế, vui lòng liên hệ bộ phận chăm sóc khách hàng để được tư vấn phương án và chi phí cụ thể.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 22 -->
+                <article class="faq-card" data-tags="Phiếu quà tặng">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-gift" style="color:var(--accent)"></i>
+                            <h3>Làm sao để mua/áp dụng phiếu quà tặng (gift card)?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Bạn có thể mua phiếu quà tặng trên website tại mục <strong>Phiếu quà tặng</strong>. Khi thanh toán, nhập mã phiếu ở ô mã giảm giá để trừ tiền. Lưu ý hạn dùng và điều kiện áp dụng.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 23 -->
+                <article class="faq-card" data-tags="Hoàn tiền">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-money-bill-transfer" style="color:var(--accent)"></i>
+                            <h3>Hoàn tiền COD thì tiền hoàn lại như thế nào?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Nếu đơn hàng thanh toán COD bị hoàn/huỷ, tiền sẽ được hoàn về tài khoản ngân hàng hoặc thẻ đã thanh toán (nếu có). Thời gian xử lý hoàn tiền thường mất <strong>3–7 ngày làm việc</strong>.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 24 -->
+                <article class="faq-card" data-tags="Đánh giá, Feedback">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-star" style="color:var(--accent)"></i>
+                            <h3>Làm sao để đánh giá sản phẩm sau khi mua?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Sau khi nhận hàng, vào mục <strong>Đơn hàng của tôi</strong> → chọn đơn → bấm <strong>Đánh giá</strong>. Bạn có thể chấm sao và để lại nhận xét để hỗ trợ người mua khác.</p>
+                    </div>
+                </article>
+
+                <!-- FAQ 25 -->
+                <article class="faq-card" data-tags="Sao kê đơn hàng">
+                    <div class="faq-q">
+                        <div class="left">
+                            <i class="fa-solid fa-file-invoice" style="color:var(--accent)"></i>
+                            <h3>Làm sao để lấy hoá đơn hoặc sao kê đơn hàng?</h3>
+                        </div>
+                        <div class="chev"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-a">
+                        <p>Bạn có thể yêu cầu xuất hoá đơn hoặc sao kê trong trang chi tiết đơn hoặc liên hệ CSKH kèm mã đơn hàng để được hỗ trợ xuất hoá đơn điện tử.</p>
+                    </div>
+                </article>
+                <!-- Thanh trang -->
+                <div id="faqPagination" class="faq-pagination">
+                    <div id="faqPageNumbers" class="page-numbers" aria-label="Phân trang FAQ"></div>
+                </div>
+
+            </div> <!-- /faq-grid -->
+        </section>
+    </div>
+
+    <!-- JSON-LD FAQ Schema (ví dụ cho SEO) -->
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@@type": "Question",
+              "name": "Tôi có thể đặt hàng qua điện thoại không?",
+              "acceptedAnswer": {
+                "@@type": "Answer",
+                "text": "Có. Gọi 1900..."
+              }
+            }
+          ]
+        }
+    </script>
+
+    <script>
+        /* ====== SCRIPTS FAQ (đã làm sạch & sync) ====== */
+        (function(){
+          // --- LEFT NAV (allow multiple open) ---
+          const toggles = Array.from(document.querySelectorAll('.cat-toggle'));
+
+          function getList(btn){
+            const next = btn?.nextElementSibling;
+            return next && next.classList && next.classList.contains('cat-list') ? next : null;
+          }
+
+          function attachObserver(list){
+            if (!list) return;
+            if (list.__ro) return list.__ro;
+            if ('ResizeObserver' in window) {
+              const ro = new ResizeObserver(() => {
+                if (list.classList.contains('open')) {
+                  list.style.maxHeight = Math.max(0, list.scrollHeight - 1) + 'px';
+                }
+              });
+              ro.observe(list);
+              list.__ro = ro;
+              return ro;
+            } else {
+              const imgs = Array.from(list.querySelectorAll('img'));
+              const onImgLoad = () => { if (list.classList.contains('open')) list.style.maxHeight = list.scrollHeight + 'px'; };
+              imgs.forEach(img => { if (!img.complete) img.addEventListener('load', onImgLoad); });
+              list.__imgFallback = onImgLoad;
+              return null;
+            }
+          }
+
+          toggles.forEach(btn => {
+            btn.setAttribute('aria-expanded', 'false');
+            const list = getList(btn);
+            if (list && !list.classList.contains('open')) list.style.maxHeight = '0px';
+
+            btn.addEventListener('click', () => {
+              const l = getList(btn);
+              if (!l) return;
+              const isOpen = l.classList.contains('open');
+              if (isOpen) {
+                if (getComputedStyle(l).maxHeight === 'none') {
+                  l.style.maxHeight = l.scrollHeight + 'px';
+                  l.offsetHeight;
+                }
+                l.style.maxHeight = '0px';
+                l.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
+                btn.querySelector('.chev i')?.classList.remove('rotate');
+              } else {
+                l.classList.add('open');
+                l.style.maxHeight = l.scrollHeight + 'px';
+                btn.setAttribute('aria-expanded', 'true');
+                btn.querySelector('.chev i')?.classList.add('rotate');
+                attachObserver(l);
+                const onEnd = (e) => {
+                  if (e.propertyName !== 'max-height') return;
+                  l.removeEventListener('transitionend', onEnd);
+                  requestAnimationFrame(() => { l.style.maxHeight = l.scrollHeight + 'px'; });
+                };
+                l.addEventListener('transitionend', onEnd);
+              }
+            });
+          });
+
+          document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.cat-list').forEach(l => {
+              if (l.querySelector('a.active')) {
+                l.classList.add('open');
+                l.style.maxHeight = l.scrollHeight + 'px';
+                const btn = l.previousElementSibling;
+                if (btn) { btn.setAttribute('aria-expanded', 'true'); btn.querySelector('.chev i')?.classList.add('rotate'); }
+                attachObserver(l);
+              } else {
+                l.style.maxHeight = '0px';
+              }
+            });
+          });
+
+          window.addEventListener('resize', () => {
+            document.querySelectorAll('.cat-list.open').forEach(l => { l.style.maxHeight = l.scrollHeight + 'px'; });
+          });
+
+          // --- FAQ card click toggle ---
+          document.querySelectorAll('.faq-q').forEach(q => {
+            q.addEventListener('click', () => {
+              const card = q.parentElement;
+              if (!card) return;
+              card.classList.toggle('open');
+            });
+          });
+
+          // --- SEARCH (light shim kept minimal) ---
+          const globalInput = document.getElementById('globalSearch');
+          const globalBtn = document.getElementById('globalSearchBtn');
+          const globalForm = document.getElementById('globalSearchForm');
+          const faqCards = Array.from(document.querySelectorAll('.faq-card'));
+          const noResultsOverlay = document.getElementById('noResultsOverlay');
+
+          function safeFaqCards() { return faqCards || Array.from(document.querySelectorAll('.faq-card')); }
+
+          function filterFaqs(term) {
+            const q = (term || '').trim().toLowerCase();
+            let visible = 0;
+            safeFaqCards().forEach(card => {
+              const title = (card.querySelector('h3')?.textContent || '').toLowerCase();
+              const body = (card.querySelector('.faq-a')?.textContent || '').toLowerCase();
+              const tags = (card.dataset.tags || '').toLowerCase();
+              const match = !q || title.includes(q) || body.includes(q) || tags.includes(q);
+              card.style.display = match ? '' : 'none';
+              if (match) {
+                visible++;
+                if (q) card.classList.add('open');
+              } else {
+                card.classList.remove('open');
+              }
+            });
+
+            if (noResultsOverlay) {
+              noResultsOverlay.style.display = visible === 0 ? 'block' : 'none';
+            }
+            return visible;
+          }
+
+          function doGlobalSearch(term) {
+            const t = (typeof term === 'string' ? term : (globalInput?.value || '')).trim();
+            const visible = filterFaqs(t);
+
+            // cập nhật pagination nếu module phân trang đã load
+            if (window.faqPagination && typeof window.faqPagination.rebuildFromVisible === 'function') {
+              window.faqPagination.rebuildFromVisible();
+            }
+
+            return visible;
+          }
+
+          if (globalBtn) {
+            globalBtn.addEventListener('click', function (e) {
+              e.preventDefault();
+              const term = globalInput?.value?.trim() || '';
+
+              // <-- gọi clearLeftNavHighlight ở đây, chỉ khi bấm nút search
+              if (typeof clearLeftNavHighlight === 'function') clearLeftNavHighlight();
+
+              if (typeof window.doSearch === 'function') {
+                window.doSearch(term);
+              } else if (typeof window.doSearchFAQ === 'function') {
+                window.doSearchFAQ(term);
+              } else {
+                doGlobalSearch(term);
+              }
+
+              // ẩn suggestions nếu có
+              if (typeof window.hideSuggestions === 'function') window.hideSuggestions();
+              // Không xóa input ngay — để user nhìn thấy từ vừa search
+            });
+          }
+
+          function clearLeftNavHighlight() {
+          document.querySelectorAll('.cat-list a.active').forEach(a => a.classList.remove('active'));
+              document.querySelectorAll('.left-nav .cat-list.open').forEach(list => {
+                list.classList.remove('open');
+                list.style.maxHeight = '0px';
+                const btn = list.previousElementSibling;
+                if (btn && btn.classList.contains('cat-toggle')) {
+                  btn.setAttribute('aria-expanded', 'false');
+                  btn.querySelector('.chev i')?.classList.remove('rotate');
+                }
+              });
+          }
+
+
+          // Enter key in global input triggers same search
+          if (globalInput) {
+            globalInput.addEventListener('keydown', function (e) {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                doGlobalSearch();
+              }
+            });
+          }
+
+          if (globalForm) {
+            globalForm.addEventListener('submit', function (e) {
+              e.preventDefault();
+              const term = globalInput?.value?.trim() || '';
+
+              if (typeof window.doSearch === 'function') {
+                window.doSearch(term);
+              } else if (typeof window.doSearchFAQ === 'function') {
+                window.doSearchFAQ(term);
+              } else {
+                doGlobalSearch(term);
+              }
+
+              if (typeof window.hideSuggestions === 'function') window.hideSuggestions();
+              // Không xóa input/blur ở đây
+            });
+          }
+
+          // left-nav category click: fill input temporarily and search, then clear input (but AFTER search)
+          document.querySelectorAll('.cat-list a').forEach(a => {
+            a.addEventListener('click', e => {
+              e.preventDefault();
+              const term = a.dataset.filter || '';
+              if (globalInput) globalInput.value = term;
+
+              if (typeof window.doSearch === 'function') {
+                window.doSearch(term);
+              } else if (typeof doGlobalSearch === 'function') {
+                doGlobalSearch(term);
+              }
+
+              // sau khi gọi tìm -> xóa input và blur
+              if (globalInput) { globalInput.value = ''; globalInput.blur(); }
+            });
+          });
+
+          const faqClear = document.getElementById('faqClear');
+          if (faqClear) {
+            faqClear.addEventListener('click', () => {
+              if (globalInput) globalInput.value = '';
+              filterFaqs('');
+              if (noResultsOverlay) noResultsOverlay.style.display = 'none';
+              if (window.faqPagination && typeof window.faqPagination.rebuildFromVisible === 'function') window.faqPagination.rebuildFromVisible();
+            });
+          }
+
+          const noResultsClose = document.getElementById('noResultsClose');
+          if (noResultsClose && noResultsOverlay) {
+            noResultsClose.addEventListener('click', () => { noResultsOverlay.style.display = 'none'; });
+          }
+
+          // initial show all
+          filterFaqs('');
+        })(); // end first IIFE (left nav + simple search)
+
+        /* ===== COMPLETE FAQ SEARCH + SUGGESTIONS (cleaned & unified) ===== */
+        (function(){
+          if (!document.getElementById) return;
+
+          const globalForm = document.getElementById('globalSearchForm');
+          const globalInput = document.getElementById('globalSearch');
+          const globalBtn = document.getElementById('globalSearchBtn');
+          const suggestionsWrap = document.getElementById('searchSuggestions');
+          const suggestionsList = document.getElementById('suggestionsList');
+          const noResultsOverlay = document.getElementById('noResultsOverlay');
+
+          const faqCards = Array.from(document.querySelectorAll('.faq-card'));
+
+          function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+          function escapeRegExpStr(str){ return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+          function removeAccents(str){
+            if (!str) return '';
+            let s = String(str).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            s = s.replace(/đ/g, 'd').replace(/Đ/g, 'D');
+            return s;
+          }
+          function stripAccentsKeepD(str){
+            if (!str) return '';
+            return String(str).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          }
+
+          const index = faqCards.map(card => {
+            const title = (card.querySelector('h3')?.textContent || '').trim();
+            const body  = (card.querySelector('.faq-a')?.textContent || '').trim();
+            const tags  = (card.dataset.tags || '').trim();
+            return {
+              title, body, tags, card,
+              nTitle: removeAccents(title.toLowerCase()),
+              nBody: removeAccents(body.toLowerCase()),
+              nTags: removeAccents(tags.toLowerCase())
+            };
+          });
+          window.__faqIndex = index;
+
+          function getSuggestions(query){
+            const raw = (query || '').trim();
+            if (!raw) return [];
+            const tokens = removeAccents(raw.toLowerCase()).split(/\s+/).filter(Boolean);
+            if (tokens.length === 0) return [];
+            const out = [];
+            for (const it of index) {
+              const haystack = `${it.nTitle} ${it.nBody} ${it.nTags}`;
+              let ok = true;
+              for (const tok of tokens) { if (!haystack.includes(tok)) { ok = false; break; } }
+              if (ok) { out.push({ text: it.title, tag: it.tags, card: it.card }); if (out.length >= 8) break; }
+            }
+            return out;
+          }
+
+          function renderSuggestions(sugs){
+            if (!suggestionsList || !suggestionsWrap) return;
+            suggestionsList.innerHTML = '';
+            if(!sugs || sugs.length === 0){ suggestionsWrap.style.display = 'none'; return; }
+            suggestionsWrap.style.display = '';
+
+            const rawQuery = (globalInput?.value || '').trim();
+            const normQ = removeAccents(rawQuery.toLowerCase());
+            const tokens = normQ.split(/\s+/).filter(Boolean);
+            const escTokens = tokens.map(t => escapeRegExpStr(t));
+
+            sugs.forEach((s) => {
+              const original = s.text || '';
+
+              let normStr = '';
+              const mapNormToOrig = [];
+              for (let i = 0; i < original.length; i++){
+                const ch = original[i];
+                const n = stripAccentsKeepD(ch);
+                for (let k = 0; k < n.length; k++){
+                  normStr += n[k];
+                  mapNormToOrig.push(i);
+                }
+              }
+
+              const ranges = [];
+              escTokens.forEach(tok => {
+                const re = new RegExp(tok, 'gi');
+                let m;
+                while ((m = re.exec(removeAccents(normStr))) !== null) {
+                  const startNorm = m.index;
+                  const lenNorm = m[0].length;
+                  const origStart = mapNormToOrig[startNorm];
+                  const origEnd = mapNormToOrig[startNorm + lenNorm - 1];
+                  if (typeof origStart === 'number' && typeof origEnd === 'number') ranges.push({ start: origStart, end: origEnd });
+                  if (startNorm === re.lastIndex) re.lastIndex++;
+                }
+              });
+
+              let html = escapeHtml(original);
+              if (ranges.length){
+                ranges.sort((a,b)=>a.start-b.start);
+                const merged = [];
+                ranges.forEach(r=>{
+                  if(!merged.length) merged.push({start:r.start,end:r.end});
+                  else {
+                    const last = merged[merged.length-1];
+                    if (r.start <= last.end+1) last.end = Math.max(last.end,r.end);
+                    else merged.push({start:r.start,end:r.end});
+                  }
+                });
+
+                let lastIdx = 0, built = '';
+                merged.forEach(r=>{
+                  built += escapeHtml(original.slice(lastIdx, r.start));
+                  built += `<span class="highlight">${escapeHtml(original.slice(r.start, r.end+1))}</span>`;
+                  lastIdx = r.end + 1;
+                });
+                built += escapeHtml(original.slice(lastIdx));
+                html = built;
+              }
+
+              const prefix = s.tag ? `<span class="suggestion-tag">[${escapeHtml(s.tag)}]</span> ` : '';
+              const li = document.createElement('li');
+              li.style.padding = '10px 12px';
+              li.style.cursor = 'pointer';
+              li.innerHTML = `<div style="flex:1; font-size:18px; ">${prefix}${html}</div>`;
+
+              li.addEventListener('click', () => {
+                if (globalInput) globalInput.value = s.text;
+
+                // call canonical search function
+                if (typeof doSearch === 'function') {
+                  doSearch(s.text);
+                } else if (typeof doGlobalSearch === 'function') {
+                  doGlobalSearch(s.text);
+                }
+
+                // after search, clear input (UX choice) and hide suggestions
+                if (globalInput) { globalInput.value = ''; globalInput.blur(); }
+                hideSuggestions();
+
+                const nr = document.getElementById('noResultsOverlay');
+                if (nr) nr.style.display = 'none';
+              });
+
+              li.addEventListener('mouseenter', ()=> li.style.background = '#f5f5f5');
+              li.addEventListener('mouseleave', ()=> li.style.background = 'transparent');
+
+              suggestionsList.appendChild(li);
+            });
+          }
+
+          function hideSuggestions(){ if(suggestionsWrap) suggestionsWrap.style.display = 'none'; if(suggestionsList) suggestionsList.innerHTML = ''; }
+          function showNoResults(){ if(noResultsOverlay) noResultsOverlay.style.display = 'block'; }
+          function hideNoResults(){ if(noResultsOverlay) noResultsOverlay.style.display = 'none'; }
+
+          function filterFaqs(term){
+            const q = (term||'').trim().toLowerCase();
+            let visible = 0;
+            faqCards.forEach(card => {
+              const title = (card.querySelector('h3')?.textContent || '').toLowerCase();
+              const body = (card.querySelector('.faq-a')?.textContent || '').toLowerCase();
+              const tags = (card.dataset.tags || '').toLowerCase();
+              const match = !q || title.includes(q) || body.includes(q) || tags.includes(q);
+              card.style.display = match ? '' : 'none';
+              if (match) { visible++; if (q) card.classList.add('open'); else card.classList.remove('open'); }
+              else card.classList.remove('open');
+            });
+            return visible;
+          }
+
+          function doSearch(term){
+            const t = (typeof term === 'string' ? term : (globalInput?.value||'')).trim();
+            if (document.getElementById('faqSearch')) document.getElementById('faqSearch').value = t;
+            const n = filterFaqs(t);
+            if (n === 0) showNoResults(); else hideNoResults();
+
+            // update pagination to reflect currently visible FAQs
+            if (window.faqPagination && typeof window.faqPagination.rebuildFromVisible === 'function') {
+              window.faqPagination.rebuildFromVisible();
+            }
+            hideSuggestions();
+          }
+
+          function debounce(fn, wait){ let t; return function(...args){ clearTimeout(t); t = setTimeout(()=> fn.apply(this,args), wait); }; }
+
+          const onInput = debounce(function(){
+            if (!globalInput) return;
+            const v = globalInput.value;
+            if (!v) { hideSuggestions(); return; }
+            const sugs = getSuggestions(v);
+            renderSuggestions(sugs);
+          }, 120);
+
+          if (globalInput) {
+            globalInput.addEventListener('input', onInput);
+
+            globalInput.addEventListener('keydown', function(e){
+              const items = Array.from(suggestionsList.children || []);
+              let selectedIdx = items.findIndex(it => it.classList.contains('active'));
+
+              if (e.key === 'ArrowDown'){
+                e.preventDefault();
+                selectedIdx = Math.min(selectedIdx+1, items.length-1);
+                items.forEach(it=>it.classList.remove('active'));
+                if (items[selectedIdx]) { items[selectedIdx].classList.add('active'); items[selectedIdx].scrollIntoView({block:'nearest'}); }
+              }
+              else if (e.key === 'ArrowUp'){
+                e.preventDefault();
+                selectedIdx = Math.max(selectedIdx-1,0);
+                items.forEach(it=>it.classList.remove('active'));
+                if (items[selectedIdx]) { items[selectedIdx].classList.add('active'); items[selectedIdx].scrollIntoView({block:'nearest'}); }
+              }
+              else if (e.key === 'Enter'){
+                e.preventDefault();
+                const pick = items.find(it=>it.classList.contains('active')) || items[0];
+                if (pick) {
+                  pick.click();
+                } else {
+                  doSearch(globalInput.value);
+                  // do not immediately clear input here — user may want to edit
+                  hideSuggestions();
+                  const nr = document.getElementById('noResultsOverlay');
+                  if (nr) nr.style.display = (document.querySelectorAll('.faq-card[style*="display: none"]').length === document.querySelectorAll('.faq-card').length ? 'block' : 'none');
+                }
+              }
+              else if (e.key === 'Escape'){
+                hideSuggestions();
+              }
+            });
+          }
+
+          document.addEventListener('click', function(e){
+            if (!document.querySelector('.search-wrap')?.contains(e.target)){
+              hideSuggestions();
+            }
+          });
+
+          filterFaqs('');
+          window.doSearchFAQ = doSearch;
+        })(); // end suggestions IIFE
+
+        // Chữ in đậm khi click left-nav link
+        document.addEventListener("DOMContentLoaded", function() {
+          const links = document.querySelectorAll(".cat-list a");
+          links.forEach(link => {
+            link.addEventListener("click", function(e) {
+              e.preventDefault();
+              links.forEach(l => l.classList.remove("active"));
+              this.classList.add("active");
+            });
+          });
+        });
+
+        // ===== Pagination module (add rebuildFromVisible) =====
+        (function(){
+          const perPage = 6;
+          const allFaqs = Array.from(document.querySelectorAll('#faqList .faq-card'));
+          const pageNumbersEl = document.getElementById('faqPageNumbers');
+          const paginationWrapper = document.getElementById('faqPagination');
+
+          let filteredFaqs = allFaqs.slice();
+          let currentPage = 1;
+
+          function buildPagination(totalItems){
+            pageNumbersEl.innerHTML = '';
+            const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
+            paginationWrapper.classList.toggle('hidden', totalPages <= 1);
+
+            for (let p = 1; p <= totalPages; p++){
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              btn.className = 'page-btn';
+              btn.textContent = p;
+              btn.dataset.page = p;
+              btn.addEventListener('click', () => { showPage(p); });
+              pageNumbersEl.appendChild(btn);
+            }
+            setActiveButton(currentPage);
+          }
+
+          function setActiveButton(page){
+            page = Math.max(1, page);
+            Array.from(pageNumbersEl.children).forEach(btn => {
+              btn.classList.toggle('active', Number(btn.dataset.page) === page);
+            });
+          }
+
+          function showPage(page){
+            const totalPages = Math.max(1, Math.ceil(filteredFaqs.length / perPage));
+            if (page < 1) page = 1;
+            if (page > totalPages) page = totalPages;
+            currentPage = page;
+
+            allFaqs.forEach(a => a.style.display = 'none');
+
+            const start = (page - 1) * perPage;
+            const end = start + perPage;
+            for (let i = start; i < end && i < filteredFaqs.length; i++){
+              filteredFaqs[i].style.display = '';
+            }
+
+            setActiveButton(page);
+
+            (function(){
+              const faqListEl = document.getElementById('faqList');
+              if (faqListEl) {
+                const headerOffset = 80;
+                const top = faqListEl.getBoundingClientRect().top + window.scrollY - headerOffset;
+                window.scrollTo({ top, behavior: 'smooth' });
+              }
+            })();
+          }
+
+          function applyFilter(filter){
+            const f = (filter||'').toString().trim().toLowerCase();
+            if (f === '__all' || f === '') filteredFaqs = allFaqs.slice();
+            else filteredFaqs = allFaqs.filter(card => {
+              const tags = (card.dataset.tags||'').toString().toLowerCase();
+              return tags.includes(f);
+            });
+            currentPage = 1;
+            buildPagination(filteredFaqs.length);
+            showPage(1);
+          }
+
+          // NEW: rebuildFromVisible -> build pagination from currently visible cards (after free-text search)
+          function rebuildFromVisible(){
+            filteredFaqs = allFaqs.filter(card => card.style.display !== 'none');
+            currentPage = 1;
+            buildPagination(filteredFaqs.length);
+            showPage(1);
+          }
+
+          document.querySelectorAll('.left-nav a[data-filter]').forEach(a => {
+            a.addEventListener('click', ev => {
+              ev.preventDefault();
+              const filter = a.dataset.filter || '__all';
+              document.querySelectorAll('.left-nav a[data-filter]').forEach(x => x.classList.toggle('active', x === a));
+              applyFilter(filter);
+            });
+            a.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); a.click(); } });
+          });
+
+          applyFilter('__all');
+
+          window.faqPagination = { applyFilter, showPage, rebuildFromVisible };
+        })();
+
+        // clear các active bên danh mục khi bấm icon search
+
+    </script>
+</body>
+</html>

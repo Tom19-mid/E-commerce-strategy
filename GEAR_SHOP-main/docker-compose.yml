@@ -1,0 +1,57 @@
+# version: '3.8'
+
+# services:
+#   database:
+#     image: mcr.microsoft.com/mssql/server
+#     container_name: sql_server
+#     environment:
+#       - ACCEPT_EULA=Y
+#       - MSSQL_SA_PASSWORD=your_strong_password
+#     ports:
+#       - "1433:1433"
+#     volumes:
+#       - sqlserver_data:/var/opt/mssql
+
+#   web:
+#     build: .
+#     container_name: web_app
+#     ports:
+#       - "8080:80"
+#     depends_on:
+#       - database
+#     environment:
+#       - ConnectionStrings:4TL_SHOP=Server=database;Database=4TL_SHOP;User Id=sa;Password=your_strong_password;Trust Server Certificate=True
+
+# volumes:
+#   sqlserver_data:
+
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tl4_shop_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__4TL_SHOP=Server=.\\SQLEXPRESS;Database=4TL_SHOP;User Id=sa;Password=lenhattan123;TrustServerCertificate=True;
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: tl4_shop_db
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=lenhattan123
+      - MSSQL_PID=Express
+    volumes:
+      - sql_data:/var/opt/mssql
+
+volumes:
+  sql_data:

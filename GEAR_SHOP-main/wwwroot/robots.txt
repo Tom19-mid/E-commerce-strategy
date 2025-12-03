@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /Admin/
+
+Allow: /
+
+Sitemap: https://phoebe-tridimensional-nonfashionably.ngrok-free.dev/sitemap.xml
