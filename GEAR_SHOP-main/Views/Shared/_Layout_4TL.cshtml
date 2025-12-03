@@ -521,11 +521,12 @@
                 background-color: #ff4d4f;
                 color: #fff;
             }
+
         /* Messenger */
         .messenger-float {
             position: fixed;
-            bottom: 19%; /* nằm trên nút Liên hệ */
-            right: 3.9%;
+            bottom: 17%; /* nằm trên nút Liên hệ */
+            right: 3.4%;
             width: 56px;
             height: 56px;
             border-radius: 50%;
@@ -556,19 +557,22 @@
             .messenger-float::before {
                 content: "";
                 position: absolute;
-                inset: -6px;
+                inset: -5px;
                 border-radius: 50%;
                 background: rgba(0, 132, 255, 0.35);
                 opacity: 0;
                 transform: scale(0.8);
-                transition: 0.25s ease;
+                transition: all 0.25s ease;
                 z-index: -1;
             }
 
+            /* Khi hover */
             .messenger-float:hover::before {
                 opacity: 1;
-                transform: scale(1);
+                transform: scale(1.08);
+                background: rgba(0, 132, 255, 0.6); /* ĐẬM HƠN */
             }
+
     </style>
 
     @* Subiz *@
