@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /Admin/
+
+Allow: /
+
+Sitemap: https://tetragonal-savagely-boyd.ngrok-free.dev/sitemap.xml

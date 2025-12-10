@@ -1,0 +1,80 @@
+﻿@model TL4_SHOP.Models.UserAccount
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+}
+@{
+    ViewBag.HideChat = true;
+}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 data-i18n="nav_Log_in_to_your_account">Đăng nhập tài khoản</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Login" method="post">
+                        <div class="mb-3">
+                            <label asp-for="Username" class="form-label" data-i18n="nav_Username">Tên đăng nhập</label>
+                            <input asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập..." data-i18n-placeholder="Username_placeholder"/>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label" data-i18n="nav_Password">Mật khẩu</label>
+                            <div class="input-group">
+                                <input asp-for="Password" type="password" class="form-control" id="password" placeholder="Nhập mật khẩu..." data-i18n-placeholder="Password_placeholder"/>
+                                <span class="input-group-text" onclick="togglePassword()" style="cursor: pointer;">
+                                    <i class="fa fa-eye" id="eyeIcon"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <p class="mt-2 text-end">
+                            <a href="/Account/ForgotPassword" data-i18n="a_ForgotPassword">Quên mật khẩu?</a>
+                        </p>
+                        <div class="form-check mb-3">
+                            <input asp-for="RememberMe" class="form-check-input" />
+                            <label asp-for="RememberMe" class="form-check-label" data-i18n="nav_Remember_login">Ghi nhớ đăng nhập</label>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" data-i18n="nav_login">Đăng nhập</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a class="btn btn-outline-danger" href="/Account/ExternalLogin?provider=Google">
+                                <i class="fab fa-google"></i> <span data-i18n="nav_Login_with_Google">Đăng nhập bằng Google</span>
+                            </a>
+                            <a class="btn btn-outline-primary ms-2" href="/Account/ExternalLogin?provider=Facebook">
+                                <i class="fab fa-facebook-f"></i> <span data-i18n="nav_Login_with_Facebook">Đăng nhập bằng Facebook</span>
+                            </a>
+                        </div>
+                        @if (ViewBag.Message != null)
+                        {
+                            <div class="alert alert-info text-center mt-3">
+                                @ViewBag.Message
+                            </div>
+                        }
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <span><span data-i18n="nav_No_account_yet">Chưa có tài khoản ?</span> <a href="/Account/Register" data-i18n="nav_Sign_up">Đăng ký</a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const eyeIcon = document.getElementById("eyeIcon");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
+    }
+</script>

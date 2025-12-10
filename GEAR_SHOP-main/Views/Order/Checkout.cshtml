@@ -1,0 +1,438 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+    ViewData["Title"] = "Thanh toán";
+}
+
+@using TL4_SHOP.Extensions
+@using TL4_SHOP.Models
+
+@{
+    var cart = Context.Session.GetObjectFromJson<List<CartItem>>("GioHang") ?? new List<CartItem>();
+    var tongTien = cart.Sum(x => x.ThanhTien);
+    var phiVanChuyen = 15000;
+    var tongCong = tongTien + phiVanChuyen;
+}
+
+<style>
+    .checkout-page {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .checkout-header {
+        background: linear-gradient(135deg, #D19C97 0%, #C88C8C 100%);
+        padding: 60px 0;
+        margin-bottom: 50px;
+    }
+
+        .checkout-header h1 {
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+    .breadcrumb-custom {
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .breadcrumb-custom li {
+            display: inline-block;
+        }
+
+        .breadcrumb-custom a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+
+            .breadcrumb-custom a:hover {
+                color: white;
+            }
+
+        .breadcrumb-custom .separator {
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0 10px;
+        }
+
+    .checkout-form-section {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: none;
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 30px;
+        padding: 15px 20px;
+        background: linear-gradient(135deg, #D19C97 0%, #C88C8C 100%);
+        border-radius: 10px;
+        text-align: center;
+        text-decoration: none !important;
+    }
+
+        
+        .section-title::before,
+        .section-title::after {
+            content: none !important;
+            border: none !important;
+            background: none !important;
+        }
+
+    .checkout-form-section .form-control,
+    .checkout-form-section textarea {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 12px 15px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+        .checkout-form-section .form-control:focus,
+        .checkout-form-section textarea:focus {
+            border-color: #D19C97;
+            box-shadow: 0 0 0 0.2rem rgba(209, 156, 151, 0.25);
+            outline: none;
+        }
+
+    .checkout-form-section label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .checkout-form-section .form-group {
+        margin-bottom: 20px;
+    }
+
+    .order-summary-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        position: sticky;
+        top: 20px;
+    }
+
+    .order-summary-header {
+        background: linear-gradient(135deg, #D19C97 0%, #C88C8C 100%);
+        color: white;
+        padding: 25px;
+        font-size: 1.4rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .order-summary-body {
+        padding: 30px 25px;
+    }
+
+    .product-list-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2C3E50;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #D19C97;
+        text-align: center;
+    }
+
+    .product-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 15px 0;
+        border-bottom: 1px dashed #e9ecef;
+        gap: 15px;
+    }
+
+        .product-item:last-child {
+            border-bottom: none;
+            margin-bottom: 20px;
+        }
+
+    .product-name {
+        font-size: 1rem;
+        color: #495057;
+        font-weight: 500;
+        flex: 1;
+        line-height: 1.5;
+    }
+
+    .product-price {
+        font-size: 1.1rem;
+        color: #D19C97;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        font-size: 1rem;
+        border-top: 2px solid #f0f0f0;
+    }
+
+        .summary-row:first-of-type {
+            border-top: 3px solid #D19C97;
+            padding-top: 20px;
+        }
+
+        .summary-row.subtotal {
+            font-weight: 700;
+            color: #2C3E50;
+            font-size: 1.1rem;
+        }
+
+            .summary-row.subtotal .summary-value {
+                color: #D19C97;
+                font-size: 1.2rem;
+            }
+
+        .summary-row.shipping {
+            color: #6c757d;
+        }
+
+    .summary-label {
+        font-weight: 600;
+    }
+
+    .summary-value {
+        font-weight: 700;
+        color: #2C3E50;
+    }
+
+    .order-total-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 25px;
+        margin: 0 -25px -25px -25px;
+        border-top: 3px solid #D19C97;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding: 20px 0; 
+        background: none; 
+        border-radius: 0; 
+        box-shadow: none; 
+    }
+
+    .total-label {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2C3E50;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .total-amount {
+        font-size: 2.0rem;
+        font-weight: 500;
+        color: #C88C8C;
+        letter-spacing: 1px;
+    }
+
+    .btn-checkout {
+        background: linear-gradient(135deg, #D19C97 0%, #C88C8C 100%);
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        padding: 18px 30px;
+        border-radius: 10px;
+        width: 100%;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(209, 156, 151, 0.3);
+        cursor: pointer;
+    }
+
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(209, 156, 151, 0.5);
+            background: linear-gradient(135deg, #C88C8C 0%, #B87C7C 100%);
+        }
+
+        .btn-checkout:active {
+            transform: translateY(0);
+        }
+
+    @@media (max-width: 991px) {
+        .order-summary-card {
+            position: static;
+            margin-top: 30px;
+        }
+
+        .checkout-header {
+            padding: 40px 0;
+        }
+
+            .checkout-header h1 {
+                font-size: 1.8rem;
+            }
+    }
+
+    @@media (max-width: 768px) {
+        .checkout-form-section {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            padding: 12px 15px;
+        }
+
+        .btn-checkout {
+            font-size: 1rem;
+            padding: 15px 20px;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+        }
+
+        .total-label {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+
+<div class="checkout-header">
+    <div class="container">
+        <div class="text-center">
+            <h1>THANH TOÁN</h1>
+            <ul class="breadcrumb-custom">
+                <li><a href="/">Trang chủ</a></li>
+                <li class="separator">/</li>
+                <li class="text-white">Thanh toán</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="checkout-page">
+    <form asp-action="Checkout" method="post">
+        @Html.AntiForgeryToken()
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="container">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    ⚠️ @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        }
+
+        <input type="hidden" name="phiVanChuyen" value="@phiVanChuyen" />
+        <input type="hidden" name="tongTien" value="@tongTien" />
+
+        <div class="container pb-5">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="checkout-form-section">
+                        <div class="section-title" style="text-decoration: none;">
+                            📍 Thông tin giao hàng
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Họ và tên <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="tenKhachHang"
+                                       placeholder="Nguyễn Văn A" required />
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Số điện thoại <span class="text-danger">*</span></label>
+                                <input class="form-control" type="tel" name="soDienThoai"
+                                       placeholder="0987654321" required />
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label>Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="diaChiGiaoHang"
+                                       placeholder="123 Đường ABC, Phường XYZ, TP.HCM" required />
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label>Ghi chú</label>
+                                <textarea class="form-control" name="ghiChu" rows="3"
+                                          placeholder="Ghi chú thêm về đơn hàng (Thời gian giao hàng, địa chỉ cụ thể...)"></textarea>
+                            </div>
+                            @if (!User.Identity.IsAuthenticated)
+                            {
+                                <div class="col-md-12 form-group">
+                                    <label>Email nhận thông tin đơn hàng <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="email" name="emailKhach"
+                                           placeholder="example@email.com" required />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="order-summary-card">
+                        <div class="order-summary-header">
+                            🛍️ Đơn hàng của bạn
+                        </div>
+
+                        <div class="order-summary-body">
+                            <div class="product-list-title">
+                                Sản phẩm (@cart.Count)
+                            </div>
+
+                            @foreach (var item in cart)
+                            {
+                                <div class="product-item">
+                                    <span class="product-name">@item.TenSanPham</span>
+                                    <span class="product-price">@item.ThanhTien.ToString("N0")₫</span>
+                                </div>
+                            }
+
+                            <div class="summary-row subtotal">
+                                <span class="summary-label">Tạm tính</span>
+                                <span class="summary-value">@tongTien.ToString("N0")₫</span>
+                            </div>
+
+                            <div class="summary-row shipping">
+                                <span class="summary-label">Phí vận chuyển</span>
+                                <span class="summary-value">@phiVanChuyen.ToString("N0")₫</span>
+                            </div>
+                        </div>
+
+                        <div class="order-total-section">
+                            <div class="total-row">
+                                <span class="total-label">TỔNG CỘNG:</span>
+                                <span class="total-amount">@tongCong.ToString("N0")₫</span>
+                            </div>
+
+                            <button type="submit" class="btn-checkout">
+                                🔒 Tiếp tục thanh toán
+                            </button>
+
+                            <div class="text-center mt-3">
+                                <small class="text-muted">
+                                    🛡️ Thanh toán an toàn & bảo mật
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

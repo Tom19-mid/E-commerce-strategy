@@ -1,0 +1,77 @@
+﻿@model TL4_SHOP.Models.UserAccount
+@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+}
+@{
+    ViewBag.HideChat = true;
+}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 data-i18n="nav_Register_an_account">Đăng ký tài khoản</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Register" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label asp-for="Username" class="form-label" data-i18n="nav_Username">Tên đăng nhập</label>
+                            <input asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập..." data-i18n-placeholder="Username_placeholder" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" class="form-control" placeholder="Nhập email..." data-i18n-placeholder="Enter_your_email_placeholder" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Phone" class="form-label">Phone</label>
+                            <input asp-for="Phone" class="form-control" placeholder="Nhập số điện thoại..." data-i18n-placeholder="Enter_your_phone_placeholder" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label" data-i18n="nav_Password">Mật khẩu</label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu..." data-i18n-placeholder="Password_placeholder" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label" data-i18n="nav_Confirm_password">Xác nhận mật khẩu</label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Nhập lại mật khẩu..." data-i18n-placeholder="Re_enter_your_password_placeholder" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-user-plus"></i> <span data-i18n="nav_Sign_up">Đăng ký</span>
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <span data-i18n="nav_Already_have_an_account">Đã có tài khoản ?</span>
+                            <a asp-area="" asp-controller="Account" asp-action="Login" data-i18n="nav_login">Đăng nhập</a>
+                        </div>
+
+                        @if (ViewBag.Message != null)
+                        {
+                            <div class="text-danger text-center mt-3">
+                                @ViewBag.Message
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

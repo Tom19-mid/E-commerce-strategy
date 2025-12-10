@@ -1,0 +1,620 @@
+﻿@model TL4_SHOP.Models.PaymentResultViewModel
+@{
+    // Title sẽ là "Thanh toán thành công" hoặc "Thanh toán thất bại"
+    ViewData["Title"] = Model.Success ? "Thanh toán thành công" : "Thanh toán thất bại";
+    Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+}
+
+<style>
+    /* Định nghĩa các biến CSS cục bộ để đồng bộ với tone màu web */
+    :root {
+        --primary-color: #D19C97;
+        --dark-pink: #C88C8C;
+        --dark-text: #2C3E50;
+        --light-grey: #f8f9fa;
+        --success-color: #28a745;
+        --failed-color: #dc3545;
+        --alert-background: #fef5f4;
+    }
+
+    .container {
+        font-family: 'Be Vietnam Pro', sans-serif;
+    }
+
+    .result-card {
+        border-radius: 25px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        border: none;
+        overflow: hidden;
+        background: white;
+    }
+
+    /* Tăng khoảng cách cho icon trong nội dung */
+    .me-2 {
+        margin-right: 10px !important;
+    }
+
+    /* --- SUCCESS (Thành công) --- */
+    .success-icon-wrapper {
+        text-align: center;
+    }
+
+    .success-checkmark {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    /* Sử dụng màu Primary của Web (Hồng/Nâu Đỏ) */
+    .check-icon {
+        width: 100px;
+        height: 100px;
+        position: relative;
+        border-radius: 50%;
+        box-sizing: content-box;
+        border: 4px solid var(--primary-color);
+        animation: checkmarkPop 0.6s ease-in-out;
+    }
+
+    .icon-line {
+        background-color: var(--primary-color);
+        height: 5px;
+        display: block;
+        border-radius: 2px;
+        position: absolute;
+        z-index: 10;
+    }
+
+    .line-tip {
+        top: 50px;
+        left: 18px;
+        width: 30px;
+        transform: rotate(45deg);
+        animation: checkmarkTip 0.75s 0.2s ease-in-out;
+    }
+
+    .line-long {
+        top: 43px;
+        right: 10px;
+        width: 55px;
+        transform: rotate(-45deg);
+        animation: checkmarkLong 0.75s 0.4s ease-in-out;
+    }
+
+    .icon-circle {
+        top: -4px;
+        left: -4px;
+        z-index: 10;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        position: absolute;
+        box-sizing: content-box;
+        border: 4px solid rgba(209, 156, 151, 0.2);
+    }
+
+    .icon-fix {
+        top: 8px;
+        width: 7px;
+        left: 30px;
+        z-index: 1;
+        height: 90px;
+        position: absolute;
+        transform: rotate(-45deg);
+        background-color: white;
+    }
+
+    .success-card h2 {
+        color: var(--primary-color) !important;
+    }
+
+    /* --- FAILED (Thất bại) --- */
+    .failed-icon-wrapper {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+        .failed-icon-wrapper i {
+            font-size: 100px;
+            color: var(--failed-color);
+            animation: shake 0.5s ease-in-out;
+        }
+
+    .failed-card h2 {
+        color: var(--failed-color) !important;
+    }
+
+    .reasons-list li::before {
+        color: var(--failed-color);
+    }
+
+    /* Transaction Card */
+    .transaction-card {
+        background: var(--light-grey);
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .transaction-header {
+        background: var(--dark-text);
+        color: white;
+        padding: 20px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .transaction-body {
+        padding: 25px;
+    }
+
+    .transaction-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px dashed #ced4da;
+    }
+
+        .transaction-row:last-of-type {
+            border-bottom: none;
+        }
+
+    .transaction-label {
+        color: #6c757d;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .transaction-value {
+        font-weight: 700;
+        color: var(--dark-text);
+    }
+
+    /* Sử dụng màu Primary của Web (Hồng/Nâu Đỏ) cho Badge/Code */
+    .badge-custom {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+
+        .badge-custom.badge-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+    .transaction-code {
+        background: rgba(209, 156, 151, 0.1);
+        padding: 6px 12px;
+        border-radius: 8px;
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .total-value-success {
+        color: var(--primary-color);
+        font-size: 1.8rem;
+        font-weight: 800;
+    }
+
+    /* Total row */
+    .transaction-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid var(--dark-text);
+    }
+
+    .total-label {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--dark-text);
+        display: flex;
+        align-items: center;
+    }
+
+    /* Info Box (Sử dụng màu nền nhạt của Primary) */
+    .info-box {
+        background: var(--alert-background);
+        border-left: 4px solid var(--primary-color);
+        color: var(--dark-text);
+        display: flex;
+        gap: 15px;
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    .info-icon {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+    }
+
+    .info-content ul {
+        padding-left: 20px;
+        margin-bottom: 0;
+    }
+
+    .info-content li {
+        margin-bottom: 5px;
+    }
+
+    /* Alert Box cho thông tin đơn hàng thất bại */
+    .alert-box.alert-warning-orange {
+        background: #fef8f8;
+        border-left: 4px solid var(--failed-color);
+        color: var(--dark-text);
+        display: flex;
+        gap: 15px;
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+        .alert-box.alert-warning-orange i {
+            color: var(--failed-color);
+        }
+
+    /* Reasons Box */
+    .reasons-box {
+        background: var(--light-grey);
+        border-radius: 15px;
+        padding: 20px;
+        border: 1px solid #e5e7eb;
+    }
+
+        .reasons-box h6 {
+            display: flex;
+            align-items: center;
+        }
+
+    .reasons-list {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+
+        .reasons-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #6b7280;
+        }
+
+            .reasons-list li::before {
+                content: "•";
+                position: absolute;
+                left: 0;
+                color: var(--failed-color);
+                font-size: 1.5rem;
+                line-height: 1;
+            }
+
+
+    /* Action Buttons (Primary Pink / Dark Text Outline) */
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 25px;
+    }
+
+    .btn-modern {
+        flex: 1;
+        padding: 15px 25px;
+        border-radius: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        min-width: 200px;
+        border: none;
+    }
+
+    /* Nút chính (Hồng/Nâu Đỏ) */
+    .btn-primary-orange {
+        background: var(--primary-color);
+        color: white;
+        box-shadow: 0 4px 15px rgba(209, 156, 151, 0.4);
+    }
+
+        .btn-primary-orange:hover {
+            transform: translateY(-2px);
+            background: var(--dark-pink);
+            box-shadow: 0 6px 20px rgba(200, 140, 140, 0.6);
+            color: white;
+        }
+
+    /* Nút viền (Đen/Xám đậm) */
+    .btn-outline-orange {
+        background: white;
+        color: var(--dark-text);
+        border: 2px solid var(--dark-text);
+    }
+
+        .btn-outline-orange:hover {
+            background: var(--dark-text);
+            color: white;
+            border: 2px solid var(--dark-text);
+            transform: translateY(-2px);
+        }
+
+    /* Keyframes */
+    @@keyframes checkmarkPop {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        50% {
+            transform: scale(1.2);
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes checkmarkTip {
+        0% {
+            width: 0;
+            left: 1px;
+            top: 19px;
+        }
+
+        54% {
+            width: 0;
+            left: 1px;
+            top: 19px;
+        }
+
+        70% {
+            width: 30px;
+            left: -2px;
+            top: 35px;
+        }
+
+        100% {
+            width: 30px;
+            left: 18px;
+            top: 50px;
+        }
+    }
+
+    @@keyframes checkmarkLong {
+        0% {
+            width: 0;
+            right: 46px;
+            top: 54px;
+        }
+
+        65% {
+            width: 0;
+            right: 46px;
+            top: 54px;
+        }
+
+        84% {
+            width: 55px;
+            right: 0px;
+            top: 35px;
+        }
+
+        100% {
+            width: 55px;
+            right: 10px;
+            top: 43px;
+        }
+    }
+
+    @@keyframes shake {
+        0%, 100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-10px);
+        }
+
+        75% {
+            transform: translateX(10px);
+        }
+    }
+
+
+    @@media (max-width: 576px) {
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-modern {
+            min-width: 100%;
+        }
+    }
+</style>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-7">
+            @if (Model.Success)
+            {
+                <div class="result-card success-card">
+                    <div class="card-body p-5">
+                        <div class="success-icon-wrapper mb-4">
+                            <div class="success-checkmark">
+                                <div class="check-icon">
+                                    <span class="icon-line line-tip"></span>
+                                    <span class="icon-line line-long"></span>
+                                    <div class="icon-circle"></div>
+                                    <div class="icon-fix"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h2 class="text-center mb-2 fw-bold">
+                            Thanh toán thành công!
+                        </h2>
+                        <p class="text-center text-muted mb-4">
+                            Cảm ơn bạn đã mua hàng tại <strong style="color: var(--primary-color);">4TL Shop</strong>
+                        </p>
+
+                        <div class="transaction-card">
+                            <div class="transaction-header">
+                                <i class="fas fa-receipt me-2"></i>
+                                Chi tiết giao dịch
+                            </div>
+                            <div class="transaction-body">
+                                <div class="transaction-row">
+                                    <span class="transaction-label">
+                                        <i class="fas fa-shopping-bag me-2 text-muted"></i>Mã đơn hàng
+                                    </span>
+                                    <span class="transaction-value">
+                                        <span class="badge-custom badge-primary">#@Model.OrderId</span>
+                                    </span>
+                                </div>
+
+                                <div class="transaction-row">
+                                    <span class="transaction-label">
+                                        <i class="fas fa-hashtag me-2 text-muted"></i>Mã giao dịch
+                                    </span>
+                                    <span class="transaction-value">
+                                        <code class="transaction-code">@Model.TransactionId</code>
+                                    </span>
+                                </div>
+
+                                <div class="transaction-row">
+                                    <span class="transaction-label">
+                                        <i class="fas fa-wallet me-2 text-muted"></i>Phương thức
+                                    </span>
+                                    <span class="transaction-value">
+                                        @if (Model.PaymentMethod == "MoMo")
+                                        {
+                                            <img src="https://developers.momo.vn/v3/assets/images/icon-52bd5808cecdb1970e1aeec3c31a3ee1.png" style="width: 20px;" class="me-2">
+                                            <strong>MoMo</strong>
+                                        }
+                                        else if (Model.PaymentMethod == "COD")
+                                        {
+                                            <i class="fas fa-money-bill-wave me-2" style="color: var(--success-color);"></i>
+                                            <strong>COD</strong>
+                                        }
+                                        else
+                                        {
+                                            <strong>@Model.PaymentMethod</strong>
+                                        }
+                                    </span>
+                                </div>
+
+                                <div class="transaction-row">
+                                    <span class="transaction-label">
+                                        <i class="far fa-clock me-2 text-muted"></i>Thời gian
+                                    </span>
+                                    <span class="transaction-value">
+                                        @Model.PaymentTime.ToString("dd/MM/yyyy HH:mm")
+                                    </span>
+                                </div>
+
+                                <div class="transaction-total">
+                                    <span class="total-label">
+                                        <i class="fas fa-coins me-2"></i>Tổng tiền
+                                    </span>
+                                    <span class="total-value-success">
+                                        @Model.Amount.ToString("N0")₫
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-box mt-4">
+                            <div class="info-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="info-content">
+                                <strong>Bước tiếp theo:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Chúng tôi sẽ xác nhận đơn hàng qua email/SMS</li>
+                                    <li>Đơn hàng sẽ được giao trong 2-3 ngày làm việc</li>
+                                    <li>Theo dõi đơn hàng trong mục "Đơn hàng của tôi"</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons mt-4">
+                            <a href="/Order/Detail/@Model.OrderId" class="btn-modern btn-primary-orange">
+                                <i class="fas fa-file-invoice me-2"></i>Xem chi tiết đơn hàng
+                            </a>
+                            <a href="/" class="btn-modern btn-outline-orange">
+                                <i class="fas fa-home me-2"></i>Về trang chủ
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="result-card failed-card">
+                    <div class="card-body p-5">
+                        <div class="failed-icon-wrapper mb-4 text-center">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+
+                        <h2 class="text-center mb-2 fw-bold">
+                            Thanh toán thất bại
+                        </h2>
+                        <p class="text-center text-muted mb-4">
+                            Đã có lỗi xảy ra trong quá trình thanh toán: **@Model.Message**
+                        </p>
+
+                        @if (Model.OrderId > 0)
+                        {
+                            <div class="alert-box alert-warning-orange mb-4">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <div>
+                                    Mã đơn hàng: <strong>#@Model.OrderId</strong><br />
+                                    Số tiền: <strong>@Model.Amount.ToString("N0")₫</strong>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="reasons-box mb-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-question-circle me-2"></i>Nguyên nhân có thể:
+                            </h6>
+                            <ul class="reasons-list">
+                                <li>Số dư tài khoản không đủ</li>
+                                <li>Thông tin thanh toán không chính xác</li>
+                                <li>Phiên giao dịch đã hết hạn</li>
+                                <li>Lỗi kết nối mạng</li>
+                                <li>Bạn đã hủy giao dịch</li>
+                            </ul>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a href="/Payment/SelectMethod?orderId=@Model.OrderId" class="btn-modern btn-primary-orange">
+                                <i class="fas fa-redo me-2"></i> Thử lại thanh toán
+                            </a>
+                            <a href="/Cart/Index" class="btn-modern btn-outline-orange">
+                                <i class="fas fa-shopping-cart me-2"></i> Về giỏ hàng
+                            </a>
+                        </div>
+
+                        <div class="support-text mt-4 text-center">
+                            <small class="text-muted">
+                                Cần hỗ trợ? Liên hệ: <a href="tel:1900xxxx">1900-xxxx</a> hoặc
+                                <a href="mailto:support@4tlshop.vn">support@4tlshop.vn</a>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

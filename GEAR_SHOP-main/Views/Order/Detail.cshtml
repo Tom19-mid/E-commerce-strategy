@@ -1,0 +1,64 @@
+﻿@model TL4_SHOP.Models.ViewModels.DonHangDetailViewModel
+
+@{
+    ViewData["Title"] = "Hóa đơn";
+    Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+}
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+<!-- Libraries Stylesheet -->
+<link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
+
+<h2 style="font-family: Tahoma;"><span data-i18n="nav_Order_details">Chi tiết đơn hàng</span> #@Model.DonHangId</h2>
+<p><strong data-i18n="nav_Customers">Khách hàng:</strong> @Model.TenKhachHang</p>
+<p><strong data-i18n="nav_SDT">SĐT:</strong> @Model.SoDienThoai</p>
+<p><strong data-i18n="nav_Address">Địa chỉ giao hàng:</strong> @Model.DiaChiGiaoHang</p>
+<p><strong data-i18n="nav_Order_date2">Ngày đặt:</strong> @Model.NgayDatHang.ToString("dd/MM/yyyy HH:mm")</p>
+<p><strong data-i18n="nav_Status2">Trạng thái:</strong> @Model.TrangThaiDonHangText</p>
+<p><strong data-i18n="nav_Shipping_fee">Phí vận chuyển:</strong> @Model.PhiVanChuyen.ToString("N0") đ</p>
+<p><strong data-i18n="nav_Total2">Tổng tiền:</strong> @Model.TongTien.ToString("N0") đ</p>
+
+<h4 style="font-family: Tahoma;" data-i18n="nav_Product_details2">Chi tiết sản phẩm:</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th data-i18n="nav_Product_name">Tên sản phẩm</th>
+            <th data-i18n="nav_Quantity">Số lượng</th>
+            <th data-i18n="nav_Unit_price">Đơn giá</th>
+            <th data-i18n="nav_Cash">Thành tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ChiTiet)
+        {
+            <tr>
+                <td>@item.TenSanPham</td>
+                <td>@item.SoLuong</td>
+                <td>@item.DonGia.ToString("N0") đ</td>
+                <td>@item.ThanhTien.ToString("N0") đ</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="TaiHoaDon" asp-route-id="@Model.DonHangId" class="btn btn-success">
+    <i class="fa fa-download"></i> <span data-i18n="nav_Download_PDF_invoice">Tải hóa đơn PDF</span>
+</a>
+@if (Model.TrangThai != 3 && Model.TrangThai != 4 && Model.TrangThai != 5)
+{
+    <form asp-action="Cancel" asp-controller="Order" method="post">
+        <input type="hidden" name="id" value="@Model.DonHangId" />
+        <button type="submit" class="btn btn-danger mt-3">
+            <i class="fa fa-times-circle"></i> <span data-i18n="nav_Cancel_order">Hủy đơn hàng</span>
+        </button>
+    </form>
+}
+

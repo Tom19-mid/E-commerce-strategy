@@ -1,0 +1,116 @@
+﻿@model IEnumerable<TL4_SHOP.Models.ViewModels.DanhMucViewModel>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+<style>
+    #dm-vertical a {
+        display: flex;
+        align-items: center; /* icon + chữ căn giữa */
+        line-height: 1.5;
+    }
+
+    #dm-vertical i {
+        font-size: 16px; /* đồng bộ kích thước icon với chữ */
+        min-width: 20px; /* icon chiếm độ rộng cố định -> chữ thẳng hàng */
+        text-align: center;
+        margin-right: 8px; /* 👈 tạo khoảng cách với chữ */
+    }
+
+    #dm-vertical span {
+        flex: 1; /* chữ chiếm hết khoảng trống */
+    }
+
+    #dm-vertical a:hover {
+        background-color: #f8f9fa;
+        color: #CC9999;
+        text-decoration: none;
+    }
+
+
+</style>
+@functions {
+    string GetIcon(string tenDanhMuc)
+    {
+        switch (tenDanhMuc.ToLower())
+        {
+            case "chuột": return "fas fa-mouse";
+            case "bàn phím": return "fas fa-keyboard";
+            case "điện thoại": return "fas fa-mobile-alt";
+            case "ipad": return "fas fa-tablet-alt";
+            case "màn hình gaming": return "fas fa-tv";
+            case "tai nghe gaming": return "fas fa-headphones";
+            case "laptop gaming": return "fas fa-laptop";
+            case "card màn hình": return "fas fa-microchip";
+            case "ram": return "fas fa-memory";
+            case "tay cầm": return "fas fa-gamepad";
+            default: return "fas fa-folder";
+        }
+    }
+}
+
+@if (Model != null && Model.Any())
+{
+    <ul id="dm-vertical" class="vertical-menu dm-menu" role="menu" aria-label="Danh mục sản phẩm">
+        @foreach (var cha in Model.Where(d => d.DanhMucChaId == null))
+        {
+            <li class="menu-item @(cha.DanhMucCon?.Any() == true ? "has-children" : "")" role="none">
+                <a asp-controller="Home" asp-action="Shop" asp-route-danhMucId="@cha.Id"
+                   class="d-flex align-items-center py-2 px-2">
+                    <i class="@GetIcon(cha.TenDanhMuc)"></i>
+                    <span>@cha.TenDanhMuc</span>
+                    @if (cha.DanhMucCon?.Any() == true)
+                    {
+                        <i class="fas fa-angle-right ms-auto"></i>
+                    }
+                </a>
+
+
+                @if (cha.DanhMucCon?.Any() == true)
+                {
+                    <div class="mega-menu dm-sub" aria-hidden="true">
+                        <div class="row dm-grid">
+                            @foreach (var cap2 in cha.DanhMucCon)
+                            {
+                                <div class="col-md-4 dm-col">
+                                    <a asp-controller="Home" asp-action="Shop" asp-route-danhMucId="@cap2.Id"
+                                       class="fw-bold d-block mb-2 text-danger no-underline dm-section">
+                                        <i class="fas fa-tags me-1"></i> @cap2.TenDanhMuc
+                                    </a>
+                                    <ul class="list-unstyled dm-list">
+                                        @foreach (var cap3 in cap2.DanhMucCon ?? Enumerable.Empty<TL4_SHOP.Models.ViewModels.DanhMucViewModel>())
+                                        {
+                                            <li>
+                                                <a asp-controller="Home"
+                                                   asp-action="Shop"
+                                                   asp-route-danhMucId="@cap3.Id"
+                                                   asp-route-nhaCungCapId="@cap3.NhaCungCapId">
+                                                    @cap3.TenDanhMuc (@cap3.SoLuongSanPham)
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </li>
+        }
+    </ul>
+}
+
+<script>
+    (function () {
+        function isMobile() { return matchMedia('(max-width: 991.98px)').matches; }
+        document.querySelectorAll('#dm-vertical > li.menu-item').forEach(function (li) {
+            var a = li.querySelector(':scope > a');
+            var sub = li.querySelector(':scope > .mega-menu, :scope > .dm-sub');
+            if (!a || !sub) return;
+            a.addEventListener('click', function (e) {
+                if (!isMobile()) return; // desktop vẫn dùng hover
+                e.preventDefault();
+                li.classList.toggle('open');
+            });
+        });
+    })();
+</script>

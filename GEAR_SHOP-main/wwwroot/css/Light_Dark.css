@@ -1,0 +1,135 @@
+﻿:root {
+    --bg-color: #f5f5f5;
+    --text-color: #222;
+    --card-bg: #ffffff;
+    --header-bg: #f8f9fa;
+    --border-color: #ddd;
+}
+
+    :root.dark {
+        --bg-color: #0f172a;
+        --text-color: #e5e7eb;
+        --card-bg: #111827;
+        --header-bg: #020617;
+        --border-color: #374151;
+    }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Override một số màu bootstrap khi ở dark mode */
+:root.dark .bg-light {
+    background-color: var(--header-bg) !important;
+    color: var(--text-color) !important;
+}
+
+:root.dark .bg-secondary {
+    background-color: #111827 !important;
+    color: var(--text-color) !important;
+}
+
+:root.dark .navbar,
+:root.dark .container-fluid {
+    background-color: transparent;
+    color: var(--text-color);
+}
+
+:root.dark .nav-link,
+:root.dark a {
+    color: var(--text-color);
+}
+
+    :root.dark .nav-link:hover {
+        color: #d48e84;
+    }
+
+/* Nút theme + lang */
+.theme-toggle-btn,
+.lang-btn {
+    padding: 2px 8px;
+    font-size: 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    margin-left: 6px;
+}
+
+    .lang-btn.active {
+        background: #D19C97;
+        color: #fff;
+        border-color: #D19C97;
+    }
+/* ===== DARK MODE: đổi màu text FAQ + icon ===== */
+html.dark .text-dark {
+    color: #f9fafb !important;
+}
+
+html.dark .bg-secondary a,
+html.dark .bg-secondary i {
+    color: #f9fafb !important;
+}
+    html.dark .bg-secondary a:hover,
+    html.dark .bg-secondary i:hover {
+        color: #d48e84 !important;
+    }
+
+/* Trong dark mode vẫn giữ chữ đen cho nút btn-light */
+html.dark .btn-light {
+    color: #212529 !important; /* màu chữ mặc định của Bootstrap */
+}
+    /* Hover: đổi chữ sang màu d48e84 */
+    html.dark .btn-light:hover {
+        color: #d48e84 !important;
+    }
+
+/* Dark mode → đổi sang ảnh sáng */
+html.dark .mailchimp-logo {
+    content: url("https://digitalasset.intuit.com/render/content/dam/intuit/mc-fe/en_us/images/intuit-mc-rewards-text-light.svg");
+}
+
+/* ========== PAGINATION - DARK MODE ========== */
+html.dark .pagination .page-link {
+    background-color: #020617; /* nền tối */
+    color: #e5e7eb; /* chữ sáng */
+    border-color: #374151;
+}
+
+    html.dark .pagination .page-link:hover {
+        background-color: #111827;
+        color: #f97316; /* màu accent khi hover */
+    }
+
+html.dark .pagination .page-item.active .page-link {
+    background-color: #f97316; /* trang hiện tại */
+    color: #ffffff;
+    border-color: #f97316;
+}
+
+html.dark .pagination .page-item.disabled .page-link {
+    background-color: #020617;
+    color: #6b7280;
+    border-color: #374151;
+}
+
+/* Chỉ đổi màu khi Dark mode */
+html.dark h5[data-i18n="nav_LienKetNhanh"],
+html.dark h5[data-i18n="nav_SocialMedia"],
+html.dark h5[data-i18n="nav_Support_Hotline"] {
+    color: #d48e84 !important;
+}
+
+html.dark h2[data-i18n="nav_register"] {
+    color: #d48e84 !important;
+}
+
+html.dark i.fa-map-marker-alt, /* Vị trí */
+html.dark i.fa-envelope, /* Mail */
+html.dark i.fa-phone-alt { /* Phone */
+    color: #d48e84 !important;
+}
+

@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Send OTP";
+    Layout = "~/Views/Shared/_Layout_4TL.cshtml";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post">
+
+    <label for="phoneNumber">Phone Number</label>
+
+    <input type="text" id="phoneNumber" name="phoneNumber" required />
+
+    <button type="submit">Send OTP</button>
+
+</form>
