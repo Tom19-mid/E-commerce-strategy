@@ -41,8 +41,6 @@
         padding: 26px 30px;
         background: rgba(255,255,255,0.7);
     }
-
-
 </style>
 
 @* --- Thay block sản phẩm: hiển thị badge giảm giá nếu có --- *@
@@ -172,11 +170,13 @@
                             <a asp-controller="SanPham" asp-action="Details" asp-route-id="@sp.SanPhamId" class="btn btn-sm text-dark p-0">
                                 <i class="fas fa-eye text-primary mr-1"></i> <span data-i18n="nav_Detail">Xem chi tiết</span>
                             </a>
-                            <a href="javascript:void(0);" class="btn btn-sm text-dark p-0 btn-add-to-cart" data-product-id="@sp.SanPhamId">
-                                <i class="fas fa-shopping-cart text-primary mr-1"></i> <span data-i18n="nav_Favorite">Yêu thích</span>
-                            </a>
+
                             <a href="javascript:void(0);" onclick="addToWishlist(@sp.SanPhamId)" class="btn btn-sm text-dark p-0">
-                                <i class="fas fa-heart text-danger mr-1"></i> <span data-i18n="nav_Add_to_cart">Thêm vào giỏ hàng</span>
+                                <i class="fas fa-heart text-danger mr-1"></i> <span data-i18n="nav_Favorite">Yêu thích</span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="btn btn-sm text-dark p-0 btn-add-to-cart" data-product-id="@sp.SanPhamId">
+                                <i class="fas fa-shopping-cart text-primary mr-1"></i> <span data-i18n="nav_Add_to_cart">Thêm vào giỏ hàng</span>
                             </a>
                         </div>
                     </div>

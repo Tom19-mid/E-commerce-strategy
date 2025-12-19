@@ -3,6 +3,23 @@
 	ViewData["Title"] = "Trang yêu thích sản phẩm";
     Layout = "~/Views/Shared/_Layout_4TL.cshtml";
 }
+
+<link rel="stylesheet" href="~/css/Discount.css"/>
+
+<style>
+    
+    .badge-sale-pill {
+        background-color: #dc3545; /* Nền đỏ */
+        color: white; /* Chữ trắng */
+        font-weight: bold;
+        font-size: 0.85rem;
+        padding: 4px 10px; /* Độ dày của badge */
+        border-radius: 50rem; /* Bo tròn hoàn hảo */
+        box-shadow: 0 3px 6px rgba(220, 53, 69, 0.4); /* Đổ bóng nhẹ cho nổi */
+        white-space: nowrap; /* Không xuống dòng */
+    }
+</style>
+
 @if (Model == null || !Model.Any())
 {
     <div class="alert alert-info text-center">
@@ -11,24 +28,64 @@
 }
 else
 {
-    <div class="row">
+    <div class="row" style="margin-top: 20px;">
         @foreach (var item in Model)
         {
+            // 1. Lấy giá gốc: Vì model khai báo là decimal nên dùng trực tiếp, không cần GetValueOrDefault
+            decimal giaGoc = item.SanPham.Gia;
+
+            // 2. Lấy giá giảm: Cái này thường là decimal? (có thể null) nên giữ nguyên GetValueOrDefault
+            decimal giaGiam = item.SanPham.GiaSauGiam.GetValueOrDefault(0);
+
+            // 3. Kiểm tra xem có đang giảm giá thật không
+            bool dangGiamGia = giaGiam > 0 && giaGiam < giaGoc;
+
+            // 4. Tính phần trăm giảm
+            int phanTramGiam = 0;
+            if (dangGiamGia && giaGoc > 0)
+            {
+                phanTramGiam = (int)Math.Round((1 - (giaGiam / giaGoc)) * 100);
+            }
+
             <div class="col-md-3 mb-4">
-                <div class="card h-100 border">
+                <div class="card h-100 shadow rounded-lg border-0">
 					<img class="card-img-top"
 						 src="@Url.Content("~/" + ((item.SanPham.HinhAnh?.Contains('/') ?? false) ? item.SanPham.HinhAnh : $"images/products/{item.SanPham.HinhAnh}"))"
 						 alt="@item.SanPham.TenSanPham"
 						 onerror="this.onerror=null;this.src='@Url.Content("~/images/placeholder-product.png")';" />
                     <div class="card-body text-center">
                         <h6 class="card-title">@item.SanPham.TenSanPham</h6>
-                        <p class="text-danger font-weight-bold">
-                            @item.SanPham.Gia.ToString("N0")₫
-                        </p>
+
+                        <div class="price-box mb-2">
+                            @if (dangGiamGia)
+                            {
+                                    <span class="text-muted ml-2" style="text-decoration: line-through; font-size: 17px; font-weight: bold;">
+                                        @giaGoc.ToString("N0")₫
+                                    </span>
+                                    <br />
+                                    <span class="badge badge-danger position-absolute badge-sale-pill" style="left: 83%;">
+                                        -@phanTramGiam%
+                                    </span>
+                                    <br />
+                                    <span class="text-danger font-weight-bold h5">
+                                        @giaGiam.ToString("N0")₫
+                                    </span>
+                            }
+                            else
+                            {
+                                <span class="text-dark font-weight-bold h5">
+                                    @giaGoc.ToString("N0")₫
+                                </span>
+                                <br />
+
+                                <span style="opacity: 0;">_</span>
+                            }
+                        </div>
+                        
                         <form method="post" asp-action="RemoveFromWishlist" asp-controller="Wishlist">
                             <input type="hidden" name="itemId" value="@item.WishlistItemId" />
-                            <button class="btn btn-sm btn-outline-danger" type="submit">
-                                <i class="fa fa-trash"></i> Xóa
+                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" type="submit">
+                                <i class="fa fa-trash"></i> Bỏ thích
                             </button>
                         </form>
                     </div>

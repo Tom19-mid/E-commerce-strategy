@@ -10,6 +10,32 @@
 <!-- Libraries Stylesheet -->
 <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
+<style>
+    /* Font chữ chung */
+    th, td, h2, h4 {
+        font-family: Tahoma;
+    }
+
+    /* --- CẤU HÌNH BẢNG --- */
+    .table-dam-hon {
+        width: 100%;
+        /* Lệnh này giúp các đường viền dính liền vào nhau thành 1 nét đơn (giống Excel) */
+        border-collapse: collapse !important;
+    }
+
+        /* --- KẺ VIỀN CHO TỪNG Ô --- */
+        /* Đây là phần quan trọng nhất để tạo ra các đường kẻ dọc/ngang như bạn vẽ */
+        .table-dam-hon th,
+        .table-dam-hon td {
+            border: 1px solid #000 !important; /* Kẻ viền đen 1px cho TẤT CẢ các ô */
+            padding: 8px; /* Thêm khoảng cách cho chữ không dính sát viền */
+        }
+
+    h2 {
+        margin-top: 1%;
+    }
+</style>
+
 @if (TempData["Message"] != null)
 {
     <div class="alert alert-info">
@@ -17,7 +43,8 @@
     </div>
 }
 
-<h2 style="font-family: Tahoma;"><span data-i18n="nav_Order_details">Chi tiết đơn hàng</span> #@Model.DonHangId</h2>
+<h2><span data-i18n="nav_Order_details">Chi tiết đơn hàng</span> #@Model.DonHangId</h2>
+
 <p><strong data-i18n="nav_Customers">Khách hàng:</strong> @Model.TenKhachHang</p>
 <p><strong data-i18n="nav_SDT">SĐT:</strong> @Model.SoDienThoai</p>
 <p><strong data-i18n="nav_Address">Địa chỉ giao hàng:</strong> @Model.DiaChiGiaoHang</p>
@@ -27,7 +54,7 @@
 <p><strong data-i18n="nav_Total2">Tổng tiền:</strong> @Model.TongTien.ToString("N0") đ</p>
 
 <h4 style="font-family: Tahoma;" data-i18n="nav_Product_details2">Chi tiết sản phẩm:</h4>
-<table class="table">
+<table class="table table-dam-hon">
     <thead>
         <tr>
             <th data-i18n="nav_Product_name">Tên sản phẩm</th>

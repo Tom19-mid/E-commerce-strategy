@@ -56,7 +56,8 @@ namespace TL4_SHOP.Services
             pay.AddRequestData("vnp_CurrCode", "VND");
             pay.AddRequestData("vnp_IpAddr", ipAddress);
             pay.AddRequestData("vnp_Locale", "vn");
-            pay.AddRequestData("vnp_OrderInfo", orderInfo);
+            string cleanOrderInfo = RemoveSign4VietnameseString(orderInfo);
+            pay.AddRequestData("vnp_OrderInfo", cleanOrderInfo);
             pay.AddRequestData("vnp_OrderType", "other");
             pay.AddRequestData("vnp_TxnRef", orderId.ToString() + "_" + tick);
             pay.AddRequestData("vnp_ExpireDate", DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss"));
@@ -67,6 +68,37 @@ namespace TL4_SHOP.Services
             Console.WriteLine("===================================");
 
             return paymentUrl;
+        }
+        // --- THÊM HÀM TIỆN ÍCH NÀY VÀO CUỐI CLASS ---
+        private static string RemoveSign4VietnameseString(string str)
+        {
+            if (string.IsNullOrEmpty(str)) return str;
+
+            string[] VietnameseSigns = new string[]
+            {
+                "aAeEoOuUiIdDyY",
+                "áàạảãâấầậẩẫăắằặẳẵ",
+                "ÁÀẠẢÃÂẤẦẬẨẪĂẮẰẶẲẴ",
+                "éèẹẻẽêếềệểễ",
+                "ÉÈẸẺẼÊẾỀỆỂỄ",
+                "óòọỏõôốồộổỗơớờợởỡ",
+                "ÓÒỌỎÕÔỐỒỘỔỖƠỚỜỢỞỠ",
+                "úùụủũưứừựửữ",
+                "ÚÙỤỦŨƯỨỪỰỬỮ",
+                "íìịỉĩ",
+                "ÍÌỊỈĨ",
+                "đ",
+                "Đ",
+                "ýỳỵỷỹ",
+                "ÝỲỴỶỸ"
+            };
+
+            for (int i = 1; i < VietnameseSigns.Length; i++)
+            {
+                for (int j = 0; j < VietnameseSigns[i].Length; j++)
+                    str = str.Replace(VietnameseSigns[i][j], VietnameseSigns[0][i - 1]);
+            }
+            return str;
         }
 
         /// <summary>

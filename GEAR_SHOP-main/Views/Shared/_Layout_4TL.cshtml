@@ -172,7 +172,7 @@
                 background-color: #d48e84;
             }
 
-        #newMessageAlert {
+        /* #newMessageAlert {
             position: absolute;
             top: -8px;
             right: 1px;
@@ -184,8 +184,8 @@
             font-weight: bold;
             text-align: center;
             line-height: 20px;
-            border-radius: 50px; /* bo tròn nhẹ để không méo khi số dài */
-            padding: 0 5px; /* giúp co giãn linh hoạt khi có 2–3 chữ số */
+            border-radius: 50px; /* bo tròn nhẹ để không méo khi số dài 
+            padding: 0 5px; /* giúp co giãn linh hoạt khi có 2–3 chữ số 
             display: none;
             box-shadow: 0 0 4px rgba(255, 59, 48, 0.5);
             z-index: 1001;
@@ -245,13 +245,13 @@
                 font-family: Tahoma;
                 font-size: 14px;
                 line-height: 1.4;
-                resize: none; /* không cho kéo thủ công */
+                resize: none; /* không cho kéo thủ công 
                 overflow-y: auto;
                 outline: none;
                 height: 36px;
                 max-height: 120px;
-                white-space: pre-wrap; /* xuống dòng tự nhiên */
-                word-wrap: break-word; /* tự động ngắt từ */
+                white-space: pre-wrap; /* xuống dòng tự nhiên 
+                word-wrap: break-word; /* tự động ngắt từ 
             }
 
             .chat-input button {
@@ -271,7 +271,7 @@
         .chat-input-right {
             position: relative;
             display: flex;
-            justify-content: flex-end; /* căn phải */
+            justify-content: flex-end; /* căn phải 
             padding: 12px;
             border-top: 1px solid #eee;
         }
@@ -282,7 +282,7 @@
         }
 
         .chat-input-right input {
-            width: 300px; /* độ rộng input */
+            width: 300px; /* độ rộng input 
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 12px;
@@ -315,12 +315,12 @@
         }
 
             .message-wrapper.admin {
-                justify-content: flex-start; /* Admin bên trái */
+                justify-content: flex-start; /* Admin bên trái 
                 margin-bottom: 3px;
             }
 
             .message-wrapper.customer {
-                justify-content: flex-end; /* Khách bên phải */
+                justify-content: flex-end; /* Khách bên phải 
                 margin-bottom: 3px;
             }
 
@@ -328,8 +328,8 @@
             padding: 6px 10px;
             border-radius: 8px;
             max-width: 70%;
-            word-wrap: break-word; /* xuống hàng khi quá dài */
-            white-space: pre-wrap; /* giữ khoảng trắng và xuống hàng theo nội dung */
+            word-wrap: break-word; /* xuống hàng khi quá dài 
+            white-space: pre-wrap; /* giữ khoảng trắng và xuống hàng theo nội dung 
         }
 
             .message-bubble.admin {
@@ -347,12 +347,12 @@
                 margin-top: 4px;
             }
 
-        /* Emoji picker */
+        /* Emoji picker 
         .emoji-picker {
             display: none;
             position: absolute;
             bottom: 45px;
-            right: 0; /* đặt bên phải */
+            right: 0; /* đặt bên phải 
             width: 220px;
             max-height: 200px;
             overflow-y: auto;
@@ -364,7 +364,6 @@
             gap: 5px;
             z-index: 10;
         }
-
             .emoji-picker span {
                 cursor: pointer;
                 font-size: 20px;
@@ -372,10 +371,9 @@
                 border-radius: 4px;
                 transition: background 0.2s;
             }
-
                 .emoji-picker span:hover {
                     background: #f1f1f1;
-                }
+                } */
 
         /* ---------- contact pill ---------- */
         .contact-widget {
@@ -602,9 +600,6 @@
             .theme-toggle-btn:hover {
                 color: #d48e84;
             }
-
-
-
     </style>
 
     @* Subiz *@
@@ -741,8 +736,8 @@
 
                     <!-- MỤC DANH MỤC -->
                     <div class="nav-item dropdown position-static">
-                        <a href="#" class="nav-link font-weight-bold" id="megaMenuToggle" role="button" data-i18n="nav_category">
-                            <i class="fas fa-bars mr-1" data-i18n="nav_category"></i> Danh mục
+                        <a href="#" class="nav-link font-weight-bold" id="megaMenuToggle" role="button">
+                            <i class="fas fa-bars mr-1"></i> <span data-i18n="nav_category">Danh mục </span>
                         </a>
                         <div id="megaMenuContent" class="dropdown-menu border-0 p-0 mt-0 bg-white shadow" style="display: none; position: absolute; top: 100%; left: 0; z-index: 9999;">
                             <div class="p-3">
@@ -775,7 +770,7 @@
                     }
                     else
                     {
-                        <a asp-controller="AccountOtp" asp-action="SendOtp" class="nav-item nav-link" data-i18n="nav_login_sms">Đăng nhập bằng SMS OTP</a>
+                        @* <a asp-controller="AccountOtp" asp-action="SendOtp" class="nav-item nav-link" data-i18n="nav_login_sms">Đăng nhập bằng SMS OTP</a> *@
                         <a asp-action="Login" asp-controller="Account" class="nav-item nav-link" data-i18n="nav_login">Đăng nhập</a>
                         <a asp-action="Register" asp-controller="Account" class="nav-item nav-link" data-i18n="nav_Sign_up">Đăng ký</a>
                     }

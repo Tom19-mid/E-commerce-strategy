@@ -3,7 +3,25 @@
     ViewData["Title"] = "Lịch sử đơn hàng";
     Layout = "~/Views/Shared/_Layout_4TL.cshtml";
 }
-<h2 style="font-family: Tahoma;" data-i18n="nav_Your_order_history">Lịch sử đơn hàng của bạn</h2>
+
+<style>
+    th, td{
+        font-family: Tahoma;
+    }
+
+    /* Tạo class mới để không ảnh hưởng các bảng khác */
+    .table-dam-hon,
+    .table-dam-hon th,
+    .table-dam-hon td {
+        border: 1px solid #000 !important; /* 2px là độ dày, #000 là màu đen */
+    }
+
+    h2{
+        margin-top: 1%;
+        font-family: Tahoma;
+    }
+</style>
+<h2 data-i18n="nav_Your_order_history">Lịch sử đơn hàng của bạn</h2>
 
 @if (Model.Count == 0)
 {
@@ -11,7 +29,7 @@
 }
 else
 {
-        <table class="table table-bordered">
+        <table class="table table-bordered table-dam-hon">
             <thead>
                 <tr>
                     <th data-i18n="nav_Order_code">Mã đơn</th>
@@ -30,7 +48,7 @@ else
                             <td>@dh.TrangThaiDonHangText</td>
                             <td>@dh.TongTien.ToString("N0") đ</td>
                             <td>
-                        <a asp-action="Detail" asp-controller="Order" asp-route-id="@dh.DonHangId" class="btn btn-sm btn-primary" data-i18n="nav_view">Xem</a>
+                        <a asp-action="Detail" asp-controller="Order" asp-route-id="@dh.DonHangId" class="btn btn-sm btn-primary" style="border-radius: 15px; padding: 10px" data-i18n="nav_view">Xem</a>
                             </td>
                         </tr>
             }
