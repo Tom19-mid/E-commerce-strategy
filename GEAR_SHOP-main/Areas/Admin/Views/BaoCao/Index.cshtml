@@ -1,128 +1,206 @@
 ﻿@model GEAR_SHOP.Models.ViewModels.BaoCaoDoanhThuVM
 @{
-    ViewData["Title"] = "Báo cáo doanh thu";
-    Layout = "~/Areas/Admin/Views/Shared/_Admin_Layout.cshtml";
+	ViewData["Title"] = "Báo cáo doanh thu";
+	Layout = "~/Areas/Admin/Views/Shared/_Admin_Layout.cshtml";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h4 class="mb-0">Báo cáo doanh thu</h4>
+	<h4 class="mb-0">Báo cáo doanh thu</h4>
 </div>
 
 <form method="get" class="card p-3 mb-4">
-  <div class="row g-3 align-items-end">
-    <div class="col-12 col-md-2">
-            <label class="form-label">Chế độ</label>
-            <select asp-for="Mode" class="form-select">
-                <option value="day">Theo ngày</option>
-                <option value="month">Theo tháng (năm)</option>
-                <option value="year">Theo năm</option>
-            </select>
-    </div>
-    <div class="col-6 col-md-2 @(Model.Mode=="day"?"":"d-none")">
-      <label class="form-label">Từ ngày</label>
-      <input type="date" name="from" value="@(Model.From?.ToString("yyyy-MM-dd"))" class="form-control"/>
-    </div>
-    <div class="col-6 col-md-2 @(Model.Mode=="day"?"":"d-none")">
-      <label class="form-label">Đến ngày</label>
-      <input type="date" name="to" value="@(Model.To?.ToString("yyyy-MM-dd"))" class="form-control"/>
-    </div>
-    <div class="col-6 col-md-2 @(Model.Mode=="month"?"":"d-none")">
-      <label class="form-label">Năm</label>
-      <input type="number" name="year" value="@(Model.Year ?? DateTime.Today.Year)" class="form-control" min="2000" max="2100"/>
-    </div>
-    <div class="col-6 col-md-2">
-      <button class="btn btn-primary w-100"><i class="bx bx-filter"></i> Áp dụng</button>
-    </div>
-  </div>
+	<div class="row g-3 align-items-end">
+		<div class="col-12 col-md-2">
+			<label class="form-label">Chế độ</label>
+			<select asp-for="Mode" class="form-select">
+				<option value="day">Theo ngày</option>
+				<option value="month">Theo tháng (năm)</option>
+				<option value="year">Theo năm</option>
+			</select>
+		</div>
+		<div class="col-6 col-md-2 @(Model.Mode == "day" ? "" : "d-none")">
+			<label class="form-label">Từ ngày</label>
+			<input type="date" name="from" value="@(Model.From?.ToString("yyyy-MM-dd"))" class="form-control" />
+		</div>
+		<div class="col-6 col-md-2 @(Model.Mode == "day" ? "" : "d-none")">
+			<label class="form-label">Đến ngày</label>
+			<input type="date" name="to" value="@(Model.To?.ToString("yyyy-MM-dd"))" class="form-control" />
+		</div>
+		<div class="col-6 col-md-2 @(Model.Mode == "month" ? "" : "d-none")">
+			<label class="form-label">Năm</label>
+			<input type="number" name="year" value="@(Model.Year ?? DateTime.Today.Year)" class="form-control" min="2000" max="2100" />
+		</div>
+		<div class="col-6 col-md-2">
+			<button class="btn btn-primary w-100"><i class="bx bx-filter"></i> Áp dụng</button>
+		</div>
+	</div>
 </form>
 
 <div class="row g-3 mb-4">
-  <div class="col-md-3">
-    <div class="card kpi">
-      <div class="card-body">
-        <small class="text-muted d-block">Đơn hàng đã bán</small>
-        <h4 class="mb-0">@Model.TongSoDonHang</h4>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card kpi">
-      <div class="card-body">
-        <small class="text-muted d-block">Sản phẩm bán</small>
-        <h4 class="mb-0">@Model.TongSoLuong</h4>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card kpi">
-      <div class="card-body">
-        <small class="text-muted d-block">Doanh thu</small>
-        <h4 class="mb-0 money">@Model.TongDoanhThu.ToString("N0") ₫</h4>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card kpi">
-      <div class="card-body">
-        <small class="text-muted d-block">Lợi nhuận</small>
-        <h4 class="mb-0 money">@Model.TongLoiNhuan.ToString("N0") ₫</h4>
-      </div>
-    </div>
-  </div>
+	<div class="col-md-3">
+		<div class="card kpi">
+			<div class="card-body">
+				<small class="text-muted d-block">Đơn hàng đã bán</small>
+				<h4 class="mb-0">@Model.TongSoDonHang</h4>
+				<a asp-area="Admin"
+				   asp-controller="BaoCao"
+				   asp-action="DonHang_Details"
+				   asp-route-mode="@Model.Mode"
+				   asp-route-from="@Model.From"
+				   asp-route-to="@Model.To"
+				   asp-route-year="@Model.Year"
+				   class="kpi-link text-muted">
+					Xem chi tiết
+					<i class="bx bx-right-arrow-alt"></i>
+				</a>
+
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="card kpi">
+			<div class="card-body">
+				<small class="text-muted d-block">Sản phẩm bán</small>
+				<h4 class="mb-0">@Model.TongSoLuong</h4>
+				<a asp-area="Admin" 
+				   asp-controller="BaoCao" 
+				   asp-action="SanPhamDaBan_Details"
+				   asp-route-mode="@Model.Mode"
+				   asp-route-from="@Model.From"
+				   asp-route-to="@Model.To"
+				   asp-route-year="@Model.Year" class="kpi-link text-muted">
+					Xem chi tiết
+					<i class="bx bx-right-arrow-alt"></i>
+				</a>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="card kpi">
+			<div class="card-body">
+				<small class="text-muted d-block">Doanh thu</small>
+				<h4 class="mb-0 money">@Model.TongDoanhThu.ToString("N0") ₫</h4>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="card kpi">
+			<div class="card-body">
+				<small class="text-muted d-block">Lợi nhuận</small>
+				<h4 class="mb-0 money">@Model.TongLoiNhuan.ToString("N0") ₫</h4>
+				<a asp-area="Admin"
+				   asp-controller="BaoCao"
+				   asp-action="ChiPhiTheoSanPham"
+				   asp-route-mode="@Model.Mode"
+				   asp-route-from="@Model.From"
+				   asp-route-to="@Model.To"
+				   asp-route-year="@Model.Year"
+				   class="kpi-link text-muted">
+					Xem chi phí theo sản phẩm
+				</a>
+
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="card">
-  <div class="card-body">
-    <div id="chart" style="height:360px"></div>
-  </div>
+	<div class="card-body">
+		<div id="chart" style="height:360px"></div>
+	</div>
 </div>
 
 @section Scripts {
-<script>
-  (function(){
-    const el = document.querySelector('#chart');
-    const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Labels));
-    const data   = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Values));
-    const opt = {
-      chart: { type: 'area', height: 360, toolbar: { show: false }, zoom: { enabled: false } },
-      series: [{ name: 'Doanh thu', data }],
-      xaxis: { categories: labels },
-      yaxis: { labels: { formatter: v => new Intl.NumberFormat('vi-VN').format(v) } },
-      dataLabels: { enabled: false },
-      stroke: { curve: 'smooth', width: 3 },
-      grid: { borderColor: '#eee', strokeDashArray: 4 },
-      tooltip: { y: { formatter: v => new Intl.NumberFormat('vi-VN').format(v) + ' ₫' } }
-    };
-    new ApexCharts(el, opt).render();
-  })();
-</script>
+	<script>
+		(function(){
+		  const el = document.querySelector('#chart');
+		  const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Labels));
+		  const data   = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Values));
+		  const opt = {
+			chart: { type: 'area', height: 360, toolbar: { show: false }, zoom: { enabled: false } },
+			series: [{ name: 'Doanh thu', data }],
+			xaxis: { categories: labels },
+			yaxis: { labels: { formatter: v => new Intl.NumberFormat('vi-VN').format(v) } },
+			dataLabels: { enabled: false },
+			stroke: { curve: 'smooth', width: 3 },
+			grid: { borderColor: '#eee', strokeDashArray: 4 },
+			tooltip: { y: { formatter: v => new Intl.NumberFormat('vi-VN').format(v) + ' ₫' } }
+		  };
+		  new ApexCharts(el, opt).render();
+		})();
+	</script>
 }
 @section Styles {
-    <style>
-        .kpi {
-            border-radius: 16px;
-            box-shadow: 0 6px 18px rgba(0,0,0,.06);
-        }
+	<style>
+		.kpi {
+			border-radius: 16px;
+			box-shadow: 0 6px 18px rgba(0,0,0,.06);
+		}
 
-            .kpi .title {
-                color: #6b7280;
-                font-weight: 600;
-            }
+			.kpi .title {
+				color: #6b7280;
+				font-weight: 600;
+			}
 
-            .kpi .val {
-                font-variant-numeric: tabular-nums;
-                font-weight: 700;
-                font-size: 1.25rem;
-            }
+			.kpi .val {
+				font-variant-numeric: tabular-nums;
+				font-weight: 700;
+				font-size: 1.25rem;
+			}
 
-        .toolbar .btn-apply {
-            border-radius: 12px;
-            font-weight: 700;
-        }
+		.toolbar .btn-apply {
+			border-radius: 12px;
+			font-weight: 700;
+		}
 
-        .chart-card {
-            border-radius: 16px;
-            box-shadow: 0 6px 18px rgba(0,0,0,.06);
-        }
-    </style>
+		.chart-card {
+			border-radius: 16px;
+			box-shadow: 0 6px 18px rgba(0,0,0,.06);
+		}
+
+		/* Hover link KPI */
+		.kpi-link {
+			font-size: .85rem;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			color: inherit;
+			text-decoration: none;
+			transition: color 0.25s ease;
+		}
+
+			.kpi-link i {
+				opacity: 0;
+				transform: translateX(-4px);
+				transition: all 0.25s ease;
+			}
+
+			.kpi-link:hover,
+			.kpi-link.text-muted:hover { /* fix màu bị text-muted ghi đè */
+				color: var(--bs-primary, #4f46e5);
+			}
+
+				.kpi-link:hover i {
+					opacity: 1;
+					transform: translateX(0);
+				}
+
+			/* Focus bằng bàn phím cũng có hiệu ứng */
+			.kpi-link:focus-visible {
+				outline: none;
+				color: var(--bs-primary, #4f46e5);
+				text-decoration: underline;
+			}
+
+				.kpi-link:focus-visible i {
+					opacity: 1;
+					transform: translateX(0);
+				}
+
+		/* Tuỳ chọn: hover cả card thì icon hiện */
+		.kpi-card:hover .kpi-link i {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	</style>
 }

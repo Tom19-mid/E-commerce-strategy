@@ -1,0 +1,37 @@
+﻿@using TL4_SHOP.Models.ViewModels
+
+@model List<DonHangItemVM>
+@{
+	ViewData["Title"] = "Danh sách đơn hàng";
+	Layout = "~/Areas/Admin/Views/Shared/_Admin_Layout.cshtml";
+}
+<style>
+	th {
+		font-weight: bold;
+	}
+</style>
+<body>
+	<h4>Danh sách đơn hàng</h4>
+
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Mã đơn</th>
+				<th>Ngày đặt</th>
+				<th>Tổng tiền</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var d in Model)
+			{
+				<tr>
+					<td>@d.DonHangId</td>
+					<td>@d.NgayDatHang.ToString("dd/MM/yyyy HH:mm")</td>
+					<td>@d.TongTien.ToString("N0")</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</body>
+
+

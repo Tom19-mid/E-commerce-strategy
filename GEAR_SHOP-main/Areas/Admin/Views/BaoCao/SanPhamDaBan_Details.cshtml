@@ -1,0 +1,26 @@
+﻿@using TL4_SHOP.Models.ViewModels
+
+@model List<SanPhamBanVM>
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Admin_Layout.cshtml";
+}
+<style>
+    th {
+        font-weight: bold;
+    }
+</style>
+<h4>Sản phẩm đã bán</h4>
+<table class="table">
+    <tr>
+        <th>Sản phẩm</th>
+        <th>Số lượng</th>
+    </tr>
+    @foreach (var sp in Model)
+    {
+        <tr>
+            <td>@sp.TenSanPham</td>
+            <td>@sp.TongSoLuong</td>
+        </tr>
+    }
+</table>

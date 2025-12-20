@@ -1,0 +1,29 @@
+﻿@using TL4_SHOP.Models.ViewModels
+@model List<ChiPhiSanPhamVM>
+@{
+    ViewData["Title"] = "Danh sách đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_Admin_Layout.cshtml";
+}
+<h4>Chi phí theo sản phẩm</h4>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Số lượng bán</th>
+            <th>Giá nhập TB</th>
+            <th>Tổng chi phí</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sp in Model)
+        {
+            <tr>
+                <td>@sp.TenSanPham</td>
+                <td>@sp.SoLuongBan</td>
+                <td>@sp.GiaNhapTrungBinh.ToString("N0")</td>
+                <td>@sp.TongChiPhi.ToString("N0")</td>
+            </tr>
+        }
+    </tbody>
+</table>
