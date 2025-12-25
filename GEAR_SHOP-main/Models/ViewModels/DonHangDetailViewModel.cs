@@ -10,6 +10,9 @@
         public decimal PhiVanChuyen { get; set; }
         public decimal TongTien { get; set; }
         public int? TrangThai { get; set; }
+        public string? TransactionId { get; set; }
+        public string? PayPalUITransactionId { get; set; }
+        public string? PhuongThucThanhToan { get; set; }
 
         public string TrangThaiDonHangText
         {

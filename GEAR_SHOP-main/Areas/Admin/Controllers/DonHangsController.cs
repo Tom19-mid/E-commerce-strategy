@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using PayPalCheckoutSdk.Orders;
 using TL4_SHOP.Data;
 using TL4_SHOP.Models.ViewModels;
-using Microsoft.Data.SqlClient;
 
 namespace TL4_SHOP.Areas.Admin.Controllers
 {
@@ -92,11 +93,14 @@ namespace TL4_SHOP.Areas.Admin.Controllers
             var vm = new DonHangDetailViewModel
             {
                 DonHangId = dh.DonHangId,
+                TransactionId = dh.TransactionId,
+                PhuongThucThanhToan = dh.PhuongThucThanhToan,
+                PayPalUITransactionId = dh.PayPalUITransactionId,
 
                 // Ưu tiên TenKhachHang lưu trực tiếp trên DonHang; fallback sang KhachHang.HoTen
                 TenKhachHang = !string.IsNullOrWhiteSpace(dh.TenKhachHang)
-        ? dh.TenKhachHang
-        : (dh.KhachHang != null ? dh.KhachHang.HoTen : string.Empty),
+                ? dh.TenKhachHang
+                : (dh.KhachHang != null ? dh.KhachHang.HoTen : string.Empty),
 
                 // Ưu tiên số ĐT trên DonHang; fallback sang DiaChi.Phone
                 SoDienThoai = !string.IsNullOrWhiteSpace(dh.SoDienThoai)
@@ -105,12 +109,12 @@ namespace TL4_SHOP.Areas.Admin.Controllers
 
                 // Nếu DonHang đã có DiaChiGiaoHang thì dùng luôn; nếu không thì ghép từ DiaChi
                 DiaChiGiaoHang = !string.IsNullOrWhiteSpace(dh.DiaChiGiaoHang)
-        ? dh.DiaChiGiaoHang
-        : (dh.DiaChi != null
-            ? string.Join(", ",
-                new[] { dh.DiaChi.SoNha, dh.DiaChi.PhuongXa, dh.DiaChi.QuanHuyen, dh.DiaChi.ThanhPho }
-                .Where(s => !string.IsNullOrWhiteSpace(s)))
-            : string.Empty),
+                ? dh.DiaChiGiaoHang
+                : (dh.DiaChi != null
+                ? string.Join(", ",
+                    new[] { dh.DiaChi.SoNha, dh.DiaChi.PhuongXa, dh.DiaChi.QuanHuyen, dh.DiaChi.ThanhPho }
+                    .Where(s => !string.IsNullOrWhiteSpace(s)))
+                : string.Empty),
 
                 NgayDatHang = dh.NgayDatHang,
                 PhiVanChuyen = dh.PhiVanChuyen,

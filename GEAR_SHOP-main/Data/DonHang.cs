@@ -32,7 +32,8 @@ public partial class DonHang
     public string? TrangThaiDonHangText { get; set; }
 
     public string? EmailNguoiDat { get; set; }
-
+    public string? TransactionId { get; set; }
+    public string? PayPalUITransactionId { get; set; }
     public virtual ICollection<ChiTietDonHang> ChiTietDonHangs { get; set; } = new List<ChiTietDonHang>();
 
     public virtual DiaChi? DiaChi { get; set; }

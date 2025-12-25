@@ -126,6 +126,27 @@ html.dark h5[data-i18n="nav_Support_Hotline"] {
 html.dark h2[data-i18n="nav_register"] {
     color: #d48e84 !important;
 }
+/*Trang hóa đơn*/
+/* Lỗi khi load lại thì nó bị mất màu chữ cho body text*/
+html.dark .Order_Details {
+    color: #d48e84 !important;
+}
+
+html.dark .Product_Details {
+    color: #e5e7eb !important;
+}
+html.dark h4[data-i18n="nav_Product_details2"] {
+    color: #d48e84 !important;
+}
+
+html.dark th[data-i18n="nav_Product_name"],
+html.dark th[data-i18n="nav_Quantity"],
+html.dark th[data-i18n="nav_Unit_price"],
+html.dark th[data-i18n="nav_Cash"] {
+    color: #e5e7eb !important;
+}
+
+/*-----------------------------------------------*/
 
 html.dark i.fa-map-marker-alt, /* Vị trí */
 html.dark i.fa-envelope, /* Mail */

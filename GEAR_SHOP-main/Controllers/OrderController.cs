@@ -183,6 +183,8 @@ namespace TL4_SHOP.Controllers
                     TongTien = d.TongTien,
                     TrangThai = d.TrangThai != null ? d.TrangThai.TrangThaiId : 0,
                     PhiVanChuyen = d.PhiVanChuyen,
+                    TransactionId = d.TransactionId,
+                    PhuongThucThanhToan = d.PhuongThucThanhToan,
                     ChiTiet = d.ChiTietDonHangs.Select(c => new ChiTietDonHangViewModel
                     {
                         SanPhamId = c.SanPhamId,

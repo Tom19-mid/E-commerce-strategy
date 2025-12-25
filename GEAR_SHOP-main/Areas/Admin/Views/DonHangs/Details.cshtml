@@ -30,12 +30,15 @@
     <div class="row">
       <div class="col-lg-6">
         <h6 class="text-muted">Thông tin</h6>
+        <p><strong>Mã giao dịch:</strong> @Model.TransactionId</p>
+        <p><strong>Mã giao dịch PayPayUI:</strong> @Model.PayPalUITransactionId</p>
         <p><strong>Khách hàng:</strong> @Model.TenKhachHang</p>
         <p><strong>Số điện thoại:</strong> @Model.SoDienThoai</p>
         <p><strong>Địa chỉ giao:</strong> @Model.DiaChiGiaoHang</p>
         <p><strong>Ngày đặt:</strong> @Model.NgayDatHang.ToString("dd/MM/yyyy HH:mm")</p>
         <p><strong>Phí vận chuyển:</strong> @Model.PhiVanChuyen.ToString("N0") đ</p>
         <p><strong>Tổng tiền:</strong> @Model.TongTien.ToString("N0") đ</p>
+        <p><strong>Phương thức thanh toán:</strong> @Model.PhuongThucThanhToan</p>
       </div>
 
       <div class="col-lg-6">

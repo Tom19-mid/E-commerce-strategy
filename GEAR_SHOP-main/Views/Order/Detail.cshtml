@@ -43,8 +43,11 @@
     </div>
 }
 
-<h2><span data-i18n="nav_Order_details">Chi tiết đơn hàng</span> #@Model.DonHangId</h2>
+@* <h2><span data-i18n="nav_Order_details">Chi tiết đơn hàng</span> <span>#@Model.DonHangId</span></h2> *@
+<h2 class="Order_Details" ><span data-i18n="nav_Order_details">Chi tiết đơn hàng</span> #@Model.DonHangId</h2>
 
+<p><strong data-i18n="nav_transaction_code">Mã giao dịch:</strong> @Model.TransactionId</p>
+<p><strong data-i18n="">Mã giao dịch PayPayUI:</strong> @Model.PayPalUITransactionId</p>
 <p><strong data-i18n="nav_Customers">Khách hàng:</strong> @Model.TenKhachHang</p>
 <p><strong data-i18n="nav_SDT">SĐT:</strong> @Model.SoDienThoai</p>
 <p><strong data-i18n="nav_Address">Địa chỉ giao hàng:</strong> @Model.DiaChiGiaoHang</p>
@@ -52,6 +55,7 @@
 <p><strong data-i18n="nav_Status2">Trạng thái:</strong> @Model.TrangThaiDonHangText</p>
 <p><strong data-i18n="nav_Shipping_fee">Phí vận chuyển:</strong> @Model.PhiVanChuyen.ToString("N0") đ</p>
 <p><strong data-i18n="nav_Total2">Tổng tiền:</strong> @Model.TongTien.ToString("N0") đ</p>
+<p><strong data-i18n="nav_Payment_method">Phương thức thanh toán:</strong> @Model.PhuongThucThanhToan</p>
 
 <h4 style="font-family: Tahoma;" data-i18n="nav_Product_details2">Chi tiết sản phẩm:</h4>
 <table class="table table-dam-hon">
@@ -66,7 +70,7 @@
     <tbody>
         @foreach (var item in Model.ChiTiet)
         {
-            <tr>
+            <tr class="Product_Details">
                 <td>@item.TenSanPham</td>
                 <td>@item.SoLuong</td>
                 <td>@item.DonGia.ToString("N0") đ</td>

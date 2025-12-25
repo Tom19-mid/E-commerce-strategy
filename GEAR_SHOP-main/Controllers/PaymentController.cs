@@ -188,11 +188,21 @@ namespace TL4_SHOP.Controllers
                 if (result.Status == "COMPLETED")
                 {
                     Console.WriteLine("✅ THANH TOÁN PAYPAL THÀNH CÔNG!");
-                    string transactionId = result.PurchaseUnits[0].Payments.Captures[0].Id;
-                    Console.WriteLine($"💳 Transaction ID: {transactionId}");
+                    string payPalCaptureId = result.PurchaseUnits[0].Payments.Captures[0].Id;
+                    string payPalOrderId = token;
+                    Console.WriteLine($"💳 Capture ID: {payPalCaptureId}");
+                    Console.WriteLine($"🧾 Order ID: {payPalOrderId}");
 
-                    UpdateOrderStatus(orderId, "Đã thanh toán", transactionId);
+                    //UpdateOrderStatus(orderId, "Đã thanh toán", payPalCaptureId, "PayPal");
                     var order = _context.DonHangs.Find(orderId);
+                    if (order != null)
+                    {
+                        order.TransactionId = payPalCaptureId;     // dùng Capture ID làm giao dịch
+                        order.PhuongThucThanhToan = "PayPal";
+                        order.TrangThaiDonHangText = "Đã thanh toán";
+
+                        _context.SaveChanges();
+                    }
 
                     // ◀️ SỬA LỖI 1: Xử lý CreateTime có thể bị null
                     DateTime paymentTime;
@@ -214,7 +224,7 @@ namespace TL4_SHOP.Controllers
                         Amount = (order?.TongTien ?? 0), // Không cộng thêm tiền phí vận chuyển nữa
                         PaymentMethod = "PayPal",
                         PaymentTime = paymentTime, // ◀️ Dùng biến đã xử lý
-                        TransactionId = transactionId
+                        TransactionId = payPalCaptureId
                     };
                 }
                 else
@@ -344,7 +354,7 @@ namespace TL4_SHOP.Controllers
                 if (response.Success)
                 {
                     Console.WriteLine($"⏳ Updating order {response.OrderId} status...");
-                    UpdateOrderStatus(response.OrderId, "Đã thanh toán", response.TransactionId);
+                    UpdateOrderStatus(response.OrderId, "Đã thanh toán", response.TransactionId, "VNPay");
                     Console.WriteLine($"✅ Order updated!");
                 }
 
@@ -438,7 +448,7 @@ namespace TL4_SHOP.Controllers
             };
 
             // Cập nhật trạng thái đơn hàng
-            UpdateOrderStatus(result.OrderId, "Đã thanh toán", result.TransactionId);
+            UpdateOrderStatus(result.OrderId, "Đã thanh toán", result.TransactionId, paymentMethod.ToString());
 
             return View("Result", result);
         }
@@ -474,7 +484,7 @@ namespace TL4_SHOP.Controllers
             return $"TXN{DateTime.Now:yyyyMMddHHmmss}{new Random().Next(1000, 9999)}";
         }
 
-        private void UpdateOrderStatus(int orderId, string statusName, string transactionId)
+        private void UpdateOrderStatus(int orderId, string statusName, string transactionId, string paymentMethodName)
         {
             try
             {
@@ -482,6 +492,7 @@ namespace TL4_SHOP.Controllers
 
                 if (order != null)
                 {
+                    // 1. Cập nhật trạng thái
                     var trangThai = _context.TrangThaiDonHangs
                         .FirstOrDefault(t => t.TenTrangThai == statusName);
 
@@ -490,9 +501,21 @@ namespace TL4_SHOP.Controllers
                         order.TrangThaiId = trangThai.TrangThaiId;
                         order.TrangThaiDonHangText = trangThai.TenTrangThai;
                     }
+                    // 2. Lưu TransactionId và Phương thức thanh toán vào database
+                    if (!string.IsNullOrEmpty(transactionId) && string.IsNullOrEmpty(order.TransactionId))
+                    {
+                        order.TransactionId = transactionId;
+                    }
+
+                    // 3. Lưu Phương thức thanh toán vào database
+                    // Dùng biến 'paymentMethodName' được truyền vào, KHÔNG dùng chữ 'PaymentMethod'
+                    if (!string.IsNullOrEmpty(paymentMethodName))
+                    {
+                        order.PhuongThucThanhToan = paymentMethodName;
+                    }
 
                     _context.SaveChanges();
-                    Console.WriteLine($"✅ Order {orderId} status updated");
+                    Console.WriteLine($"✅ Order {orderId} updated successfully.");
                 }
                 else
                 {
