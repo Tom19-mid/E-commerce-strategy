@@ -199,15 +199,36 @@ namespace TL4_SHOP.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var nv = _context.TaoTaiKhoans.Find(id);
+            // 1. Lấy tài khoản
+            var taiKhoan = _context.TaoTaiKhoans
+                .Include(t => t.Wishlists)
+                    .ThenInclude(w => w.WishlistItems)
+                .FirstOrDefault(t => t.TaiKhoanId == id && t.LoaiTaiKhoan == "NhanVien");
 
-            if (nv != null && nv.LoaiTaiKhoan == "NhanVien")
+            if (taiKhoan == null)
+                return NotFound();
+
+            // 2. Xóa WishlistItems → Wishlists
+            if (taiKhoan.Wishlists != null && taiKhoan.Wishlists.Any())
             {
-                _context.TaoTaiKhoans.Remove(nv);
-                _context.SaveChanges();
+                foreach (var wl in taiKhoan.Wishlists)
+                {
+                    if (wl.WishlistItems != null && wl.WishlistItems.Any())
+                    {
+                        _context.WishlistItems.RemoveRange(wl.WishlistItems);
+                    }
+                }
+
+                _context.Wishlists.RemoveRange(taiKhoan.Wishlists);
             }
 
-            TempData["ThongBao"] = "Xóa nhân viên thành công !";
+            // 4. Xóa TaoTaiKhoan (CHA)
+            _context.TaoTaiKhoans.Remove(taiKhoan);
+
+            // 5. Lưu
+            _context.SaveChanges();
+
+            TempData["ThongBao"] = "Xóa nhân viên thành công!";
             return RedirectToAction(nameof(Index));
         }
     }

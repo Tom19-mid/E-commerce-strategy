@@ -8,7 +8,7 @@ using TL4_SHOP.Models.ViewModels;
 namespace TL4_SHOP.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Policy = "AdminOnly")]
+    [Authorize(Policy = "AdminOrOrderManager")]
     public class BaoCaoController : Controller
     {
         private readonly _4tlShopContext _context;

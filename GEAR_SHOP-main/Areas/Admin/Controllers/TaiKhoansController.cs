@@ -11,7 +11,7 @@ using TL4_SHOP.Models.ViewModels;
 namespace TL4_SHOP.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminOrHRManager")]
     public class TaiKhoansController : Controller
     {
         private readonly _4tlShopContext _context;
@@ -199,16 +199,82 @@ namespace TL4_SHOP.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var tk = _context.TaoTaiKhoans.Find(id);
+            var taiKhoan = _context.TaoTaiKhoans
+                .Include(t => t.Wishlists)
+                    .ThenInclude(w => w.WishlistItems)
+                .Include(t => t.KhachHang)
+                .Include(t => t.NhanVien)
+                .FirstOrDefault(t =>
+                    t.TaiKhoanId == id &&
+                    (t.LoaiTaiKhoan == "NhanVien" || t.LoaiTaiKhoan == "KhachHang"));
 
-            if (tk != null)
+            if (taiKhoan == null)
+                return NotFound();
+
+            // ===== KHÁCH HÀNG =====
+            if (taiKhoan.LoaiTaiKhoan == "KhachHang")
             {
-                _context.TaoTaiKhoans.Remove(tk);
-                _context.SaveChanges();
+                // Xóa WishlistItems → Wishlists
+                if (taiKhoan.Wishlists != null)
+                {
+                    foreach (var wl in taiKhoan.Wishlists)
+                    {
+                        _context.WishlistItems.RemoveRange(wl.WishlistItems);
+                    }
+                    _context.Wishlists.RemoveRange(taiKhoan.Wishlists);
+                }
+
+                // Xóa KhachHang
+                if (taiKhoan.KhachHang != null)
+                {
+                    _context.KhachHangs.Remove(taiKhoan.KhachHang);
+                }
             }
 
-            TempData["ThongBao"] = "Xóa tài khoản thành công !";
+            // ===== NHÂN VIÊN =====
+            if (taiKhoan.LoaiTaiKhoan == "NhanVien")
+            {
+                // Xóa WishlistItems → Wishlists
+                if (taiKhoan.Wishlists != null)
+                {
+                    foreach (var wl in taiKhoan.Wishlists)
+                    {
+                        _context.WishlistItems.RemoveRange(wl.WishlistItems);
+                    }
+                    _context.Wishlists.RemoveRange(taiKhoan.Wishlists);
+                }
+
+                // Xóa NhanVien
+                if (taiKhoan.NhanVien != null)
+                {
+                    _context.NhanViens.Remove(taiKhoan.NhanVien);
+                }
+            }
+
+            // ===== NHÂN VIÊN =====
+            //if (taiKhoan.LoaiTaiKhoan == "NhanVien")
+            //{
+            //    // ❗ Không cho xóa nếu đã có hóa đơn
+            //    bool hasHoaDon = _context.DonHangs.Any(h => h.MaNV == id);
+            //    if (hasHoaDon)
+            //    {
+            //        TempData["ThongBaoLoi"] = "Không thể xóa nhân viên đã phát sinh hóa đơn.";
+            //        return RedirectToAction(nameof(Index));
+            //    }
+
+            //    if (taiKhoan.NhanVien != null)
+            //    {
+            //        _context.NhanViens.Remove(taiKhoan.NhanVien);
+            //    }
+            //}
+
+            // ===== XÓA TÀI KHOẢN (CHA) =====
+            _context.TaoTaiKhoans.Remove(taiKhoan);
+            _context.SaveChanges();
+
+            TempData["ThongBao"] = "Xóa tài khoản thành công!";
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

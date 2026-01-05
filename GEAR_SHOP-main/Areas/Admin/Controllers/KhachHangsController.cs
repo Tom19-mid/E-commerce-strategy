@@ -11,7 +11,7 @@ using System.Text;
 namespace TL4_SHOP.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminOrCustomerCare")]
     public class KhachHangsController : Controller
     {
         private readonly _4tlShopContext _context;
@@ -208,15 +208,38 @@ namespace TL4_SHOP.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var kh = _context.TaoTaiKhoans.Find(id);
+            // 1. Lấy tài khoản
+            var taiKhoan = _context.TaoTaiKhoans
+                .Include(t => t.Wishlists)
+                    .ThenInclude(w => w.WishlistItems)
+                .FirstOrDefault(t => t.TaiKhoanId == id && t.LoaiTaiKhoan == "KhachHang");
 
-            if (kh != null && kh.LoaiTaiKhoan == "KhachHang")
+            if (taiKhoan == null)
+                return NotFound();
+
+            // 2. Xóa WishlistItems → Wishlists
+            if (taiKhoan.Wishlists != null && taiKhoan.Wishlists.Any())
             {
-                _context.TaoTaiKhoans.Remove(kh);
-                _context.SaveChanges();
+                foreach (var wl in taiKhoan.Wishlists)
+                {
+                    if (wl.WishlistItems != null && wl.WishlistItems.Any())
+                    {
+                        _context.WishlistItems.RemoveRange(wl.WishlistItems);
+                    }
+                }
+
+                _context.Wishlists.RemoveRange(taiKhoan.Wishlists);
             }
-            TempData["ThongBao"] = "Xóa khách hàng thành công !";
+
+            // 4. Xóa TaoTaiKhoan (CHA)
+            _context.TaoTaiKhoans.Remove(taiKhoan);
+
+            // 5. Lưu
+            _context.SaveChanges();
+
+            TempData["ThongBao"] = "Xóa khách hàng thành công!";
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

@@ -192,9 +192,19 @@
                     }
 
                     @* Nhân viên: Admin + HR *@
-                    @if (isAdmin || isHR)
+                    @if (isAdmin)
                     {
-                        <li class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString()=="NhanViens" ? "active" : "")">
+                        <li class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "NhanViens" ? "active" : "")">
+                            <a class="menu-link" asp-area="Admin" asp-controller="NhanViens" asp-action="Index">
+                                <span class="menu-icon iconify" data-icon="bx:id-card"></span>
+                                <div>Nhân viên</div>
+                            </a>
+                        </li>
+                    }
+                    @if (isHR)
+                    {
+                        <li class="menu-header small text-uppercase">Người dùng</li>
+                        <li class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "NhanViens" ? "active" : "")">
                             <a class="menu-link" asp-area="Admin" asp-controller="NhanViens" asp-action="Index">
                                 <span class="menu-icon iconify" data-icon="bx:id-card"></span>
                                 <div>Nhân viên</div>
@@ -203,7 +213,7 @@
                     }
 
                     @* Tài khoản: Admin *@
-                    @if (isAdmin)
+                    @if (isAdmin || isHR)
                     {
                         <li class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString()=="TaiKhoans" ? "active" : "")">
                             <a class="menu-link" asp-area="Admin" asp-controller="TaiKhoans" asp-action="Index">
@@ -226,7 +236,7 @@
                     }
 
                     <!-- BÁO CÁO: Admin -->
-                    @if (isAdmin)
+                    @if (isAdmin || isOM)
                     {
                         <li class="menu-header small text-uppercase">Báo cáo</li>
                         <li class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString()=="BaoCao" ? "active" : "")">

@@ -95,7 +95,6 @@ namespace TL4_SHOP.Areas.Admin.Controllers
                 DonHangId = dh.DonHangId,
                 TransactionId = dh.TransactionId,
                 PhuongThucThanhToan = dh.PhuongThucThanhToan,
-                PayPalUITransactionId = dh.PayPalUITransactionId,
 
                 // Ưu tiên TenKhachHang lưu trực tiếp trên DonHang; fallback sang KhachHang.HoTen
                 TenKhachHang = !string.IsNullOrWhiteSpace(dh.TenKhachHang)

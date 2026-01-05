@@ -6,7 +6,7 @@ using TL4_SHOP.Data;
 namespace TL4_SHOP.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminOrProductManager")]
     public class KhoHangsController : Controller
     {
         private readonly _4tlShopContext _context;

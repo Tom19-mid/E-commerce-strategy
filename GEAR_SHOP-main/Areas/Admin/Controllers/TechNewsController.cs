@@ -6,7 +6,7 @@ using TL4_SHOP.Data;
 namespace TL4_SHOP.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,HRManager,ProductManager,OrderManager,CustomerCare")]
     public class TechNewsController : Controller
     {
         private readonly _4tlShopContext _context;

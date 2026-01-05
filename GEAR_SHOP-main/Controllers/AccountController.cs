@@ -167,11 +167,10 @@ namespace TL4_SHOP.Controllers
                     return RedirectToAction("Index", "DonHangs", new { area = "Admin" });
 
                 case AppRoles.HRManager:
-                    // nếu controller/action thật sự là Index thì đổi lại cho khớp
-                    return RedirectToAction("QuanLyNhanVien", "NhanViens", new { area = "Admin" });
+                    return RedirectToAction("Index", "NhanViens", new { area = "Admin" });
 
                 case AppRoles.CustomerCare:
-                    return RedirectToAction("Index", "ChamSocKhachHangs", new { area = "Admin" });
+                    return RedirectToAction("Index", "KhachHangs", new { area = "Admin" });
 
                 default:
                     return RedirectToAction("Index", "Home");
@@ -201,6 +200,12 @@ namespace TL4_SHOP.Controllers
                 string.IsNullOrWhiteSpace(account.Password))
             {
                 ViewBag.Message = "Vui lòng nhập đầy đủ thông tin.";
+                return View(account);
+            }
+
+            if (account.Username.Any(c => "<>\"'".Contains(c)))
+            {
+                ViewBag.Message = "Tên đăng nhập chứa ký tự không hợp lệ.";
                 return View(account);
             }
 

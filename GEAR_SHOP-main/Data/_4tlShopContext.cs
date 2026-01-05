@@ -216,7 +216,6 @@ public partial class _4tlShopContext : DbContext
             entity.Property(e => e.TrangThaiDonHangText).HasMaxLength(100);
             entity.Property(e => e.TrangThaiId).HasColumnName("TrangThaiID");
             entity.Property(e => e.TransactionId).HasMaxLength(100);
-            entity.Property(e => e.PayPalUITransactionId).HasMaxLength(50);
 
             entity.HasOne(d => d.DiaChi).WithMany(p => p.DonHangs)
                 .HasForeignKey(d => d.DiaChiId)
